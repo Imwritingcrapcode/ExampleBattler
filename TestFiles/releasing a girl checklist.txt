@@ -1,0 +1,17 @@
+1. change all the turns
+2. check colour codes
+3. mAke girlinfo about her
+4. add her to released characters
+5. add her effect icons
+6. add her art, left & right
+7. does she change gamestate in some new way?
+8. can the bot play as her?
+9. desctibe effects
+10. add descriptions to constants.js
+11. init as number
+12. resolutions.
+13. GetGirlRarity
+14. releasedcharacterspacks
+15. add her to portraits list (true), add her portrait
+
+okay, I guess that's it!

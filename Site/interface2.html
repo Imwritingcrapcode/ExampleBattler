@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta charset="UTF-8">
+    <title>Example Battler</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+    <script>
+
+        let SkillMap = {
+            "0": "Q",
+            "1": "W",
+            "2": "E",
+            "3": "R",
+            "": "",
+        };
+        let ws;
+        let connected = false;
+        let RedirectAfter = 10;
+        let Are_buttons_disabled = true;
+        let Are_opp_buttons_disabled = true;
+        let timeLeft = 0;
+        let isTicking = false;
+
+        function getChar(event) {
+            if (event.which == null) { // IE
+                if (event.keyCode < 32) return "";
+                return String.fromCharCode(event.keyCode)
+            }
+            if (event.which !== 0 && event.charCode !== 0) { // not IE
+
+                if (event.which < 32) return ""; // symb
+                return String.fromCharCode(event.which); // the rest
+            }
+            return ""; // symb
+
+        }
+
+        document.onkeypress = (key) => {
+            if (!Are_buttons_disabled) {
+                console.log(getChar(key));
+                if (getChar(key).toLowerCase() === "q") {
+                    SendSkill('Q');
+                } else if (getChar(key).toLowerCase() === "w") {
+                    SendSkill('W');
+                } else if (getChar(key).toLowerCase() === "e") {
+                    SendSkill('E');
+                } else if (getChar(key).toLowerCase() === "r") {
+                    SendSkill('R');
+                }
+            }
+        };
+
+        const GetTurnNum = (i) => {
+            return Math.floor((i - 1) / 2 + 1);
+        };
+
+        function SortMap(map) {
+            let tupleArray = [];
+            for (let key in map)
+                if (map.hasOwnProperty(key)) {
+                    tupleArray.push(key);
+                }
+            tupleArray.sort((a, b) => (a > b) ? 1 : ((b > a) ? -1 : 0));
+            return tupleArray;
+        }
+
+        function SetSkillNames(State) {
+            for (let property in State) {
+                if (State.hasOwnProperty(property)) {
+                    document.getElementById(property.toString()).innerText = State[property];
+                }
+            }
+
+        }
+
+        function SetOppSkillNames(State) {
+            for (let property in State) {
+                if (State.hasOwnProperty(property)) {
+                    document.getElementById(property.toString()).innerText = State[property];
+                }
+            }
+        }
+
+        function countdownRedirect(where) {
+            RedirectAfter = RedirectAfter - 1;
+            if (RedirectAfter <= 0) {
+                window.location = "/afterbattle";
+                console.log("RELOCATED!~");
+                document.getElementById("preloader").innerHTML = "";
+            } else {
+                document.getElementById("preloader").innerHTML = "<b>" + RedirectAfter + "</b>";
+                window.setTimeout("countdownRedirect()", 1000);
+            }
+        }
+
+        function countdown(value) {
+            timeLeft = value - 1;
+            if (timeLeft < 0) {
+                isTicking = false;
+                console.log("turn times out");
+                document.getElementById("preloader").innerHTML = "";
+            } else {
+                document.getElementById("preloader").innerHTML = "<b>" + timeLeft + "</b>";
+                window.setTimeout("countdown(timeLeft)", 1000);
+            }
+        }
+
+        function setTimeLeft(value) {
+            timeLeft = value;
+        }
+
+        const DisableButtons = () => {
+            Are_buttons_disabled = true;
+            document.getElementById("Q").disabled = true;
+            document.getElementById("W").disabled = true;
+            document.getElementById("E").disabled = true;
+            document.getElementById("R").disabled = true;
+        };
+
+        const DisableOppButtons = () => {
+            Are_opp_buttons_disabled = true;
+            document.getElementById("OppQ").disabled = true;
+            document.getElementById("OppW").disabled = true;
+            document.getElementById("OppE").disabled = true;
+            document.getElementById("OppR").disabled = true;
+        };
+
+        const EnableButtons = (State) => {
+            Are_buttons_disabled = false;
+            for (let property in State) {
+                if (State.hasOwnProperty(property)) {
+                    document.getElementById(property.toString()).disabled = State[property] !== 0;
+                }
+            }
+        };
+
+        const EnableOppButtons = (State) => {
+            Are_opp_buttons_disabled = false;
+            for (let property in State) {
+                if (State.hasOwnProperty(property)) {
+                    document.getElementById(property.toString()).disabled = State[property] !== 0;
+                }
+            }
+        };
+
+        const SendSkill = (Skill) => {
+            if (connected) {
+                if (Are_buttons_disabled) {
+                    return
+                }
+                ws.send(JSON.stringify(Skill));
+                DisableButtons();
+            } else {
+                document.getElementById("GameInfo").innerText += "Not connected yet!\n";
+                Connect();
+            }
+        };
+
+        const Concede = () => {
+            if (connected) {
+                ws.send(JSON.stringify("GiveUp"));
+                DisableButtons();
+            } else {
+                document.getElementById("GameInfo").innerText += "Not connected yet!\n";
+                Connect();
+            }
+        };
+
+        /*const TogglePreloader = () => {
+            let preloader = document.getElementById("preloader");
+            if (preloader.getAttribute("style") === "") {
+                document.getElementById("preloader").setAttribute("style", "visibility: hidden");
+            } else {
+                document.getElementById("preloader").setAttribute("style", "");
+            }
+        };*/
+
+        const Parse = (i) => {
+            if (!i.hasOwnProperty("Instruction")) {
+                let num = parseInt((i.split(":")[1]), 10);
+                if (!isTicking) {
+                    isTicking = true;
+                    countdown(num);
+                } else {
+                    setTimeLeft(num);
+                }
+                return
+            }
+            switch (i.EndState) {
+                case 0:
+                    console.log("STATE OK");
+                    break;
+                case 1:
+                    setTimeLeft(0);
+                    console.log("I WON");
+                    DisableButtons();
+                    countdownRedirect("/afterbattle");
+                    return;
+                case 2:
+                    setTimeLeft(0);
+                    console.log("I LOST");
+                    DisableButtons();
+                    countdownRedirect("/afterbattle");
+                    return;
+                case 3:
+                    setTimeLeft(0);
+                    console.log("DRAW");
+                    DisableButtons();
+                    countdownRedirect("/afterbattle");
+                    return;
+                case 4:
+                    setTimeLeft(0);
+                    console.log("OPP GAVE UP");
+                    DisableButtons();
+                    countdownRedirect("/afterbattle");
+                    return;
+                case 5:
+                    setTimeLeft(0);
+                    console.log("I GAVE UP");
+                    DisableButtons();
+                    countdownRedirect("/afterbattle");
+                    return;
+                case 6:
+                    setTimeLeft(0);
+                    let info = "Opponent failed to connect! Redirecting...";
+                    document.getElementById("GameInfo").innerHTML += info;
+                    document.getElementById("GameInfo").scrollTop = document.getElementById("GameInfo").scrollHeight;
+                    countdownRedirect("/girllist");
+                    return;
+                default:
+            }
+
+            let skillUsed = ParseInstruction(i.Instruction);
+            let lastUsed = skillUsed !== "" ? skillUsed + "\n" : "";
+            let info = lastUsed + "<b>Turn " + i.TurnNum + " (your " + GetTurnNum(i.TurnNum) + ")</b>\n";
+            let effs = SortMap(i.Effects);
+            let oppEffs = SortMap(i.OppEffects);
+            if (i.TurnPlayer === 1) {
+                info += ("<u>" + i.PlayerName + " (" + i.PlayerNum + ")\n");
+                info += (i.HP + "/" + i.MaxHP + " (" + Math.floor(i.HP / i.MaxHP * 100) + "%)</u>\n");
+                info += (i.OppName + "(" + i.OppNum + ")\n");
+                info += (i.OppHP + "/" + i.OppMaxHP + " (" + Math.floor(i.OppHP / i.OppMaxHP * 100) + "%)\n");
+                for (let key of effs) {
+                    if (effs[key] === "") {
+                        info += key + "\n"
+                    } else {
+                        info += key + " " + i.Effects[key] + "\n"
+                    }
+                }
+                info += "\n";
+                for (let key of oppEffs) {
+                    if (oppEffs[key] === "") {
+                        info += key + "\n"
+                    } else {
+                        info += key + " " + i.OppEffects[key] + "\n"
+                    }
+                }
+                info += "\n";
+                EnableButtons(i.SkillState);
+            } else {
+                info += i.OppName + " (" + i.OppNum + ")\n";
+                info += (i.OppHP + "/" + i.OppMaxHP + " (" + Math.floor(i.OppHP / i.OppMaxHP * 100) + "%)\n");
+                info += ("<u>" + i.PlayerName + " (" + i.PlayerNum + ")\n");
+                info += (i.HP + "/" + i.MaxHP + " (" + Math.floor(i.HP / i.MaxHP * 100) + "%)</u>\n");
+                for (let key of oppEffs) {
+                    if (oppEffs[key] === "") {
+                        info += key + "\n"
+                    } else {
+                        info += key + " " + i.OppEffects[key] + "\n"
+                    }
+                }
+                info += "\n";
+                for (let key of effs) {
+                    if (effs[key] === "") {
+                        info += key + "\n"
+                    } else {
+                        info += key + " " + i.Effects[key] + "\n"
+                    }
+                }
+                info += "\n";
+                DisableButtons();
+            }
+            document.getElementById("GameInfo").innerHTML += info;
+            document.getElementById("GameInfo").scrollTop = document.getElementById("GameInfo").scrollHeight;
+            EnableOppButtons(i.OppSkillState);
+            SetSkillNames(i.SkillNames);
+            SetOppSkillNames(i.OppSkillNames);
+        };
+
+        const ParseInstruction = (text) => {
+            if (text !== "") {
+                return text[text["length"] - 2]
+            } else {
+                return ""
+            }
+        };
+
+        function Connect() {
+            if (ws) {
+                return
+            }
+            let loc = window.location, new_uri;
+            if (loc.protocol === "https:") {
+                new_uri = "wss:";
+            } else {
+                new_uri = "ws:";
+            }
+            new_uri += "//" + loc.host + "/battler";
+            ws = new WebSocket(new_uri);
+
+            ws.onopen = function (evt) {
+                console.log("OPEN");
+                connected = true;
+            };
+            ws.onclose = function (evt) {
+                console.log("CLOSE");
+                ws = null;
+            };
+            ws.onmessage = function (evt) {
+                console.log("RESPONSE:");
+                //JSONED = evt.data;
+                let battleresponse = JSON.parse(evt.data);
+                Parse(battleresponse);
+                console.log(battleresponse);
+            };
+            ws.onerror = function (evt) {
+                console.log("ERROR: " + evt);
+            };
+        }
+
+
+    </script>
+</head>
+<body>
+<table WIDTH="100%">
+    <tr>
+        <td>
+            <div class="left" align="center">Welcome, {{.Username}}</div>
+        </td>
+        <td>
+            <div class="left" align="center"><a href="/">Main page</a></div>
+        </td>
+        <td>
+            <div class="center" align="center"><a href="/friends">Friend list</a></div>
+        </td>
+        <td>
+            <div class="center" align="center"><a href="/girllist">Choose chars</a></div>
+        </td>
+        <td>
+            <div class="center" align="center"><a onclick="Concede()">Give Up</a></div>
+        </td>
+        <td>
+            <div class="right" align="right"><a href="/logout">Logout</a></div>
+        </td>
+
+    </tr>
+</table>
+<table border="1px" bgcolor="#e7e7e7" width="500" rules="rows" align="center">
+    <tr>
+        <td colspan="4" height="400">
+            <div id="GameInfo" class="GameInfo" align="center"
+                 style="overflow-y:scroll; white-space: pre; height:375px"></div>
+            <div id="preloader" class="preloader" style=""></div>
+        </td>
+    </tr>
+    <tr align="center">
+        <td width="25%">
+            <button id="Q" type="button" onclick="SendSkill('Q')"
+                    style="font-size : 20px; width:100%; height: 100px;">Q
+            </button>
+        </td>
+        <td width="25%">
+            <button id="W" type="button" onclick="SendSkill('W')"
+                    style="font-size : 20px; width:100%; height: 100px;">W
+            </button>
+        </td>
+        <td width="25%">
+            <button id="E" type="button" onclick="SendSkill('E')"
+                    style="font-size : 20px; width:100%; height: 100px;">E
+            </button>
+        </td>
+        <td width="25%">
+            <button id="R" type="button" onclick="SendSkill('R')"
+                    style="font-size : 20px; width:100%; height: 100px;">R
+            </button>
+        </td>
+    </tr>
+</table>
+<table border="1px" bgcolor="#e7e7e7" width="250" rules="rows" align="center">
+    <tr align="center">
+        <td width="25%">
+            <button id="OppQ" type="button" onclick=""
+                    style="font-size : 20px; width:100%; height: 50px;">Q
+            </button>
+        </td>
+        <td width="25%">
+            <button id="OppW" type="button" onclick=""
+                    style="font-size : 20px; width:100%; height: 50px;">W
+            </button>
+        </td>
+        <td width="25%">
+            <button id="OppE" type="button" onclick=""
+                    style="font-size : 20px; width:100%; height: 50px;">E
+            </button>
+        </td>
+        <td width="25%">
+            <button id="OppR" type="button" onclick=""
+                    style="font-size : 20px; width:100%; height: 50px;">R
+            </button>
+        </td>
+    </tr>
+</table>
+<script>
+    DisableButtons();
+    DisableOppButtons();
+    Connect();
+</script>
+</body>
+</html>

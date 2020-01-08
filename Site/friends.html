@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Friend list</title>
+    <style>
+        /* Style the tab */
+        .tab {
+            width: 600px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-bottom: none;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: top;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            width: 600px;
+            display: none;
+            border: 1px solid #ccc;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+    <script>
+        friends = [];
+        incoming = [];
+        pending = [];
+
+        function init() {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', '/friendlist', true);
+            xhr.send();
+            xhr.onreadystatechange = (e) => {
+                if (xhr.readyState === 4) {
+                    let response = JSON.parse(xhr.responseText);
+                    console.log(response);
+                    setFriends(response.friends);
+                    setIncoming(response.incoming);
+                    setPending(response.pending);
+                }
+            };
+        }
+
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            //hiding all the tab contents
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            //deactivating all buttons
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            //displaying current tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function setFriends(friends) {
+            let innerHTML = "";
+            if (!!friends) {
+                friends = friends.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+                for (let friend of friends) {
+                    console.log("you have friends");
+                    let prefix = friend[0] + " " + friend[1];
+                    if (friend.length === 3) {
+                        prefix += " " + friend[2];
+                    }
+                    let postfix = " <button class=\"removefriend\" onclick='removeFriend(\"" + friend[0] + "\")'>✖</button><br>";
+                    innerHTML += prefix + postfix;
+                }
+            } else {
+                console.log("you have 0 friends uwu");
+                innerHTML = "You have 0 friends uwu";
+            }
+            document.getElementById("friends").innerHTML = innerHTML;
+        }
+
+        function removeFriend(name) {
+            console.log("remove: " + name);
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/friendlist', true);
+            xhr.send(JSON.stringify(["Remove", name]));
+            xhr.onreadystatechange = (e) => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        alert(xhr.responseText);
+                        init();
+                    } else {
+                        alert(xhr.responseText);
+                        alert(response);
+
+                    }
+                }
+            };
+        }
+
+        function addFriend(name) {
+            console.log("add: " + name);
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/friendlist', true);
+            xhr.send(JSON.stringify(["Add", name]));
+            xhr.onreadystatechange = (e) => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        alert(xhr.responseText);
+                        init();
+                    } else {
+                        alert(xhr.responseText);
+                    }
+                }
+            };
+        }
+
+        function setIncoming(incoming) {
+            let innerHTML = "";
+            if (!!incoming) {
+                console.log("you have incoming");
+                incoming = incoming.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+                for (let friend of incoming) {
+                    innerHTML += friend + " <button class=\"addfriend\" onclick='addFriend(\"" + friend + "\")'>✔</button> <button class=\"removefriend\" onclick='removeFriend(\"" + friend + "\")'>✖</button><br>";
+                }
+            } else {
+                console.log("you have 0 inc uwu");
+                innerHTML = "No incoming requests"
+            }
+            document.getElementById("incoming").innerHTML = innerHTML;
+
+        }
+
+        function setPending(pending) {
+            let innerHTML = "";
+            if (!!pending) {
+                console.log("you have pending");
+                pending = pending.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+                for (let friend of pending) {
+                    innerHTML += friend + " <button class=\"removefriend\" onclick='removeFriend(\"" + friend + "\")'>✖</button><br>";
+                }
+            } else {
+                console.log("you have 0 pending uwu");
+                innerHTML = "No pending requests. Add someone! :>";
+            }
+            document.getElementById("pending").innerHTML = innerHTML;
+        }
+
+    </script>
+</head>
+<body>
+<table WIDTH="100%">
+    <tr>
+        <td>
+            <div class="left" align="center">Welcome, {{.Username}}</div>
+        </td>
+        <td>
+            <div class="left" align="center"><a href="/">Main page</a></div>
+        </td>
+        <td>
+            <div class="center" align="center"><a href="/girllist">Choose chars</a></div>
+        </td>
+        <td>
+            <div class="right" align="right"><a href="/logout">Logout</a></div>
+        </td>
+
+    </tr>
+</table>
+<div align="center">
+    <h2>Friend list</h2>
+    <div class="tab">
+        <button id="defaultTab" class="tablinks" onclick="openTab(event, 'Friends')">Friends</button>
+        <button class="tablinks" onclick="openTab(event, 'Incoming requests')">Incoming requests</button>
+        <button class="tablinks" onclick="openTab(event, 'Pending requests')">Pending requests</button>
+    </div>
+
+    <div id="Friends" class="tabcontent">
+        <h3>Friends</h3>
+        <p>
+        <div id="friends"></div>
+    </div>
+
+    <div id="Incoming requests" class="tabcontent">
+        <h3>Incoming requests</h3>
+        <p>
+        <div id="incoming">INCOMING</div>
+    </div>
+
+    <div id="Pending requests" class="tabcontent">
+        <h3>Pending requests</h3>
+        <p>
+        <div id="pending">PENDING</div>
+    </div>
+</div>
+<script>
+    let response = init();
+    //displaying current tab
+    document.getElementById('Friends').style.display = "block";
+    //clicking on the top button
+    document.getElementById('defaultTab').className += " active";
+</script>
+</body>
+</html>

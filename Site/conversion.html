@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Battle rewards</title>
+    <script>
+        function convert(requestType, amount, dustType) {
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/conversion', true);
+            xhr.send(JSON.stringify({
+                ReqType: requestType,
+                Amount: amount,
+                DustType: dustType}));
+            xhr.onreadystatechange = (e) => {
+                if (xhr.readyState === 4) {
+                    console.log(xhr.responseText);
+                }
+            };
+        }
+
+
+    </script>
+</head>
+<body>
+<table WIDTH="100%">
+    <tr>
+        <td>
+            <div class="left" align="center">Welcome, {{.Username}}</div>
+        </td>
+        <td>
+            <div class="left" align="center"><a href="/">Main page</a></div>
+        </td>
+        <td>
+            <div class="center" align="center"><a href="/girllist">Choose chars</a></div>
+        </td>
+        <td>
+            <div class="right" align="right"><a href="/logout">Logout</a></div>
+        </td>
+
+    </tr>
+</table>
+<br>
+<br>
+<table WIDTH="100%">
+    <tr>
+        <td>
+            <div align="center" id="items">
+            </div>
+        </td>
+    </tr>
+</table>
+<script>
+</script>
+</body>
+</html>
