@@ -93,9 +93,9 @@ func Damage(player, opp *Girl, deal int, ignoreDef bool, colour Colour) int {
 			add = 0
 		}
 
-		if player.HasEffect(AtkReduc) {
-			atkred = player.GetEffect(AtkReduc).State
-			player.RemoveEffect(AtkReduc)
+		if opp.HasEffect(AtkReduc) {
+			atkred = opp.GetEffect(AtkReduc).State
+			opp.RemoveEffect(AtkReduc)
 		} else {
 			atkred = 0
 		}

@@ -92,10 +92,10 @@ func SpeedQ(player, opp *Girl, turn int) {
 	} else if player.GetEffect(GreenToken).State < 5 {
 		player.GetEffect(GreenToken).State += GETGTKNS
 	}
-	if opp.HasEffect(AtkReduc) {
-		opp.GetEffect(AtkReduc).State += DMGREDATK
+	if player.HasEffect(AtkReduc) {
+		player.GetEffect(AtkReduc).State += DMGREDATK
 	} else {
-		eff := opp.CreateEff(AtkReduc, player, 21, DMGREDATK)
+		eff := player.CreateEff(AtkReduc, player, 21, DMGREDATK)
 		opp.AddEffect(eff)
 	}
 }

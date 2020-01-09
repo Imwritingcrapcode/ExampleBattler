@@ -47,6 +47,7 @@ const (
 	Prohibiting
 	Control
 	Debuff
+	Buff
 	State
 	Numerical
 )
@@ -63,6 +64,7 @@ const (
 	//Debuff
 	TurnThreshold
 	TurnReduc
+	//Buff
 	AtkReduc
 	//State
 	Unseen

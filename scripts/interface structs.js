@@ -38,7 +38,7 @@ function Panel(x, y, w, h, s) {
         //display the rect
         stroke(dark);
         noFill();
-        strokeWeight(1.5);
+        strokeWeight(3);
         rect(this.x, this.y, this.width, this.height, this.smooth);
         //display hover
         if (current && current.in()) {
@@ -770,6 +770,7 @@ function SkillButton(x, y, type, t, id, mine) {
     this.setState = function (State) {
         this.state = State;
         switch (State) {
+            //0 - active, -1 - on CD, -2 - dis by eff ??? -100 - disabled
             case 0:
                 this.baseColour.setAlpha(0.87 * 255);
                 this.hoverColour.setAlpha(0.87 * 255);

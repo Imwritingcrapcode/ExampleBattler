@@ -93,12 +93,13 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			dummy,
 			dummy,
 		}
+		//Buff
 	case AtkReduc:
 		s = Effect{
 			ID,
 			duration,
 			state,
-			Debuff,
+			Buff,
 			self,
 			dummy,
 			dummy,

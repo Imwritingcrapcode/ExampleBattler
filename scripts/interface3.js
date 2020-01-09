@@ -6,7 +6,7 @@
     //PICS = false;
     if (TESTING) {
         STATE = "{\"Instruction\":\"\",\"TurnNum\":12,\"TurnPlayer\":1,\"PlayerNum\":33,\"OppNum\":51,\"PlayerName\":\"Speed\",\"OppName\":\"Milana\",\"HP\":78,\"MaxHP\":113,\"OppHP\":94,\"OppMaxHP\":114,\"Effects\"" +
-            ":{\"0\":\"0\", \"2\":\"2\", \"3\":\"\", \"4\":\"2\", \"15\":\"19\"},\"OppEffects\":{\"4\":\"23\"},\"SkillState\":{\"E\":-2,\"Q\":0,\"R\":-1,\"W\":2},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-1,\"OppW\":0},\"SkillNames\":{\"E\":\"Speed\",\"Q\":\"Run\",\"R\":\"Stab\",\"W\":\"Weaken\"},\"OppSkillNames\":{\"OppE\":\"Mint Mist\",\"OppQ\":\"Royal Move\",\"OppR\":\"Pride\",\"OppW\":\"Composure\"},\"Defenses\":{\"1\":0,\"10\":0,\"11\":2,\"12\":-2,\"2\":0,\"3\":0,\"4\":4,\"5\":0,\"6\":0,\"7\":-2,\"8\":0,\"9\":0},\"OppDefenses\":{\"1\":0,\"10\":0,\"11\":-2,\"12\":2,\"2\":-1,\"3\":1,\"4\":1,\"5\":1,\"6\":0,\"7\":-1,\"8\":0,\"9\":0},\"SkillColours\":{\"E\":\"rgb(14,51,20)\",\"Q\":\"rgb(14,51,20)\",\"R\":\"rgb(0,0,0)\",\"W\":\"rgb(0,0,0)\"},\"OppSkillColours\":{\"OppE\":\"rgb(232,255,243)\",\"OppQ\":\"rgb(49,255,185)\",\"OppR\":\"rgb(115,255,240)\",\"OppW\":\"rgb(232,255,243)\"},\"EndState\":0}";
+            ":{\"7\":\"0\", \"2\":\"2\", \"3\":\"\", \"4\":\"2\", \"15\":\"19\"},\"OppEffects\":{\"4\":\"23\"},\"SkillState\":{\"E\":-2,\"Q\":0,\"R\":-1,\"W\":2},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-1,\"OppW\":0},\"SkillNames\":{\"E\":\"Speed\",\"Q\":\"Run\",\"R\":\"Stab\",\"W\":\"Weaken\"},\"OppSkillNames\":{\"OppE\":\"Mint Mist\",\"OppQ\":\"Royal Move\",\"OppR\":\"Pride\",\"OppW\":\"Composure\"},\"Defenses\":{\"1\":0,\"10\":0,\"11\":2,\"12\":-2,\"2\":0,\"3\":0,\"4\":4,\"5\":0,\"6\":0,\"7\":-2,\"8\":0,\"9\":0},\"OppDefenses\":{\"1\":0,\"10\":0,\"11\":-2,\"12\":2,\"2\":-1,\"3\":1,\"4\":1,\"5\":1,\"6\":0,\"7\":-1,\"8\":0,\"9\":0},\"SkillColours\":{\"E\":\"rgb(14,51,20)\",\"Q\":\"rgb(14,51,20)\",\"R\":\"rgb(0,0,0)\",\"W\":\"rgb(0,0,0)\"},\"OppSkillColours\":{\"OppE\":\"rgb(232,255,243)\",\"OppQ\":\"rgb(49,255,185)\",\"OppR\":\"rgb(115,255,240)\",\"OppW\":\"rgb(232,255,243)\"},\"EndState\":0}";
         S = JSON.parse(STATE);
         S2 = JSON.parse(STATE);
     }
@@ -61,7 +61,7 @@
     topPanel.add(new TextInfo(555, 30, dark, "", 25, "turnNumber", "", false, false, true));
     topPanel.add(new TurnLog(550, 230, dark, 20, "turnLog", 180, 175, true));
     //left panel!
-    leftPanel.add(new CanvasImage(0, 0, "", "myChar", "", 0, 0));
+    //leftPanel.add(new CanvasImage(0, 0, "", "myChar", "", 0, 0));
     leftPanel.add(new TextInfo(5, 30, dark, "", 25, "playerName", "", false, false, false));
     leftPanel.add(new TextInfo(5, 55, dark, "", 20, "playerHP", "", false, false, true));
     leftPanel.add(new TextInfo(5, 235, dark, "", 25, "effects", "effects", 215, undefined, true));
@@ -71,7 +71,7 @@
     leftPanel.add(new SkillButton(286, 315, 3, "", "E", true));
     leftPanel.add(new SkillButton(440, 265, 4, "", "R", true));
     //right panel!
-    rightPanel.add(new CanvasImage(730, 0, "", "oppChar", "", 0, 0));
+    //rightPanel.add(new CanvasImage(730, 0, "", "oppChar", "", 0, 0));
     rightPanel.add(new TextInfo(735, 30, dark, "", 25, "oppName", "", false, false, false));
     rightPanel.add(new TextInfo(735, 55, dark, "", 20, "oppHP", "", false, false, true));
     rightPanel.add(new TextInfo(735, 235, dark, "", 25, "oppEffects", "effects", 215, undefined, true));
@@ -140,8 +140,8 @@ function mousePressed() {
 }
 
 function draw() {
-    background(bg_color);
-    //frameRate(10);
+//    frameRate(10);
+    clear();
     leftPanel.display();
     rightPanel.display();
     topPanel.display();
@@ -191,8 +191,11 @@ function parseState(i) {
     }
     //char pics
     if (PICS) {
-        setMyChar(i.PlayerName, i.PlayerNum);
-        setOppChar(i.OppName, i.OppNum);
+        setMyChar(i.PlayerName, i.PlayerNum, color(i.SkillColours["Q"]));
+        setOppChar(i.OppName, i.OppNum, color(i.OppSkillColours["OppQ"]));
+        if (backP === 3) {
+            new p5(backSketch, "bacc");
+        }
     }
     //turn number and names
     let turn = "Turn " + i.TurnNum;
@@ -389,23 +392,6 @@ function parseInstruction(t, isMine) {
     }
 }
 
-function setMyChar(PlayerName, PlayerNum) {
-    let myChar = getElement("myChar");
-    if (myChar.name !== PlayerName && getResolution(PlayerNum)[0] !== 0) {
-        myChar.open("/images/locked/" + PlayerName + "_left.png", PlayerName, getResolution(PlayerNum)[0], getResolution(PlayerNum)[1]);
-    } else if (myChar.name !== PlayerName) {
-        myChar.open("/images/locked/Placeholder_left.png", PlayerName, 350, 550);
-    }
-}
-
-function setOppChar(OppName, OppNum) {
-    let oppChar = getElement("oppChar");
-    if (oppChar.name !== OppName && getResolution(OppNum)[0] !== 0) {
-        oppChar.open("/images/locked/" + OppName + "_right.png", OppName, getResolution(OppNum)[0], getResolution(OppNum)[1]);
-    } else if (oppChar.name !== OppName) {
-        oppChar.open("/images/locked/Placeholder_right.png", OppName, 350, 550);
-    }
-}
 
 function setHP(HP, MaxHP) {
     let c;

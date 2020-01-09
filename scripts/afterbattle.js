@@ -108,9 +108,7 @@ function setup() {
     dust = 0;
     added = 0;
     levelled_up = false;
-    percentage = 0.0;
-    new_percentage = 0.0;
-    speed = to_add / 4;
+    addingSpeed = to_add / 4;
     gname = "";
     oppName = "";
     result = "";
@@ -119,9 +117,8 @@ function setup() {
     objects = [];
     x = 50;
     y = 100;
-    h = 50;
     initial_w = 500;
-    r = 10;
+    objects.push(new LoadingBar(x, y, initial_w, 50, 10, "bar", dark, right));
     let size = 30;
     let t = "Battle again";
     strokeWeight(1);
@@ -138,23 +135,24 @@ function setup() {
 
 function draw() {
     background(bg_color);
-    let stop = lerpColor(dark, right, percentage / 100);
-    drawText(stop);
-    w = round(initial_w * percentage / 100);
-    setGradient(x, y, w, h, dark, stop);
-    drawRect(x, y, initial_w, h);
+    let bar = getElement("bar");
+    let percentage = bar.percentage;
+    let new_percentage = bar.newPercentage;
     if (new_percentage > percentage) {
-        percentage = percentage + speed;
+        percentage = percentage + addingSpeed;
         if (percentage > 100) {
-            percentage = 100;
-            new_percentage = 100;
+            bar.setPercentage(100);
+            bar.setNewPercentage(100);
+        } else {
+            bar.setPercentage(percentage);
         }
+
     } else if (percentage >= 100 && level < 20) {
         level = level + 1;
         levelled_up = true;
         if (level < 20) {
-            percentage = 0.0;
-            new_percentage = 0.0;
+            bar.setPpercentage(0.0);
+            bar.setNewPercentage(0.0);
         }
     } else if (to_add > added) {
         add_match();
@@ -188,16 +186,11 @@ function draw() {
             obj.display();
         }
     }
-}
-
-function drawRect(x, y, w, h) {
-    stroke(rectangle);
-    strokeWeight(1);
-    noFill();
-    rect(x, y, w, h, r);
+    drawText(getElement("bar").stopColour);
 }
 
 function drawText(stop) {
+    let bar = getElement("bar");
     strokeWeight(1);
     fill(stop);
     noStroke();
@@ -208,13 +201,13 @@ function drawText(stop) {
     text(gname, x + 200, y - 10);
     textAlign(RIGHT);
     if (level === 20) {
-        percentage = 100;
-        new_percentage = 0;
+        bar.setPercentage(100);
+        bar.setNewPercentage(0);
         fill(255, 204, 102);
         text("★ Max ★", (initial_w - x) / 2 + 250, y - 10);
         right = color(130, 190, 255)
     } else {
-        text(round(percentage) + "%", (initial_w - x) / 2 + 310, y - 10);
+        text(round(bar.percentage) + "%", (initial_w - x) / 2 + 310, y - 10);
         if (levelled_up) {
             fill(win);
             text("Lvl up! ★", (initial_w - x) / 2 + 250, y - 10);
@@ -235,46 +228,17 @@ function drawText(stop) {
     text(result, 300, 40);
 }
 
-function setGradient(x, y, w, h, c1, c2) {
-    noFill();
-    strokeWeight(2);
-    //circle at the beginning
-    for (let i = x; (i < x + r) && (i < x + w); i++) {
-        let inter = map(i, x, x + w, 0, 1);
-        let c = lerpColor(c1, c2, inter);
-        stroke(c);
-        let top_y = y + r - sqrt(sq(r) - sq(i - x - r));
-        let bot_y = y + h - r + sqrt(sq(r) - sq(i - x - r));
-        line(i, top_y, i, bot_y);
-    }
-
-    for (let i = x + r; i < x + w - r; i++) {
-        let inter = map(i, x, x + w, 0, 1);
-        let c = lerpColor(c1, c2, inter);
-        stroke(c);
-        line(i, y, i, y + h);
-    }
-    //circle at the end
-    for (let i = x + w; (i >= x + r) && (i >= x + w - r); i--) {
-        let inter = map(i, x, x + w, 0, 1);
-        let c = lerpColor(c1, c2, inter);
-        stroke(c);
-        let top_y = y + r - sqrt(sq(r) - sq(i - x - w + r));
-        let bot_y = y + h - r + sqrt(sq(r) - sq(i - x - w + r));
-        line(i, top_y, i, bot_y);
-    }
-}
-
 function add_match() {
     curr_matches = curr_matches + 1;
     added += 1;
     let to_level_up = matches[level - 1];
     if (to_add > to_level_up && to_add > 1) {
-        speed = map(added, 0, to_add, to_add / 4, 0.5);
+        addingSpeed = map(added, 0, to_add, to_add / 4, 0.5);
     } else {
-        speed = 0.5
+        addingSpeed = 0.5
     }
-    new_percentage = 100 * curr_matches / to_level_up;
+    let new_percentage = 100 * curr_matches / to_level_up;
+    getElement("bar").setNewPercentage(new_percentage);
     if (to_level_up === curr_matches) {
         curr_matches = 0
     }

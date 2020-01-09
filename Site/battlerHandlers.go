@@ -16,23 +16,29 @@ import (
 
 /*
 
-//TODO random damage
+//TODO reverse icons for Speed's skills and make Run applicable to yourself - FIX THIS
 //TODO conversion page
-//TODO shoppu DOING
-//TODO frontend paused for now x_x 1. refactor afterbattle 2. friendlist 3. mainpage 4. icons
-//top left 5. smart header 6. shop. 7. conversion 8. css
-//TODO DDOS protecction
+//TODO shop
+//TODO frontend 2. friendlist 3. mainpage 4. icons
+//top left 6. shop. 7. conversion 8. css
+//TODO buttons soft animation + change update timings for girlslist +
 //TODO dun offline if in gameee
+//todo linux support, get a server
+//TODO DDOS protecction (not cloudflare apparently)
 
 //FLAVOR
+//TODO random damage
+//todo quality of the pics
 //todo offline for
 //TODO global chat
 //TODO dms chat
 //TODO notifications
 //TODO prompt reconnect >_<
 //TODO speech bubbles
+//TODO skins
 //TODO ability draft, 2v2
-//TODO are you really Loveless
+//TODO telegram bot
+//TODO character wiki
 //TODO euphoria and z89
 */
 
