@@ -226,6 +226,7 @@ function InterfaceText(p, x, y, colour, t, size, id, type, width) {
 }
 
 function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
+    this.loaded = false;
     this.id = id;
     this.x = x;
     this.y = y;
@@ -291,8 +292,14 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
         this.x = this.x + (550 - width) / 2;
         this.width = width;
         this.height = height;
-        this.image = p.loadImage(path);
+        this.image = p.loadImage(path, img => {
+            this.loaded = true;
+        }, this.failed);
         this.name = name;
+    };
+
+    this.failed = function (img) {
+        console.log("FAILED TO LOAD", this.name);
     };
 
     this.display = function () {
@@ -355,4 +362,110 @@ function interfaceCalculateLines(p, hoverText, width, size) {
         }
     }
     return height;
+}
+
+
+function LoadingScreen(p, x, y, w, h) {
+    this.p = p;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.frame = 0;
+    this.maxframes = 20;
+    this.pauseTime = 10;
+    this.pause = 0;
+    this.phi = 0.0;
+    this.squares = [];
+    this.paused = false;
+    this.stopped = 0;
+    let width;
+    let height;
+    if (w > h) {
+        width = h / 2;
+        height = h / 2;
+    } else {
+        width = w / 2;
+        height = w / 2;
+    }
+    let distance = 0.05;
+    this.squares.push([0 + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), 0 + x, height * (1 + distance) + y, this.colour3]); //1 bot left pi to 3pi/2
+    this.squares.push([0 + x, 0 + y, width * (1 - distance), height * (1 - distance), 0 + x, 0 + y, this.colour1]); //4 top left 3pi/2 to 2pi
+    this.squares.push([width * (1 + distance) + x, 0 + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, 0 + y, this.colour2]); //3 top right pi to 3pi/2
+    this.squares.push([width * (1 + distance) + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, height * (1 + distance) + y, this.colour4]); //2 bot right pi/2 to pi
+
+    this.stop = function () {
+        this.stopped = 1;
+    };
+
+    this.display = function () {
+        let addition = 0.0;
+        for (let i = 0; i < this.squares.length; i++) {
+            let s = this.squares[i];
+            let curr_phi = this.phi + addition;
+
+            //rotate
+            let center_x = s[0] + s[2] / 2;
+            let center_y = s[1] + s[3] / 2;
+            this.p.translate(center_x, center_y);
+            this.p.rotate(-curr_phi * 2);
+            //draw
+            let prev = i !== 0 ? i - 1 : 3;
+            let inter = this.p.map(this.phi, 0, -PI / 2, 0, 1);
+            let c = this.p.lerpColor(s[6], this.squares[prev][6], inter);
+            this.p.fill(c);
+            this.p.noStroke();
+            this.p.rect(-s[2] / 2, -s[3] / 2, s[2], s[3], s[2] / 20);
+            //rotate back
+            this.p.rotate(curr_phi * 2);
+            this.p.translate(-center_x, -center_y);
+
+
+            //move
+            let x = s[0];
+            let y = s[1];
+            let r = sin(2 * curr_phi) * this.w;
+            let new_x = r * cos(curr_phi) + s[4];
+            let new_y = r * sin(curr_phi) + s[5];
+            s[0] = new_x;
+            s[1] = new_y;
+            addition -= PI / 2;
+
+        }
+
+        if (this.paused) {
+            if (this.stopped === 2) {
+                this.pause += 1;
+                if (this.pause >= this.pauseTime) {
+                    this.pause = 0;
+                    this.paused = false;
+                }
+            }
+        } else if (this.frame >= this.maxframes) {
+            this.frame = 0;
+            this.phi = 0.0;
+            let lastCol = this.squares[3][6];
+            for (let i = 3; i > 0; i--) {
+                let s = this.squares[i];
+                s[6] = this.squares[i - 1][6];
+            }
+            this.squares[0][6] = lastCol;
+            this.paused = true;
+            if (this.stopped > 0) {
+                this.stopped = 2;
+            }
+        } else {
+            this.frame += 1;
+            this.phi -= PI / (2 * (this.maxframes));
+        }
+
+    };
+
+    this.setColours = function (c1, c2, c3, c4) {
+        this.squares[0][6] = this.p.color(c1.toString());
+        this.squares[1][6] = this.p.color(c2.toString());
+        this.squares[2][6] = this.p.color(c3.toString());
+        this.squares[3][6] = this.p.color(c4.toString());
+
+    }
 }

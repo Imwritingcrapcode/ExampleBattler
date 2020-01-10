@@ -1,7 +1,7 @@
 ﻿function setup() {
     //textFont('Calibri');
-    //TESTING = true;
-    TESTING = false;
+    TESTING = true;
+    //TESTING = false;
     PICS = true;
     //PICS = false;
     if (TESTING) {
@@ -101,7 +101,7 @@
         parseInstruction("Animation:R", true);
         parseInstruction("Animation:R", false);
         S2.OppHP = 32;
-        parseState(S2);
+        //parseState(S2);
     }
 
 }
@@ -160,6 +160,7 @@ function displayTimer(number) {
 }
 
 function parseState(i) {
+
     if (!i.hasOwnProperty("Instruction")) { //this is a time update
         let num = parseInt((i.split(":")[1]), 10);
         if (!isTicking) {
@@ -191,8 +192,8 @@ function parseState(i) {
     }
     //char pics
     if (PICS) {
-        setMyChar(i.PlayerName, i.PlayerNum, color(i.SkillColours["Q"]));
-        setOppChar(i.OppName, i.OppNum, color(i.OppSkillColours["OppQ"]));
+        setMyChar(i.PlayerName, i.PlayerNum, color(i.SkillColours["Q"]), color(i.SkillColours["W"]), color(i.SkillColours["E"]), color(i.SkillColours["R"]));
+        setOppChar(i.OppName, i.OppNum, color(i.OppSkillColours["OppQ"]), i.OppSkillColours["OppW"], color(i.OppSkillColours["OppE"]), color(i.OppSkillColours["OppR"]));
         if (backP === 3) {
             new p5(backSketch, "bacc");
         }

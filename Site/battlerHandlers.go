@@ -16,6 +16,7 @@ import (
 
 /*
 
+//TODO loading screen
 //TODO reverse icons for Speed's skills and make Run applicable to yourself - FIX THIS
 //TODO conversion page
 //TODO shop

@@ -1,13 +1,21 @@
 var bcanvas;
 var backP = 3;
+
 backSketch = function (p) {
     bg_color = p.color(BG);
     left = p.color(LEFTC);
     backP = p;
 
-    p.preload = function () {
+    p.setup = function () {
+        bcanvas = p.createCanvas(1280, 550);
+        bcanvas.position(0, 0);
+        bcanvas.style("z-index", "-1");
         myChar = new InterfaceImage(p, 0, 0, "", "myChar", "", 0, 0);
         oppChar = new InterfaceImage(p, 730, 0, "", "oppChar", "", 0, 0);
+        plscreen = new LoadingScreen(p, 0.4 * 550, 0.4 * 550, 0.2 * 550, 0.2 * 550);
+        plscreen.setColours(PlC, PlW, PlE, PlR);
+        oppscreen = new LoadingScreen(p, 730 + 0.4 * 550, 0.4 * 550, 0.2 * 550, 0.2 * 550);
+        oppscreen.setColours(OC, OW, OE, OR);
         if (myChar.name !== PlN && getResolution(PlNum)[0] !== 0) {
             myChar.open("/images/locked/" + PlN + "_left.png", PlN, getResolution(PlNum)[0], getResolution(PlNum)[1]);
         } else if (myChar.name !== PlNum) {
@@ -19,48 +27,61 @@ backSketch = function (p) {
             oppChar.open("/images/locked/Placeholder_right.png", ONum, 350, 550);
         }
     };
-    p.setup = function () {
-        bcanvas = p.createCanvas(1280, 550);
-        bcanvas.position(0, 0);
-        bcanvas.style("z-index", "-1");
-        p.background(bg_color);
-        p.noLoop();
-    };
     p.draw = function () {
         let p = backP;
-        let k;
-        if (isLight(PlC)) {
-            k = 0.07
+        p.background(bg_color);
+        if (myChar.loaded && oppChar.loaded && plscreen.stopped > 1 && oppscreen.stopped > 1) {
+            let k;
+            if (isLight(PlC)) {
+                k = 0.07
+            } else {
+                k = 0.28
+            }
+            let pColour = p.lerpColor(color(left.toString()), PlC, k);
+            if (isLight(OC)) {
+                k = 0.07
+            } else {
+                k = 0.28
+            }
+            let oppColour = p.lerpColor(color(left.toString()), OC, k);
+            setGradient(p, 0, 230, 550, 320, 5, bg_color, pColour);
+            setGradient(p, 730, 230, 550, 320, 5, bg_color, oppColour);
+            setGradient(p, 550, 230, 180, 320, 5, bg_color, left);
+            myChar.display();
+            oppChar.display();
+            p.noLoop();
+            console.log("drew girls");
         } else {
-            k = 0.28
+            if (myChar.loaded && plscreen.stopped < 1) {
+                plscreen.stop();
+            }
+            if (oppChar.loaded && oppscreen.stopped < 1) {
+                oppscreen.stop();
+            }
+            plscreen.display();
+            oppscreen.display();
+
         }
-        let pColour = p.lerpColor(color(left.toString()), PlC, k);
-        if (isLight(OC)) {
-            k = 0.07
-        } else {
-            k = 0.28
-        }
-        let oppColour = p.lerpColor(color(left.toString()), OC, k);
-        setGradient(p, 0, 230, 550, 320, 5, bg_color, pColour);
-        setGradient(p, 730, 230, 550, 320, 5, bg_color, oppColour);
-        setGradient(p, 550, 230, 180, 320, 5, bg_color, left);
-        myChar.display();
-        oppChar.display();
-        console.log("drew girls");
     };
 
 };
 
-function setMyChar(PlayerName, PlayerNum, PlayerColour) {
+function setMyChar(PlayerName, PlayerNum, c1, c2, c3, c4) {
     PlN = PlayerName;
     PlNum = PlayerNum;
-    PlC = PlayerColour;
+    PlC = c1;
+    PlW = c2;
+    PlE = c3;
+    PlR = c4;
 }
 
-function setOppChar(OppName, OppNum, OpponentColour) {
+function setOppChar(OppName, OppNum, c1, c2, c3, c4) {
     ON = OppName;
     ONum = OppNum;
-    OC = OpponentColour;
+    OC = c1;
+    OW = c2;
+    OE = c3;
+    OR = c4;
 }
 
 
