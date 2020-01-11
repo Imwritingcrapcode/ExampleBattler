@@ -141,6 +141,10 @@ func Turn2Channels(girl1, girl2 CharInt, turnnum int, p1, p2 *ClientChannels) bo
 		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(CantHeal)
 	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
+	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
 	} else if player.HasEffect(EuphoricHeal) {
@@ -273,8 +277,18 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 
 			//CHOOSE YOUR SKILL, MY GOOD HUMAN FRIEND
 			for used := false; !used; {
-
 				select {
+				case msg := <-p1.HasGivenUp:
+					if msg {
+						return msg
+					}
+					//BOT skipped a turn due to timeout
+					awaitingInput = false
+					myNewChannel := make(chan string, 2)
+					playerInputChannel = myNewChannel
+					for i := 0; i < movesAvailable; i++ {
+						playerInputChannel <- "Q"
+					}
 				case response, stillOpen := <-playerInputChannel:
 					if !stillOpen {
 						return !stillOpen
@@ -321,17 +335,6 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 							p1.Clock.TellTheTime()
 						}
 					}
-				case msg := <-p1.HasGivenUp:
-					if msg {
-						return msg
-					}
-					//BOT skipped a turn due to timeout
-					awaitingInput = false
-					myNewChannel := make(chan string, 2)
-					playerInputChannel = myNewChannel
-					for i := 0; i < movesAvailable; i++ {
-						playerInputChannel <- "Q"
-					}
 				}
 			}
 		}
@@ -349,6 +352,10 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
 		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(CantHeal)
+	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
@@ -405,6 +412,10 @@ func TurnApply(girl1, girl2 CharInt, turnnum int, strat []int) {
 	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
 		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(CantHeal)
+	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
@@ -467,6 +478,10 @@ func TurnKeyboard(girl1, girl2 CharInt, turnnum int) {
 	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
 		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(CantHeal)
+	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)

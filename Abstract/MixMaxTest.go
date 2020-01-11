@@ -64,6 +64,11 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
 						copyPlayer.(*Girl).RemoveEffect(CantHeal)
 					}
+					if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+						copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
+						copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+					}
+
 
 					//send deeper
 					if isMaximizerTurn {
@@ -149,6 +154,11 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 					copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
 					copyPlayer.(*Girl).RemoveEffect(CantHeal)
 				}
+				if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+					copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
+					copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+				}
+
 				//send deeper
 				if isMaximizerTurn {
 					valArray[currStrat], lengthArray[currStrat], movesArray[currStrat] = MiniMax(copyPlayer, copyOpp, turnNum+1, depth-1, !isMaximizerTurn, append(bestStrat, []int{i, -1}...))

@@ -3,14 +3,15 @@ BG = 230;
 LEFTC = 50;
 RIGHTC = "rgb(120,180,255)";
 LIGHTC = 170;
+OTHERLIGHTC = 135;
 //DARKC = 80;
 DARKC = LEFTC;
-LVLUPC = 'rgb(255, 204, 102)';
+LVLUPC = 'rgb(255, 182, 13)';
 CLICKABLEC = 'rgba(150, 150, 255, 1)';
 ACTIVEC = 'rgba(130, 130, 255, 1)';
 CLICKEDC = 'rgba(120, 120, 200, 1)';
 HOVERC = 'rgba(255, 255, 255, 0.87)';
-WINC = 'rgb(255, 204, 102)';
+WINC = 'rgb(255, 182, 13)';
 
 
 //SHORTCUTS FOR COLOURS
@@ -32,8 +33,8 @@ EFFECTDESCRIPTIONS = [
     [2, "Prevents you from healing."],
     [3, "You can't use skills of the same colour you used last."],
     [4, "This turn, your opponent chooses which skills you use."],
-    [5, "You have to deal more damage than the threshold, or no damage at all."],
-    [7, "Your next attack will deal this much less damage."],
+    [6, "Your opponent has to deal more damage than the threshold, or no damage at all."],
+    [7, "Your opponent's next attack will deal this much less damage."],
     [8, "Your opponent can't use debuffs on you. Your Royal Move and Composure become stronger."],
     [9, "This turn, you can use two skills but not your ultimate."],
     [10, "If you survive your opponent's next turn, fully heals you."],
@@ -70,10 +71,10 @@ let SKILLDESCRIPTIONS = new Map([
     ["Rage", "Deal 24 - 2 * your turn number Red damage."],
     ["Stop", "For the next opponent's turn and your next turn, your opponent can't heal. While this is active, .Execute becomes stronger.\nCooldown 1."],
     [".Execute", "If your opponent's at less than 10% of their max HP, defeat them instantly.\nWhile Stop effect is active, the threshold goes to 20% of opponent's max hp."],
-    ["High Spirits", "Increases Source by 9 and removes all their effects with duration 1.\nCooldown: 1."],
-    ["Unstudied", "Last damage you got gets returned to your opponent in Orange."],
+    ["High Spirits", "Increases Source by 9 and heals everyone by 9.\nCooldown: 1."],
+    ["Unstudied", "Add 16 to Source if opp's ulti isn't unlocked yet. CD:2, ST:3."],
     ["Pink Sphere", "Deals (5 + Source) Pink damage."],
-    ["Euphoria", "Heal that drains the Source by 6 each turn.\nStarting turn: 5.\nCooldown: 3."],
+    ["Euphoria", "Heal that drains the Source each turn.\nStarting turn: 5.\nCooldown: 3."],
     ["Run", "Your opponent's next attack will deal 5 less damage. Gain a Green Token."],
     ["Weaken", "Reduce your opponent's defense to Green by 1. Gain a Black Token."],
     ["Speed", "Next turn, you'll use two skills but not your ultimate. Gain a Green Token."],

@@ -12,6 +12,7 @@ leftSketch = function (p) {
         dark = p.color(DARKC);
         light = p.color(LIGHTC);
         right = p.color(RIGHTC);
+        other = p.color(OTHERLIGHTC);
         leftobjects = [];
         current = undefined;
         console.log("left is getting");

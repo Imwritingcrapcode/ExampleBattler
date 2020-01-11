@@ -1,4 +1,4 @@
-function LoadingBar(x, y, initial_w, h, radius, id, c, c2) {
+function LoadingBar(x, y, w, h, radius, id, c, c2) {
     this.id = id;
     this.clickable = false;
     this.hoverable = false;
@@ -9,7 +9,7 @@ function LoadingBar(x, y, initial_w, h, radius, id, c, c2) {
     this.newPercentage = 0.0;
     this.x = x;
     this.y = y;
-    this.initial_w = initial_w;
+    this.initial_w = w;
     this.w = 0;
     this.h = h;
     this.radius = radius;
@@ -17,11 +17,11 @@ function LoadingBar(x, y, initial_w, h, radius, id, c, c2) {
     this.display = function () {
         this.w = round(this.initial_w * this.percentage / 100);
         this.stopColour = lerpColor(this.rectColour, this.otherColour, this.percentage / 100);
-        this.setGradient(this.x, this.y, this.w, this.h, this.radius, this.c, this.stopColour);
-        stroke(color);
+        this.setGradient(this.x, this.y, this.w, this.h, this.radius, this.rectColour, this.stopColour);
+        stroke(this.rectColour);
         strokeWeight(1);
         noFill();
-        rect(this.x, this.y, this.w, this.h, this.radius);
+        rect(this.x, this.y, this.initial_w, this.h, this.radius);
     };
 
     this.setPercentage = function(perc) {

@@ -180,3 +180,11 @@ func (girl *Girl) SkillColoursToString() []string {
 	}
 	return res
 }
+
+func (girl *Girl) SkillColourCodesToString() []string {
+	var res []string
+	for _, skill := range girl.Skills {
+		res = append(res, skill.ColourCode)
+	}
+	return res
+}

@@ -30,7 +30,7 @@ func (self *Euphoria) Init() {
 		false,
 		1, 0, 0,
 		Orange,
-		"High Spirits, heal to both + source",
+		"High Spirits",
 		EuphoriaQ,
 		"rgb(255,173,135)",
 	}
@@ -38,7 +38,7 @@ func (self *Euphoria) Init() {
 		false,
 		2, 0, 3,
 		Orange,
-		"Unstudied, + source if their ulti not av",
+		"Unstudied",
 		EuphoriaW,
 		"rgb(255,173,135)",
 	}
@@ -46,7 +46,7 @@ func (self *Euphoria) Init() {
 		false,
 		0, 0, 0,
 		Pink,
-		"Pink Sphere, dmg with addition from source",
+		"Pink Sphere",
 		EuphoriaE,
 		"rgb(255,135,173)",
 	}
@@ -94,7 +94,7 @@ func EuphoriaQ(player, opp *Girl, turn int) {
 }
 
 func EuphoriaW(player, opp *Girl, turn int) {
-	if opp.Skills[3].StrT < turn {
+	if turn < opp.Skills[3].StrT {
 		opp.Skills[3].StrT += 2
 		if player.HasEffect(EuphoricSource) {
 			player.GetEffect(EuphoricSource).State += 16

@@ -95,6 +95,10 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 							copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
 							copyPlayer.(*Girl).RemoveEffect(CantHeal)
 						}
+						if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+							copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
+							copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+						}
 						if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 							copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
 						} else if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
@@ -204,6 +208,10 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
 						copyPlayer.(*Girl).RemoveEffect(CantHeal)
 					}
+					if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+						copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
+						copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+					}
 					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
 					} else if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
@@ -281,6 +289,10 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 					opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
 					opp.RemoveEffect(CantHeal)
 				}
+				if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+					opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+					opp.RemoveEffect(TurnThreshold)
+				}
 				if opp.HasEffect(EuphoricHeal) {
 					opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
 				} else if player.HasEffect(EuphoricHeal) {
@@ -332,6 +344,10 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
 						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
 						copyPlayer.(*Girl).RemoveEffect(CantHeal)
+					}
+					if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+						copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
+						copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
 					}
 					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)

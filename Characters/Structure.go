@@ -127,11 +127,11 @@ func StructureE(player, opp *Girl, turn int) {
 		}
 	}
 	if player.HasEffect(BoostLayers) {
-		eff := opp.CreateEff(TurnThreshold, player, 1, player.GetEffect(BoostLayers).State+STARTINGTHRESHOLD)
-		opp.AddEffect(eff)
+		eff := player.CreateEff(TurnThreshold, opp, 2, player.GetEffect(BoostLayers).State+STARTINGTHRESHOLD)
+		player.AddEffect(eff)
 	} else {
-		eff := opp.CreateEff(TurnThreshold, player, 1, STARTINGTHRESHOLD)
-		opp.AddEffect(eff)
+		eff := player.CreateEff(TurnThreshold, opp, 2, STARTINGTHRESHOLD)
+		player.AddEffect(eff)
 	}
 }
 func StructureUlti(player, opp *Girl, turn int) {

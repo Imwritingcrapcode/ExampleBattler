@@ -6,7 +6,7 @@
 6. add her art, left & right
 7. does she change gamestate in some new way?
 8. can the bot play as her?
-9. desctibe effects
+9. describe effects
 10. add descriptions to constants.js
 11. init as number
 12. resolutions.

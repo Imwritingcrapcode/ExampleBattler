@@ -25,6 +25,8 @@ rightSketch = function (p) {
             }
         };
         let i1 = new InterfaceImage(p, 519.5, 5, "", "girl", "", 201, 268, dark);
+        p_screen = new LoadingScreen(p, 0.4*201 + 519.5, 5 + 0.4*268, 0.2*201, 0.2*201);
+        p_screen.setColours(dark, bg_color2, other, right);
         let r2 = {
             hoverable: false,
             clickable: false,
@@ -43,8 +45,7 @@ rightSketch = function (p) {
         let t7 = new InterfaceText(p, 5, 300, dark, "", 28, "skills", "A");
         let t8 = new InterfaceText(p, 5, 333, dark, "", 28, "skillcolours", "A");
         let t9 = new InterfaceText(p, 5, 380, dark, "", 28, "description", "C", 743);
-        let t10 = new InterfaceText(p, 514.5, 61, dark, "", 28, "mainset", "D");
-        let t11 = new InterfaceText(p, 514.5, 94, dark, "", 28, "secset", "D");
+        let t10 = new InterfaceText(p, 514.5, 61, dark, "", 28, "set", "D");
         rightobjects.push(t1);
         rightobjects.push(t2);
         rightobjects.push(t3);
@@ -58,7 +59,6 @@ rightSketch = function (p) {
         rightobjects.push(t8);
         rightobjects.push(t9);
         rightobjects.push(t10);
-        rightobjects.push(t11);
     };
     p.draw = function () {
         p.background(bg_color2);
@@ -86,10 +86,18 @@ rightSketch = function (p) {
                 obj.unhovered();
                 current = undefined;
                 obj.display();
+            } else if (obj.id === "girl" && obj.loaded() && p_screen.stopped < 1) {
+                p_screen.stop();
+                p_screen.clear();
+            } else if (obj.id === "girl" && obj.loaded()) {
+                obj.display();
+            } else if (obj.id === "girl" && p_screen.stopped < 1) {
+                p_screen.display();
             } else {
                 obj.display();
             }
         }
+
     };
 
 };

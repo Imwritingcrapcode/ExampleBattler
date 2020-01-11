@@ -62,10 +62,10 @@ const (
 	//Control
 	ControlledByStT
 	//Debuff
-	TurnThreshold
 	TurnReduc
 	//Buff
 	AtkReduc
+	TurnThreshold
 	//State
 	Unseen
 	SpedUp
@@ -122,9 +122,10 @@ var EffectNames = map[EffectID]string{
 	//Control
 	ControlledByStT: "Controlled by Storyteller!", //none
 	//Debuff
-	TurnThreshold: "Damage min this turn:",               //state
 	TurnReduc:     "Damage reduced this turn by:",        //state
-	AtkReduc:      "Next attack's damage is reduced by:", //state
+	//Buff
+	TurnThreshold: "Damage min this turn:",               //state
+	AtkReduc:      "Next opp's attack's damage is reduced by:", //state
 	//State
 	Unseen:       "Unseen for:",              //duration
 	SpedUp:       "SpedUp for:",              //duration
@@ -155,12 +156,14 @@ type GirlInfo struct {
 	Tags         []string
 	Skills       []string
 	SkillColours []string
+	SkillColourCodes []string
 	Description  string
 	MainColour   string
 }
 
 var ReleasedCharacters = []int{
 	1,
+	9,
 	10,
 	33,
 	51,
@@ -169,6 +172,7 @@ var ReleasedCharacters = []int{
 
 var ReleasedCharactersNames = map[int]string{
 	1:   "Storyteller",
+	9:	 "Euphoria",
 	10:  "Ruby",
 	33:  "Speed",
 	51:  "Milana",
@@ -177,7 +181,7 @@ var ReleasedCharactersNames = map[int]string{
 
 var ReleasedCharactersPacks = map[string][]int{
 	"ST": {},
-	"AD": {33},
+	"AD": {9, 33},
 	"SP": {10, 51},
 	"RP": {},
 	"LF": {1, 119},

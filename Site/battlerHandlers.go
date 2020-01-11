@@ -15,14 +15,13 @@ import (
 )
 
 /*
-
-//TODO loading screen
-//TODO reverse icons for Speed's skills and make Run applicable to yourself - FIX THIS
+//IMPORTANT
+//TODO fix the 1 frame lag ye
+//TODO buttons soft animation
 //TODO conversion page
 //TODO shop
 //TODO frontend 2. friendlist 3. mainpage 4. icons
 //top left 6. shop. 7. conversion 8. css
-//TODO buttons soft animation + change update timings for girlslist +
 //TODO dun offline if in gameee
 //todo linux support, get a server
 //TODO DDOS protecction (not cloudflare apparently)
@@ -364,8 +363,11 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 			var char2 int
 			botChosen := make([]int, 2)
 			botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
+			for botChosen[0] == 9 {
+				botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
+			}
 			botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			for botChosen[1] == botChosen[0] {
+			for botChosen[1] == botChosen[0] || botChosen[1] == 9 {
 				botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
 			p1.PlayingAs, char2 = FindValidCombination(p1.ChosenGirls, botChosen)

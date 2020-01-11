@@ -1,6 +1,11 @@
 loading = function(p) {
 
     p.setup = function () {
+        height = 550;
+        width = 550;
+        let bcanvas = p.createCanvas(width, height);
+        bcanvas.parent("screen");
+        bg_col = p.color(BG);
         dark = p.color(DARKC);
         light = p.color(LIGHTC);
         right = p.color(RIGHTC);
@@ -8,18 +13,19 @@ loading = function(p) {
 
         plscreen = new LoadingScreen(p, 0.4 * height, 0.4 * height, 0.2 * height, 0.2 * height);
         plscreen.setColours(dark, light, right, last);
-        oppscreen = new LoadingScreen(p, 1.4 * height, 0.4 * height, 0.2 * height, 0.2 * height);
-        oppscreen.setColours(dark, light, right, last);
+        //oppscreen = new LoadingScreen(p, 1.4 * height, 0.4 * height, 0.2 * height, 0.2 * height);
+        //oppscreen.setColours(dark, light, right, last);
         //r = 2sin(2phi)
         //x = rcos(phi)
         //y = rsin(phi)
-        console.log()
     };
 
     p.draw = function () {
-        background(bg_color);
+        p.background(bg_col);
+        //p.translate(width/2, height/2);
+       // p.rotate(p.PI/4);
         plscreen.display();
-        oppscreen.display();
+        //oppscreen.display();
         /*let x = width / 2;
         let y = height / 2;
         strokeWeight((width * 0.4) / 150);
@@ -35,7 +41,8 @@ loading = function(p) {
             let c = lerpColor(dark, right, inter);
             stroke(c);
         }*/
-
+        //p.rotate(-p.PI/4);
+        //p.translate(-width/2, -height/2);
     };
 
 };

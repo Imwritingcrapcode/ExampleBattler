@@ -226,7 +226,7 @@ function InterfaceText(p, x, y, colour, t, size, id, type, width) {
 }
 
 function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
-    this.loaded = false;
+    this.loadedObj = {};
     this.id = id;
     this.x = x;
     this.y = y;
@@ -244,7 +244,10 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
     } else {
         this.width = width;
         this.height = height;
-        this.image = p.loadImage(path);
+        this.image = p.loadImage(path, img => {
+            this.loadedObj.loaded = true;
+            console.log(this.loadedObj);
+        }, this.failed);
         this.name = name;
     }
     this.hoverable = false;
@@ -256,6 +259,10 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
 
     this.getName = function () {
         return this.name;
+    };
+
+    this.loaded = function() {
+        return this.loadedObj.hasOwnProperty("loaded")
     };
 
     this.copy = function () {
@@ -274,6 +281,7 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
         this.path = other.path;
         this.colour = other.colour;
         if (!other.path) {
+            this.loadedObj = {};
             this.width = other.width;
             this.height = other.height;
             this.image = undefined;
@@ -283,17 +291,19 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
             this.height = other.height;
             this.image = other.image;
             this.name = other.name;
+            this.loadedObj = other.loadedObj;
         }
         this.hoverable = other.hoverable;
         this.clickable = other.clickable;
     };
 
     this.open = function (path, name, width, height) {
+        console.log(this.loadedObj);
         this.x = this.x + (550 - width) / 2;
         this.width = width;
         this.height = height;
         this.image = p.loadImage(path, img => {
-            this.loaded = true;
+            this.loadedObj.loaded = true;
         }, this.failed);
         this.name = name;
     };
@@ -395,7 +405,18 @@ function LoadingScreen(p, x, y, w, h) {
     this.squares.push([width * (1 + distance) + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, height * (1 + distance) + y, this.colour4]); //2 bot right pi/2 to pi
 
     this.stop = function () {
-        this.stopped = 1;
+        if (this.stopped < 2) {
+            this.stopped = 1;
+        }
+    };
+
+    this.clear = function() {
+        this.frame = 0;
+        this.phi = 0.0;
+    };
+
+    this.restart = function () {
+        this.stopped = 0;
     };
 
     this.display = function () {
@@ -411,7 +432,7 @@ function LoadingScreen(p, x, y, w, h) {
             this.p.rotate(-curr_phi * 2);
             //draw
             let prev = i !== 0 ? i - 1 : 3;
-            let inter = this.p.map(this.phi, 0, -PI / 2, 0, 1);
+            let inter = this.p.map(this.phi, 0, -this.p.PI / 2, 0, 1);
             let c = this.p.lerpColor(s[6], this.squares[prev][6], inter);
             this.p.fill(c);
             this.p.noStroke();
@@ -424,39 +445,38 @@ function LoadingScreen(p, x, y, w, h) {
             //move
             let x = s[0];
             let y = s[1];
-            let r = sin(2 * curr_phi) * this.w;
-            let new_x = r * cos(curr_phi) + s[4];
-            let new_y = r * sin(curr_phi) + s[5];
+            let r = this.p.sin(2 * curr_phi) * this.w;
+            let new_x = r * this.p.cos(curr_phi) + s[4];
+            let new_y = r * this.p.sin(curr_phi) + s[5];
             s[0] = new_x;
             s[1] = new_y;
-            addition -= PI / 2;
+            addition -= this.p.PI / 2;
 
         }
-
-        if (this.paused) {
-            if (this.stopped === 2) {
+        if (this.stopped !== 2) {
+            if (this.paused) {
                 this.pause += 1;
                 if (this.pause >= this.pauseTime) {
                     this.pause = 0;
                     this.paused = false;
+                    if (this.stopped > 0) {
+                        this.stopped = 2;
+                    }
                 }
+            } else if (this.frame >= this.maxframes) {
+                this.frame = 0;
+                this.phi = 0.0;
+                let lastCol = this.squares[3][6];
+                for (let i = 3; i > 0; i--) {
+                    let s = this.squares[i];
+                    s[6] = this.squares[i - 1][6];
+                }
+                this.squares[0][6] = lastCol;
+                this.paused = true;
+            } else {
+                this.frame += 1;
+                this.phi -= this.p.PI / (2 * (this.maxframes));
             }
-        } else if (this.frame >= this.maxframes) {
-            this.frame = 0;
-            this.phi = 0.0;
-            let lastCol = this.squares[3][6];
-            for (let i = 3; i > 0; i--) {
-                let s = this.squares[i];
-                s[6] = this.squares[i - 1][6];
-            }
-            this.squares[0][6] = lastCol;
-            this.paused = true;
-            if (this.stopped > 0) {
-                this.stopped = 2;
-            }
-        } else {
-            this.frame += 1;
-            this.phi -= PI / (2 * (this.maxframes));
         }
 
     };

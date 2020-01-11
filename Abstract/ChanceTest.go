@@ -79,5 +79,9 @@ func TurnChance(girl1, girl2 CharInt, turnnum int) {
 		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(CantHeal)
 	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
+	}
 
 }

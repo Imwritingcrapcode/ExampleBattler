@@ -118,7 +118,7 @@ function setup() {
     x = 50;
     y = 100;
     initial_w = 500;
-    objects.push(new LoadingBar(x, y, initial_w, 50, 10, "bar", dark, right));
+    objects.push(new LoadingBar(x, y, initial_w, 50, 10, "bar", color(dark.toString()), right));
     let size = 30;
     let t = "Battle again";
     strokeWeight(1);
@@ -151,7 +151,7 @@ function draw() {
         level = level + 1;
         levelled_up = true;
         if (level < 20) {
-            bar.setPpercentage(0.0);
+            bar.setPercentage(0.0);
             bar.setNewPercentage(0.0);
         }
     } else if (to_add > added) {
@@ -203,7 +203,7 @@ function drawText(stop) {
     if (level === 20) {
         bar.setPercentage(100);
         bar.setNewPercentage(0);
-        fill(255, 204, 102);
+        fill(255, 195, 13);
         text("★ Max ★", (initial_w - x) / 2 + 250, y - 10);
         right = color(130, 190, 255)
     } else {

@@ -11,7 +11,7 @@ import (
 func main() {
 	var DEPTH int
 	rand.Seed(time.Now().UTC().UnixNano())
-	TWOBOTS := true
+	TWOBOTS := false
 	INIT1 := 9
 	//index1 := rand.Intn(len(ReleasedCharacters))
 	//index2 := rand.Intn(len(ReleasedCharacters))

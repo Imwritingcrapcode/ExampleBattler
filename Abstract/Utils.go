@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"log"
 )
 
 //This file is for structs and functions we use to support other game objects.
@@ -104,8 +105,9 @@ func Damage(player, opp *Girl, deal int, ignoreDef bool, colour Colour) int {
 		} else {
 			turnred = 0
 		}
-		if player.HasEffect(TurnThreshold) {
-			turnthr = player.GetEffect(TurnThreshold).State
+		if opp.HasEffect(TurnThreshold) {
+			turnthr = opp.GetEffect(TurnThreshold).State
+			log.Println("THRESHOLD", turnthr)
 		} else {
 			turnthr = 0
 		}
@@ -116,8 +118,8 @@ func Damage(player, opp *Girl, deal int, ignoreDef bool, colour Colour) int {
 		fmt.Println("ATK RED", atkred)
 		fmt.Println("DEF", opp.Defences[colour])*/
 		dmg = dmg*mul + add - atkred - turnred - opp.Defenses[colour]
-		//fmt.Println(dmg)
-		if dmg > 0 && dmg > turnthr {
+		fmt.Println(dmg, turnthr)
+		if dmg > turnthr {
 			opp.CurrHP -= dmg
 		} else {
 			dmg = 0

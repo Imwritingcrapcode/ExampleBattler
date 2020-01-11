@@ -3,7 +3,8 @@ var backP = 3;
 
 backSketch = function (p) {
     bg_color = p.color(BG);
-    left = p.color(LEFTC);
+    dark = p.color(LEFTC);
+    light = p.color(LIGHTC);
     backP = p;
 
     p.setup = function () {
@@ -30,32 +31,34 @@ backSketch = function (p) {
     p.draw = function () {
         let p = backP;
         p.background(bg_color);
-        if (myChar.loaded && oppChar.loaded && plscreen.stopped > 1 && oppscreen.stopped > 1) {
+        if (myChar.loaded() && oppChar.loaded() && plscreen.stopped > 1 && oppscreen.stopped > 1) {
             let k;
             if (isLight(PlC)) {
-                k = 0.07
+                k = 0.1
             } else {
-                k = 0.28
+                k = 0.35
             }
-            let pColour = p.lerpColor(color(left.toString()), PlC, k);
+            let pColour = p.lerpColor(color(dark.toString()), PlC, k);
             if (isLight(OC)) {
-                k = 0.07
+                k = 0.10
             } else {
-                k = 0.28
+                k = 0.35
             }
-            let oppColour = p.lerpColor(color(left.toString()), OC, k);
+            let oppColour = p.lerpColor(color(dark.toString()), OC, k);
             setGradient(p, 0, 230, 550, 320, 5, bg_color, pColour);
             setGradient(p, 730, 230, 550, 320, 5, bg_color, oppColour);
-            setGradient(p, 550, 230, 180, 320, 5, bg_color, left);
+            setGradient(p, 550, 230, 180, 320, 5, bg_color, dark);
             myChar.display();
             oppChar.display();
             p.noLoop();
             console.log("drew girls");
         } else {
-            if (myChar.loaded && plscreen.stopped < 1) {
+            if (myChar.loaded() && plscreen.stopped < 1) {
+                //console.log("setting my to 1");
                 plscreen.stop();
             }
-            if (oppChar.loaded && oppscreen.stopped < 1) {
+            if (oppChar.loaded() && oppscreen.stopped < 1) {
+                //console.log("setting other to 1");
                 oppscreen.stop();
             }
             plscreen.display();

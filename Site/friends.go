@@ -106,7 +106,7 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			} else { //an invalid user
 				http.Error(w, "You sent an invalid friend request.", 400)
-				log.Println("[FriendListPost] invalid request", session.UserID, "trying to remove", friendReq[1])
+				log.Println("[FriendListPost] invalid request", session.UserID, "trying to add", friendReq[1])
 			}
 		} else {
 			http.Error(w, "You sent an invalid friend request.", 400)

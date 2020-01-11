@@ -95,8 +95,8 @@ func SpeedQ(player, opp *Girl, turn int) {
 	if player.HasEffect(AtkReduc) {
 		player.GetEffect(AtkReduc).State += DMGREDATK
 	} else {
-		eff := player.CreateEff(AtkReduc, player, 21, DMGREDATK)
-		opp.AddEffect(eff)
+		eff := player.CreateEff(AtkReduc, opp, 21, DMGREDATK)
+		player.AddEffect(eff)
 	}
 }
 
@@ -149,13 +149,13 @@ func SpeedUlti(player, opp *Girl, turn int) {
 	} else {
 		add = 0
 	}
-	if player.HasEffect(AtkReduc) {
-		atkred = player.GetEffect(AtkReduc).State
+	if opp.HasEffect(AtkReduc) {
+		atkred = opp.GetEffect(AtkReduc).State
 	} else {
 		atkred = 0
 	}
-	if player.HasEffect(TurnThreshold) {
-		turnthr = player.GetEffect(TurnThreshold).State
+	if opp.HasEffect(TurnThreshold) {
+		turnthr = opp.GetEffect(TurnThreshold).State
 	} else {
 		turnthr = 0
 	}

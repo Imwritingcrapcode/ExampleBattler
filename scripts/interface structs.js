@@ -837,7 +837,7 @@ function SkillButton(x, y, type, t, id, mine) {
     };
 }
 
-function StandardButton(x, y, s, t, size, id) {
+function StandardButton(x, y, s, t, size, id, col) {
     this.id = id;
     if (this.id === "GiveUp") {
         this.hoverText = "Click here to give up and end the match.";
@@ -855,7 +855,11 @@ function StandardButton(x, y, s, t, size, id) {
     textSize(size);
     this.width = textWidth(t) + 10;
     this.smooth = s;
-    this.baseColour = color(light.toString());
+    if (!!col) {
+        this.baseColour = color(col.toString());
+    } else {
+        this.baseColour = color(light.toString());
+    }
     this.colour = this.baseColour;
     let hoverchange = 17;
     let clickchange = 34;

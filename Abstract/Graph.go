@@ -230,6 +230,10 @@ func TurnGraph(char1, char2 CharInt, turnnum int) *Graph {
 					copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
 					copyPlayer.(*Girl).RemoveEffect(CantHeal)
 				}
+				if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+					copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
+					copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+				}
 
 				//send deeper
 				current.Edges[i] = TurnGraph(copyOpp, copyPlayer, turnnum+1)

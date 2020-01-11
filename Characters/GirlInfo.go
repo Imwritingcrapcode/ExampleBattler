@@ -34,6 +34,8 @@ func GetGirlInfo(number int) *GirlInfo {
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
 		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
 		info.Description = "The one that is the beginning and the end."
 		info.MainColour = girl.Skills[0].ColourCode
@@ -51,8 +53,11 @@ func GetGirlInfo(number int) *GirlInfo {
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
 		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
 		info.Description = "Her prayers were heard, rejoice."
+		info.MainColour = girl.Skills[0].ColourCode
 	case 10:
 		(*Ruby)(&girl).Init()
 		//Name string
@@ -67,6 +72,8 @@ func GetGirlInfo(number int) *GirlInfo {
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
 		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
 		info.Description = "A fierce fighter that dances till the end."
 		info.MainColour = girl.Skills[0].ColourCode
@@ -84,6 +91,8 @@ func GetGirlInfo(number int) *GirlInfo {
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
 		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
 		info.Description = "Asneakyassassininthecornerofyoureye."
 		info.MainColour = girl.Skills[0].ColourCode
@@ -101,6 +110,8 @@ func GetGirlInfo(number int) *GirlInfo {
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
 		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
 		info.Description = "An overconfident spoiled princess."
 		info.MainColour = girl.Skills[0].ColourCode
@@ -118,6 +129,8 @@ func GetGirlInfo(number int) *GirlInfo {
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
 		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
 		info.Description = "An android girl with no eyes."
 		info.MainColour = girl.Skills[0].ColourCode

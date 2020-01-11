@@ -37,8 +37,8 @@ function connectToServer() {
         console.log("RESPONSE:");
         //JSONED = evt.data;
         let battleresponse = JSON.parse(evt.data);
-        parseState(battleresponse);
         console.log(battleresponse);
+        parseState(battleresponse);
     };
     ws.onerror = function (evt) {
         let errs = getElement("info");

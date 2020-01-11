@@ -73,16 +73,6 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			dummy,
 		}
 		//Debuff
-	case TurnThreshold:
-		s = Effect{
-			ID,
-			duration,
-			state,
-			Debuff,
-			self,
-			dummy,
-			dummy,
-		}
 	case TurnReduc:
 		s = Effect{
 			ID,
@@ -100,6 +90,16 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			duration,
 			state,
 			Buff,
+			self,
+			dummy,
+			dummy,
+		}
+	case TurnThreshold:
+		s = Effect{
+			ID,
+			duration,
+			state,
+			Debuff,
 			self,
 			dummy,
 			dummy,

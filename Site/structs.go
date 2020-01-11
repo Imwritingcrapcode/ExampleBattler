@@ -106,10 +106,9 @@ func EndGame(channels *ClientChannels) {
 //DB
 
 var BotNames = []string{
-	"Becky",
-	"Ben",
 	"BestHomie",
-	"frozencanna",
+	"frozencalla",
+	"IrJean",
 	"Ron",
 	"ukulele",
 	"urkitten",
@@ -161,6 +160,7 @@ type UserGirl struct {
 	Tags         []string
 	Skills       []string
 	SkillColours []string
+	SkillColourCodes []string
 	Description  string
 	MainColour   string
 }

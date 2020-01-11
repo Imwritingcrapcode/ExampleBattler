@@ -86,7 +86,7 @@
     let struc;
     let response;
     let currentGirls = [];
-    let num;
+    //let num;
     let tags = [];
     let colours = [];
     let rarities = [];
@@ -111,7 +111,7 @@
         ["RP", 3],
         ["LF", 4],
     ]);
-    let curNum = 0;
+    let curNum = -1;
     let mainNum = -1;
     let secNum = -1;
     let clearClickable = false;
@@ -177,11 +177,16 @@
         }
     }
 
-    function refreshCurGirl(number) {
-        num = number;
+    function refreshCurGirl(number, force) {
+        if (curNum === number && !force) {
+            console.log("no need to refresh", number);
+            return
+        } else {
+            console.log("refreshing", number);
+        }
+        curNum = number;
         let curGirl = getGirlByNumber(number);
         //put her info in the doc
-
         getElementRight("name").setText(curGirl.Name + " (" + curGirl.Number + ")");
         getElementRight("rarity").setText(curGirl.Rarity);
         switch (curGirl.Rarity) {
@@ -225,7 +230,12 @@
                 imageBox.add(new InterfaceImage(rightP, 519.5, 5, "/images/locked/Placeholder_portrait.png", "girl", name, 201, 268, curGirl.MainColour));
             }
         }
+        //setloadingscreencolours;
+        p_screen.setColours(curGirl.SkillColourCodes[0], curGirl.SkillColourCodes[1], curGirl.SkillColourCodes[2], curGirl.SkillColourCodes[3]);
+        // update the pic
         getElementRight("girl").set(imageBox.get(name));
+        //p_screen.restart()
+        p_screen.restart();
         let tags = "";
         for (let tag of curGirl.Tags.sort()) {
             tags += tag + ", "
@@ -256,24 +266,19 @@
 
 
         //check if she can be picked
-        curNum = curGirl.Number;
         if (bottomReady) {
             getElementBottom("setmain").clickable = !(curNum === mainNum);
             getElementBottom("setsec").clickable = !(curNum === secNum);
 
         }
         if (curNum === mainNum && bottomReady) {
-            getElementRight("mainset").setText("Set as Main!")
+            getElementRight("set").setText("Set as Main!");
             //document.getElementById("mainset").textContent = "Set as Main!";
-        } else if (bottomReady) {
-            getElementRight("mainset").setText("")
-            ///document.getElementById("mainset").textContent = "";
-        }
-        if (curNum === secNum && bottomReady) {
-            getElementRight("secset").setText("Set as Secondary!")
+        } else if (curNum === secNum && bottomReady) {
+            getElementRight("set").setText("Set as Secondary!");
             //document.getElementById("secset").textContent = "Set as Secondary!";
         } else if (bottomReady) {
-            getElementRight("secset").setText("")
+            getElementRight("set").setText("");
             //document.getElementById("secset").textContent = "";
         }
     }
@@ -387,12 +392,20 @@
             let arr = presets.split(" ");
             mainNum = +arr[0];
             secNum = +arr[1];
+            if (bottomReady) {
+                getElementBottom("clear").clickable = true;
+
+            }
             clearClickable = true;
         } else {
+            if (bottomReady) {
+                getElementBottom("clear").clickable = false;
+            }
             clearClickable = false;
         }
 
         display(response);
+        refreshCurGirl(response[0].Number);
 
         for (let girl of response) {
             //sobiraem colors
@@ -457,8 +470,6 @@
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     let all = JSON.parse(xhr.responseText);
-                    //let responseText = "{\"girls\":[{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end, and also in obnoxiously loud and annoying and talk a lot and has a very long description that nobody will read anyway so I'll just type more stuff because I can, of course!\"},{\"MainColour\":\"rgb(255,249,151)\",\"Number\":10,\"Level\":20,\"MatchesPlayed\":179,\"MatchesWon\":179,\"Name\":\"Ruby\",\"Rarity\":\"SP\",\"Tags\":[\"Aggressive\",\"Preventive\",\"Output\",\"Combo\"],\"Skills\":[\"Dance\",\"Rage\",\"Stop\",\".Execute\"],\"SkillColours\":[\"Yellow\",\"Red\",\"Cyan\",\"Red\"],\"Description\":\"A fierce fighter that dances till the end.\"}, {\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"}, {\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"},{\"MainColour\":\"rgb(255,69,002)\",\"Number\":1,\"Level\":2,\"MatchesPlayed\":10,\"MatchesWon\":0,\"Name\":\"Storyteller\",\"Rarity\":\"LF\",\"Tags\":[\"Control\",\"Meta\",\"Heal\",\"Colours\"],\"Skills\":[\"Your Number\",\"Your Colour\",\"Your Dream\",\"My Story\"],\"SkillColours\":[\"Orange\",\"White\",\"Violet\",\"Blue\"],\"Description\":\"The one that is the beginning and the end.\"}],\"response\":\"Press \\\"Battle!\\\" when you are ready\"}";
-                    //let all = JSON.parse(responseText);
                     response = all.girls.sort((a, b) => (a.Number > b.Number) ? 1 : ((b.Number > a.Number) ? -1 : 0));
                     if (bottomReady) {
                         getElementBottom("prompts").setText(all.response);
@@ -466,7 +477,6 @@
                     if (response.length > 0) {
                         console.log(response);
                         currentGirls = response.slice(0);
-                        refreshCurGirl(response[0].Number);
                         parse(response);
                     } else {
                         console.log("0 girls found!!!")
@@ -494,15 +504,18 @@
         secNum = response[rand2].Number;
         console.log(mainNum, secNum, rand, rand2, response.length);
         display(currentGirls);
-        refreshCurGirl(num);
+        refreshCurGirl(curNum, curNum===secNum||curNum===mainNum);
         if (old_prompt !== "") {
             getElementBottom("prompts").setText(old_prompt);
         }
     }
 
     function setasmain() {
-        if (curNum === secNum) {
-            clearsetgirls();
+        if (curNum === secNum) { //if we try to set the sec as main, swap them
+            secNum = mainNum;
+            getElementBottom("setsec").clickable = true;
+            //clearsetgirls();
+
         }
         mainNum = curNum;
         if (bottomReady) {
@@ -510,13 +523,15 @@
             getElementBottom("clear").clickable = true;
 
         }
-        getElementRight("mainset").setText("Set as Main!")
+        getElementRight("set").setText("Set as Main!")
         //document.getElementById("mainset").textContent = "Set as Main!";
     }
 
     function setassec() {
         if (curNum === mainNum) {
-            clearsetgirls();
+            mainNum = secNum;
+            getElementBottom("setmain").clickable = true;
+            //clearsetgirls();
         }
         secNum = curNum;
         if (bottomReady) {
@@ -524,7 +539,7 @@
             getElementBottom("clear").clickable = true;
 
         }
-        getElementRight("secset").setText("Set as Secondary!")
+        getElementRight("set").setText("Set as Secondary!")
         //document.getElementById("secset").textContent = "Set as Secondary!";
     }
 
@@ -537,8 +552,7 @@
             getElementBottom("clear").clickable = false;
         }
 
-        getElementRight("mainset").setText("");
-        getElementRight("secset").setText("");
+        getElementRight("set").setText("");
         //document.getElementById("mainset").textContent = "";
         //document.getElementById("secset").textContent = "";
 
