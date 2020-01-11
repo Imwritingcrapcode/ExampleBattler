@@ -118,7 +118,6 @@ func Damage(player, opp *Girl, deal int, ignoreDef bool, colour Colour) int {
 		fmt.Println("ATK RED", atkred)
 		fmt.Println("DEF", opp.Defences[colour])*/
 		dmg = dmg*mul + add - atkred - turnred - opp.Defenses[colour]
-		fmt.Println(dmg, turnthr)
 		if dmg > turnthr {
 			opp.CurrHP -= dmg
 		} else {

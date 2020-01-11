@@ -88,10 +88,9 @@ rightSketch = function (p) {
                 obj.display();
             } else if (obj.id === "girl" && obj.loaded() && p_screen.stopped < 1) {
                 p_screen.stop();
-                p_screen.clear();
             } else if (obj.id === "girl" && obj.loaded()) {
                 obj.display();
-            } else if (obj.id === "girl" && p_screen.stopped < 1) {
+            } else if (obj.id === "girl" && !obj.loaded() && p_screen.stopped < 1) {
                 p_screen.display();
             } else {
                 obj.display();

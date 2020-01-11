@@ -154,94 +154,6 @@ function ImageBox() {
 
 }
 
-function TurnLog(x, y, colour, size, id, width, height, hoverable) {
-    this.id = id;
-    this.x = x;
-    this.y = y;
-    this.textSize = size;
-    this.maxlen = 8;
-    this.text = [];
-    this.textColours = [];
-    this.aligns = [];
-    this.turns = [];
-    this.len = 0;
-    this.width = width;
-    this.height = height;
-    this.clickable = false;
-    this.hoverable = hoverable;
-    this.isHovered = false;
-    this.hoverText = "";
-
-    this.display = function () {
-        strokeWeight(1);
-        textSize(this.textSize);
-        for (let i = this.len - 1; i >= 0; i--) {
-            if (this.isHovered) {
-                stroke(this.textColours[i]);
-                fill(this.textColours[i]);
-            } else {
-                let col = lerpColor(bg_color, this.textColours[i], 1.05 - (this.len - i - 2) / (this.maxlen - 2));
-                stroke(col);
-                fill(col);
-            }
-            if (this.aligns[i]) {
-                textAlign(LEFT);
-                text(this.text[i], this.x + 5, this.y - (this.textSize) * (this.len - i - 1) - 5);
-            } else {
-                textAlign(RIGHT);
-                text(this.text[i], this.x + this.width - 5, this.y - (this.textSize) * (this.len - i - 1) - 5);
-            }
-        }
-    };
-
-    this.push = function (text, colour, isMine) {
-        if (this.len < this.maxlen) {
-            this.text.push(text);
-            //this.textColours.push(colour);
-            this.textColours.push(lerpColor(color(dark.toString()), colour, 0.7));
-            this.aligns.push(isMine);
-            this.len++;
-        } else {
-            this.pop();
-            this.push(text, colour, isMine);
-        }
-    };
-
-    this.pop = function () {
-        let len = this.len;
-        if (len > 0) {
-            this.text = this.text.slice(1, len);
-            this.turns = this.turns.slice(1, len);
-            this.textColours = this.textColours.slice(1, len);
-            this.aligns = this.aligns.slice(1, len);
-            this.len--;
-        } else {
-            console.log("popping when turn log is empty.")
-        }
-    };
-
-    this.in = function () {
-        let x = mouseX;
-        let y = mouseY;
-        return (this.x <= x && x <= (this.width + this.x) && y <= this.y && (this.y - this.height) <= y);
-    };
-
-    this.hovered = function () {
-        this.isHovered = true;
-    };
-
-    this.unhovered = function () {
-        this.isHovered = false;
-
-    };
-
-    this.displayHover = function () {
-        if (this.isHovered && this.hoverText !== "") {
-            displayStandardHoverBubble(this.hoverText, calculateLines(this.hoverText));
-        }
-    }
-}
-
 function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     this.id = id;
     this.x = x;
@@ -279,7 +191,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     this.hoverable = hoverable;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = 30;
+        this.hoverLinger = 180;
     }
     this.hoverText = "";
 
@@ -508,6 +420,130 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     }
 }
 
+function TurnLog(x, y, colour, size, id, width, height, hoverable) {
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.textSize = size;
+    this.maxlen = 8;
+    this.text = [];
+    this.textColours = [];
+    this.aligns = [];
+    this.turns = [];
+    this.len = 0;
+    this.width = width;
+    this.height = height;
+    this.clickable = false;
+    this.hoverable = hoverable;
+    this.isHovered = false;
+    this.hoverText = "";
+    this.maxFramesDown = 45;
+    this.maxFramesUp = 20;
+    this.frame = 0;
+    this.isTransitioning = false;
+    this.transitioningUp = false;
+
+    this.display = function () {
+        strokeWeight(1);
+        textSize(this.textSize);
+        for (let i = this.len - 1; i >= 0; i--) {
+            if (this.isTransitioning) {
+                this.frame += 1;
+                let c;
+                let col;
+                if (this.transitioningUp) {
+                    col = lerpColor(bg_color, this.textColours[i], 1.05 - (this.len - i - 2) / (this.maxlen - 2));
+                    c = lerpColor(col, this.textColours[i], this.frame / this.maxFramesUp);
+                } else {
+                    col = lerpColor(bg_color, this.textColours[i], 1.05 - (this.len - i - 2) / (this.maxlen - 2));
+                    c = lerpColor(this.textColours[i], col, this.frame / this.maxFramesDown);
+                }
+                stroke(c);
+                fill(c);
+                if (this.frame > this.maxFramesUp && this.transitioningUp
+                    || this.frame > this.maxFramesDown && !this.transitioningUp) {
+                    this.isTransitioning = false;
+                    this.frame = 0;
+                }
+            } else if (this.isHovered) {
+                stroke(this.textColours[i]);
+                fill(this.textColours[i]);
+            } else {
+                let col = lerpColor(bg_color, this.textColours[i], 1.05 - (this.len - i - 2) / (this.maxlen - 2));
+                stroke(col);
+                fill(col);
+            }
+            if (this.aligns[i]) {
+                textAlign(LEFT);
+                text(this.text[i], this.x + 5, this.y - (this.textSize) * (this.len - i - 1) - 5);
+            } else {
+                textAlign(RIGHT);
+                text(this.text[i], this.x + this.width - 5, this.y - (this.textSize) * (this.len - i - 1) - 5);
+            }
+        }
+    };
+
+    this.push = function (text, colour, isMine) {
+        if (this.len < this.maxlen) {
+            this.text.push(text);
+            //this.textColours.push(colour);
+            this.textColours.push(lerpColor(color(dark.toString()), colour, 0.7));
+            this.aligns.push(isMine);
+            this.len++;
+        } else {
+            this.pop();
+            this.push(text, colour, isMine);
+        }
+    };
+
+    this.pop = function () {
+        let len = this.len;
+        if (len > 0) {
+            this.text = this.text.slice(1, len);
+            this.turns = this.turns.slice(1, len);
+            this.textColours = this.textColours.slice(1, len);
+            this.aligns = this.aligns.slice(1, len);
+            this.len--;
+        } else {
+            console.log("popping when turn log is empty.")
+        }
+    };
+
+    this.in = function () {
+        let x = mouseX;
+        let y = mouseY;
+        return (this.x <= x && x <= (this.width + this.x) && y <= this.y && (this.y - this.height) <= y);
+    };
+
+    this.hovered = function () {
+        this.isHovered = true;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+            this.transitioningUp = true;
+        } else {
+            this.frame = Math.ceil((this.maxFramesDown - this.frame)/this.maxFramesDown*this.maxFramesUp);
+            //this.frame = this.maxframes - this.frame;
+        }
+    };
+
+    this.unhovered = function () {
+        this.isHovered = false;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+            this.transitioningUp = false;
+        } else {
+            this.frame = Math.ceil((this.maxFramesUp - this.frame)/this.maxFramesUp*this.maxFramesDown);
+            //this.frame = this.maxframes - this.frame;
+        }
+    };
+
+    this.displayHover = function () {
+        if (this.isHovered && this.hoverText !== "") {
+            displayStandardHoverBubble(this.hoverText, calculateLines(this.hoverText));
+        }
+    }
+}
+
 function SkillButton(x, y, type, t, id, mine) {
     this.isMine = mine;
     this.id = id;
@@ -527,6 +563,11 @@ function SkillButton(x, y, type, t, id, mine) {
         this.height = 210;
     }
 
+    this.maxframes = 10;
+    this.frame = 0;
+    this.destColour = this.baseColour;
+    this.previousColour = this.baseColour;
+    this.isTransitioning = false;
     this.colour = clickc;
     this.baseColour = clickc;
     this.hoverColour = clickc;
@@ -539,10 +580,20 @@ function SkillButton(x, y, type, t, id, mine) {
     this.clickTimer = 0;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = 30;
+        this.hoverLinger = 180;
     }
 
     this.display = function () {
+        if (this.isTransitioning) {
+            if (this.frame <= this.maxframes) {
+                this.frame++;
+                this.colour = lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
+            } else {
+                this.frame = 0;
+                this.isTransitioning = false;
+            }
+        }
+
         let border = this.borderColour;
         let c = this.colour;
         let x = this.x;
@@ -696,13 +747,26 @@ function SkillButton(x, y, type, t, id, mine) {
 
     this.hovered = function () {
         this.isHovered = true;
-        this.colour = this.hoverColour;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.hoverColour;
     };
 
     this.unhovered = function () {
         this.hoverTimer = 0;
         this.isHovered = false;
-        this.colour = this.baseColour;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.baseColour;
     };
 
     this.setColour = function (stringColour) {
@@ -863,6 +927,11 @@ function StandardButton(x, y, s, t, size, id, col) {
     this.colour = this.baseColour;
     let hoverchange = 17;
     let clickchange = 34;
+    this.maxframes = 10;
+    this.frame = 0;
+    this.destColour = this.baseColour;
+    this.previousColour = this.baseColour;
+    this.isTransitioning = false;
     this.hoverColour = color(this.colour.toString());
     this.clickedColour = color(this.colour.toString());
     this.hoverColour.setRed(red(this.colour) - hoverchange);
@@ -871,22 +940,28 @@ function StandardButton(x, y, s, t, size, id, col) {
     this.clickedColour.setRed(red(this.colour) - clickchange);
     this.clickedColour.setGreen(green(this.colour) - clickchange);
     this.clickedColour.setBlue(blue(this.colour) - clickchange);
-    /*this.hoverColour.setAlpha(0.87 * 255);
-    this.clickedColour.setAlpha(0.87 * 255);
-    this.baseColour.setAlpha(0.87 * 255);*/
     this.textColour = dark;
     this.height = size + 10;
     this.warned = false;
     this.clickable = true;
     this.hoverable = true;
-    this.clickLinger = 4;
+    this.clickLinger = 10;
     this.clickTimer = 0;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = 30;
+        this.hoverLinger = 180;
     }
 
     this.display = function () {
+        if (this.isTransitioning) {
+            if (this.frame <= this.maxframes) {
+                this.frame++;
+                this.colour = lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
+            } else {
+                this.frame = 0;
+                this.isTransitioning = false;
+            }
+        }
         noStroke();
         fill(this.colour);
         strokeWeight(1);
@@ -936,23 +1011,35 @@ function StandardButton(x, y, s, t, size, id, col) {
         textSize(this.textSize);
         this.width = textWidth(t);
     };
+
     this.hovered = function () {
         this.isHovered = true;
-        this.colour = this.hoverColour;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.hoverColour;
     };
 
     this.unhovered = function () {
         this.hoverTimer = 0;
         this.isHovered = false;
-        this.colour = this.baseColour;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.baseColour;
     };
 
     this.displayHover = function () {
         if (this.hoverTimer < this.hoverLinger) {
             this.hoverTimer += 1;
-            return;
-        }
-        if (this.hoverText) {
+        } else if (this.hoverText) {
             displayStandardHoverBubble(this.hoverText, this.hoverLines);
         }
     }

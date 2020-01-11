@@ -16,8 +16,6 @@ import (
 
 /*
 //IMPORTANT
-//TODO fix the 1 frame lag ye
-//TODO buttons soft animation
 //TODO conversion page
 //TODO shop
 //TODO frontend 2. friendlist 3. mainpage 4. icons

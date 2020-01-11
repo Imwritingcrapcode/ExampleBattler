@@ -90,6 +90,11 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 		} else if friendReq[0] == "Add" {
 			other := FindBase(friendReq[1])
 			if other != nil { //a valid user
+				if other.UserID == session.UserID {
+					http.Error(w, "You are already your own friend. Hopefully.", 400)
+					log.Println("[FriendListPost] invalid request", session.UserID, "adding yourself.")
+					return
+				}
 				if IsFriend(session.UserID, other.UserID) { //they were already a friend
 					http.Error(w, "You have already sent a friend request to this user.", 400)
 					log.Println("[FriendListPost] invalid request", session.UserID, "adding someone who's a friend already")

@@ -34,6 +34,11 @@ function InterfaceButton(p, x, y, t, size, id, type, width, height) {
     this.colour = this.baseColour;
     let hoverchange = 17;
     let clickchange = 34;
+    this.maxframes = 10;
+    this.frame = 0;
+    this.destColour = this.baseColour;
+    this.previousColour = this.baseColour;
+    this.isTransitioning = false;
     this.hoverColour = this.p.color(this.colour.toString());
     this.clickedColour = this.p.color(this.colour.toString());
     this.hoverColour.setRed(this.p.red(this.colour) - hoverchange);
@@ -65,6 +70,15 @@ function InterfaceButton(p, x, y, t, size, id, type, width, height) {
     };
 
     this.display = function () {
+        if (this.isTransitioning) {
+            if (this.frame <= this.maxframes) {
+                this.frame++;
+                this.colour = this.p.lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
+            } else {
+                this.frame = 0;
+                this.isTransitioning = false;
+            }
+        }
         this.p.noStroke();
         this.p.fill(this.colour);
         this.p.strokeWeight(1);
@@ -129,12 +143,25 @@ function InterfaceButton(p, x, y, t, size, id, type, width, height) {
     };
     this.hovered = function () {
         this.isHovered = true;
-        this.colour = this.hoverColour;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.hoverColour;
     };
 
     this.unhovered = function () {
         this.isHovered = false;
-        this.colour = this.baseColour;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.baseColour;
     };
 
     this.displayHover = function () {
@@ -298,7 +325,6 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
     };
 
     this.open = function (path, name, width, height) {
-        console.log(this.loadedObj);
         this.x = this.x + (550 - width) / 2;
         this.width = width;
         this.height = height;
@@ -347,40 +373,13 @@ function InterfaceImageBox() {
 
 }
 
-function interfaceCalculateLines(p, hoverText, width, size) {
-    if (!width) {
-        width = 290;
-    }
-    if (!size) {
-        size = 15;
-    }
-    let height = 0;
-    p.textSize(size);
-    for (let line of hoverText.split("\n")) {
-        height += 1;
-        let x_pos = 0;
-        for (let word of line.split(" ")) {
-            /*strokeWeight(5);
-            stroke(red2);
-            point(mouseX+10+x_pos + change, mouseY+height*size);*/
-            if (x_pos + p.textWidth(word + " ") < width) { //we are still on that line
-                x_pos += p.textWidth(word + " ")
-            } else { //start a new line
-                height += 1;
-                x_pos = p.textWidth(word + " ");
-            }
-        }
-    }
-    return height;
-}
-
-
 function LoadingScreen(p, x, y, w, h) {
     this.p = p;
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
+    this.fade = false;
     this.frame = 0;
     this.maxframes = 20;
     this.pauseTime = 10;
@@ -399,10 +398,10 @@ function LoadingScreen(p, x, y, w, h) {
         height = w / 2;
     }
     let distance = 0.05;
-    this.squares.push([0 + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), 0 + x, height * (1 + distance) + y, this.colour3]); //1 bot left pi to 3pi/2
-    this.squares.push([0 + x, 0 + y, width * (1 - distance), height * (1 - distance), 0 + x, 0 + y, this.colour1]); //4 top left 3pi/2 to 2pi
-    this.squares.push([width * (1 + distance) + x, 0 + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, 0 + y, this.colour2]); //3 top right pi to 3pi/2
-    this.squares.push([width * (1 + distance) + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, height * (1 + distance) + y, this.colour4]); //2 bot right pi/2 to pi
+    this.squares.push([0 + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), 0 + x, height * (1 + distance) + y, undefined]); //1 bot left pi to 3pi/2
+    this.squares.push([0 + x, 0 + y, width * (1 - distance), height * (1 - distance), 0 + x, 0 + y, undefined]); //4 top left 3pi/2 to 2pi
+    this.squares.push([width * (1 + distance) + x, 0 + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, 0 + y, undefined]); //3 top right pi to 3pi/2
+    this.squares.push([width * (1 + distance) + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, height * (1 + distance) + y, undefined]); //2 bot right pi/2 to pi
 
     this.stop = function () {
         if (this.stopped < 2) {
@@ -410,13 +409,37 @@ function LoadingScreen(p, x, y, w, h) {
         }
     };
 
-    this.clear = function() {
-        this.frame = 0;
-        this.phi = 0.0;
+    this.enableFade = function () {
+        this.fade = true;
     };
 
     this.restart = function () {
+        let width;
+        let height;
+        let distance = 0.05;
+        if (this.w > this.h) {
+            width = this.h / 2;
+            height = this.h / 2;
+        } else {
+            width = this.w / 2;
+            height = this.w / 2;
+        }
+        this.squares[0][0] = this.x;
+        this.squares[0][1] = height * (1 + distance) + this.y;
+        this.squares[3][0] = width * (1 + distance) + this.x;
+        this.squares[3][1] = height * (1 + distance) + this.y;
+        this.squares[2][0] = width * (1 + distance) + this.x;
+        this.squares[2][1] = this.y;
+        this.squares[1][0] = this.x;
+        this.squares[1][1] = this.y;
+        this.frame = 0;
+        this.phi = 0.0;
+        this.pause = 0;
         this.stopped = 0;
+        for (let i = 0; i < this.squares.length; i++) {
+            let square = this.squares[i];
+            square[6].setAlpha(255)
+        }
     };
 
     this.display = function () {
@@ -456,6 +479,12 @@ function LoadingScreen(p, x, y, w, h) {
         if (this.stopped !== 2) {
             if (this.paused) {
                 this.pause += 1;
+                if (this.stopped > 0 && this.fade) {
+                    for (let i = 0; i < this.squares.length; i++) {
+                        let square = this.squares[i];
+                        square[6].setAlpha(255 - 255*(0.45+this.pause/10))
+                    }
+                }
                 if (this.pause >= this.pauseTime) {
                     this.pause = 0;
                     this.paused = false;
@@ -488,4 +517,32 @@ function LoadingScreen(p, x, y, w, h) {
         this.squares[3][6] = this.p.color(c4.toString());
 
     }
+}
+
+
+function interfaceCalculateLines(p, hoverText, width, size) {
+    if (!width) {
+        width = 290;
+    }
+    if (!size) {
+        size = 15;
+    }
+    let height = 0;
+    p.textSize(size);
+    for (let line of hoverText.split("\n")) {
+        height += 1;
+        let x_pos = 0;
+        for (let word of line.split(" ")) {
+            /*strokeWeight(5);
+            stroke(red2);
+            point(mouseX+10+x_pos + change, mouseY+height*size);*/
+            if (x_pos + p.textWidth(word + " ") < width) { //we are still on that line
+                x_pos += p.textWidth(word + " ")
+            } else { //start a new line
+                height += 1;
+                x_pos = p.textWidth(word + " ");
+            }
+        }
+    }
+    return height;
 }

@@ -6,7 +6,7 @@
     //PICS = false;
     if (TESTING) {
         STATE = "{\"Instruction\":\"\",\"TurnNum\":12,\"TurnPlayer\":1,\"PlayerNum\":33,\"OppNum\":51,\"PlayerName\":\"Speed\",\"OppName\":\"Milana\",\"HP\":78,\"MaxHP\":113,\"OppHP\":94,\"OppMaxHP\":114,\"Effects\"" +
-            ":{\"13\":\"1\", \"14\":\"2\", \"3\":\"\", \"4\":\"2\", \"15\":\"19\"},\"OppEffects\":{\"4\":\"23\"},\"SkillState\":{\"E\":-2,\"Q\":0,\"R\":-1,\"W\":2},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-1,\"OppW\":0},\"SkillNames\":{\"E\":\"Speed\",\"Q\":\"Run\",\"R\":\"Stab\",\"W\":\"Weaken\"},\"OppSkillNames\":{\"OppE\":\"Mint Mist\",\"OppQ\":\"Royal Move\",\"OppR\":\"Pride\",\"OppW\":\"Composure\"},\"Defenses\":{\"1\":0,\"10\":0,\"11\":2,\"12\":-2,\"2\":0,\"3\":0,\"4\":4,\"5\":0,\"6\":0,\"7\":-2,\"8\":0,\"9\":0},\"OppDefenses\":{\"1\":0,\"10\":0,\"11\":-2,\"12\":2,\"2\":-1,\"3\":1,\"4\":1,\"5\":1,\"6\":0,\"7\":-1,\"8\":0,\"9\":0},\"SkillColours\":{\"E\":\"rgb(14,51,20)\",\"Q\":\"rgb(14,51,20)\",\"R\":\"rgb(0,0,0)\",\"W\":\"rgb(0,0,0)\"},\"OppSkillColours\":{\"OppE\":\"rgb(232,255,243)\",\"OppQ\":\"rgb(49,255,185)\",\"OppR\":\"rgb(115,255,240)\",\"OppW\":\"rgb(232,255,243)\"},\"EndState\":1}";
+            ":{\"13\":\"1\", \"14\":\"2\", \"6\":\"\", \"9\":\"1\"},\"OppEffects\":{\"15\":\"19\", \"8\":\"1\"},\"SkillState\":{\"E\":-2,\"Q\":0,\"R\":-1,\"W\":2},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-1,\"OppW\":0},\"SkillNames\":{\"E\":\"Speed\",\"Q\":\"Run\",\"R\":\"Stab\",\"W\":\"Weaken\"},\"OppSkillNames\":{\"OppE\":\"Mint Mist\",\"OppQ\":\"Royal Move\",\"OppR\":\"Pride\",\"OppW\":\"Composure\"},\"Defenses\":{\"1\":0,\"10\":0,\"11\":2,\"12\":-2,\"2\":0,\"3\":0,\"4\":4,\"5\":0,\"6\":0,\"7\":-2,\"8\":0,\"9\":0},\"OppDefenses\":{\"1\":0,\"10\":0,\"11\":-2,\"12\":2,\"2\":-1,\"3\":1,\"4\":1,\"5\":1,\"6\":0,\"7\":-1,\"8\":0,\"9\":0},\"SkillColours\":{\"E\":\"rgb(14,51,20)\",\"Q\":\"rgb(14,51,20)\",\"R\":\"rgb(0,0,0)\",\"W\":\"rgb(0,0,0)\"},\"OppSkillColours\":{\"OppE\":\"rgb(232,255,243)\",\"OppQ\":\"rgb(49,255,185)\",\"OppR\":\"rgb(115,255,240)\",\"OppW\":\"rgb(232,255,243)\"},\"EndState\":0}";
         S = JSON.parse(STATE);
         S2 = JSON.parse(STATE);
     }
@@ -102,7 +102,7 @@
         parseInstruction("Animation:R", true);
         parseInstruction("Animation:R", false);
         S2.OppHP = 32;
-        //parseState(S2);
+        parseState(S2);
     }
 
 }
