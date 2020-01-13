@@ -16,15 +16,13 @@ import (
 
 /*
 //IMPORTANT
-//TODO conversion page
-//TODO shop
 //TODO frontend 2. friendlist 3. mainpage 4. icons
-//top left 6. shop. 7. conversion 8. css
-//TODO dun offline if in gameee
+//5. header of the site 6. shop. 7. conversion 8. css 9. login, 10. register new pages
 //todo linux support, get a server
 //TODO DDOS protecction (not cloudflare apparently)
 
 //FLAVOR
+//TODO telegram bot
 //TODO random damage
 //todo quality of the pics
 //todo offline for
@@ -35,7 +33,6 @@ import (
 //TODO speech bubbles
 //TODO skins
 //TODO ability draft, 2v2
-//TODO telegram bot
 //TODO character wiki
 //TODO euphoria and z89
 */
@@ -176,8 +173,12 @@ func Game(p1, p2 *ClientChannels) {
 	SetState(p2.UserID, JustFinishedTheGame)
 	IncreaseBattles(p1.UserID, p1Won)
 	IncreaseBattles(p2.UserID, p2Won)
-	IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won)
-	IncreaseMatchesAs(p2.UserID, p2.PlayingAs, p2Won)
+	if state1.EndState != GameGaveUp {
+		IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won)
+	}
+	if state2.EndState != GameGaveUp {
+		IncreaseMatchesAs(p2.UserID, p2.PlayingAs, p2Won)
+	}
 	EndGame(p1)
 }
 
@@ -257,7 +258,9 @@ func BotGame(p1 *ClientChannels, botChar int, DEPTH int) {
 	p1.Send(state1)
 	SetState(p1.UserID, JustFinishedTheGame)
 	IncreaseBattles(p1.UserID, p1Won)
-	IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won)
+	if state1.EndState != GameGaveUp {
+		IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won, )
+	}
 	EndGame(p1)
 }
 
@@ -361,11 +364,11 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 			var char2 int
 			botChosen := make([]int, 2)
 			botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			for botChosen[0] == 9 {
+			for botChosen[0] == 9 || botChosen[0] == 8 {
 				botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
 			botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			for botChosen[1] == botChosen[0] || botChosen[1] == 9 {
+			for botChosen[1] == botChosen[0] || botChosen[1] == 9 || botChosen[1] == 8 {
 				botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
 			p1.PlayingAs, char2 = FindValidCombination(p1.ChosenGirls, botChosen)

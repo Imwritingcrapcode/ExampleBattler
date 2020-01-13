@@ -10,7 +10,7 @@
 10. add descriptions to constants.js
 11. init as number
 12. resolutions.
-13. GetGirlRarity
+//13. GetGirlRarity = just make sure is present inthe packs or add manually.
 14. releasedcharacterspacks
 15. add her to portraits list (true), add her portrait
 

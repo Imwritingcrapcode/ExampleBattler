@@ -177,13 +177,7 @@
         }
     }
 
-    function refreshCurGirl(number, force) {
-        if (curNum === number && !force) {
-            console.log("no need to refresh", number);
-            return
-        } else {
-            console.log("refreshing", number);
-        }
+    function refreshCurGirl(number) {
         curNum = number;
         let curGirl = getGirlByNumber(number);
         //put her info in the doc
@@ -500,11 +494,25 @@
         while (rand2 === rand) {
             rand2 = Math.floor(Math.random() * len);
         }
+        let wasMain = false;
+        let wasSec = false;
+        if (mainNum === curNum) {
+            wasMain = true;
+        }
+        if (secNum === curNum) {
+            wasSec = true;
+        }
         mainNum = response[rand].Number;
         secNum = response[rand2].Number;
         console.log(mainNum, secNum, rand, rand2, response.length);
         display(currentGirls);
-        refreshCurGirl(curNum, curNum===secNum||curNum===mainNum);
+        if ((wasMain && mainNum !== curNum) || (wasSec && secNum !== curNum) ||
+        (!wasMain && mainNum === curNum) || (!wasSec && secNum === curNum)) {
+            refreshCurGirl(curNum);
+        } else {
+            console.log("no need to refresh", curNum);
+        }
+
         if (old_prompt !== "") {
             getElementBottom("prompts").setText(old_prompt);
         }

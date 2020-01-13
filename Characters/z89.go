@@ -8,7 +8,7 @@ import (
 type Z89 Girl
 
 func (self *Z89) Init() {
-	self.Name = "z89"
+	self.Name = "Z89"
 	self.Number = 8
 	self.MaxHP = 116
 	self.CurrHP = self.MaxHP
@@ -30,17 +30,17 @@ func (self *Z89) Init() {
 		false,
 		1, 0, 0,
 		Black,
-		"Z89 lower hp",
+		"Z89 Q",
 		Z89Q,
-		"rgb(0, 0, 0)",
+		"rgb(9, 15, 26)",
 	}
 	self.Skills[1] = &Skill{
 		false,
 		0, 0, 0,
 		Cyan,
-		"Z89 eff removal and damage 15 no def",
+		"Cold Gaze",
 		Z89W,
-		"rgb(0, 255, 255)",
+		"rgb(37, 247, 247)",
 	}
 	self.Skills[2] = &Skill{
 		false,
@@ -48,7 +48,7 @@ func (self *Z89) Init() {
 		Green,
 		"Green Sphere",
 		Z89E,
-		"rgb(0, 255, 0)",
+		"rgb(20, 179, 46)",
 	}
 	self.Skills[3] = &Skill{
 		true,
@@ -56,7 +56,7 @@ func (self *Z89) Init() {
 		Blue,
 		"Z89 R",
 		Z89Ulti,
-		"rgb(0, 0, 255)",
+		"rgb(22, 63, 145)",
 	}
 	self.Effects = EffectSet{}
 	self.Effects.Init(TOTALEFFECTS)

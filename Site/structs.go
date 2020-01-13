@@ -109,7 +109,7 @@ var BotNames = []string{
 	"BestHomie",
 	"frozencalla",
 	"IrJean",
-	"Ron",
+	"Fiendine•",
 	"ukulele",
 	"urkitten",
 	"YouHaveTheHugeMegaGay",
@@ -122,7 +122,6 @@ var DustMap = map[string]string{
 	"g": "gdust",
 	"s": "sdust",
 }
-
 
 var DATABASE *sql.DB
 
@@ -155,14 +154,14 @@ type UserGirl struct {
 	MatchesPlayed int
 	MatchesWon    int
 	//all the fields below are taken from GirlInfo
-	Name         string
-	Rarity       string
-	Tags         []string
-	Skills       []string
-	SkillColours []string
+	Name             string
+	Rarity           string
+	Tags             []string
+	Skills           []string
+	SkillColours     []string
 	SkillColourCodes []string
-	Description  string
-	MainColour   string
+	Description      string
+	MainColour       string
 }
 
 type FriendList struct {
@@ -282,15 +281,32 @@ func GetItemByID(ID string) (bool, ShopItem) {
 //conversion
 
 type ConvRequest struct {
-	ReqType string
-	Amount int
+	ReqType  string
+	Amount   int
 	DustType string
 }
 
 type ConvResponse struct {
-	ConversionRate map [string]float64
-	SecondsPerConversion map [string]int
+	ConversionRate       map[string]float64
+	SecondsPerConversion map[string]int
+	IsConvertingRN       bool
+	CurrentProgress      int
+	Left      int
 }
+
+/*var ConversionRate = map[string]float64{
+	"w": 0.5,
+	"b": 0.5,
+	"y": 0.5,
+	"g": 0.5,
+}
+
+var SecondsPerConversion = map[string]int{
+	"w": 0,
+	"b": 0,
+	"y": 0,
+	"g": 0,
+}*/
 
 var ConversionRate = map[string]float64{
 	"w": 0.5,
@@ -298,8 +314,7 @@ var ConversionRate = map[string]float64{
 	"y": 0.25,
 	"g": 0.2,
 }
-
-var SecondsPerConversion = map [string]int{
+var SecondsPerConversion = map[string]int{
 	"w": 24,
 	"b": 30,
 	"y": 45,

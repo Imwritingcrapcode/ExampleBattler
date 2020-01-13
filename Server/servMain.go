@@ -110,19 +110,19 @@ func main() {
 	}
 	statement.Exec()
 
-	/*statement, err = DATABASE.Prepare("DROP TABLE friends")
-	if err != nil {
-		panic(err)
-	}
-	statement.Exec()*/
-
 	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS friends (userID INTEGER NOT NULL, friendID INTEGER NOT NULL, FOREIGN KEY(userID) REFERENCES userData(userID), PRIMARY KEY (userID, friendID))")
 	if err != nil {
 		panic(err)
 	}
 	statement.Exec()
 
-	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS conversions (userID INTEGER PRIMARY KEY, begins INTEGER NOT NULL, ends INTEGER NOT NULL, give INTEGER NOT NULL, type TEXT NOT NULL, FOREIGN KEY(userID) REFERENCES userData(userID))")
+	/*statement, err = DATABASE.Prepare("DROP TABLE conversions")
+	if err != nil {
+		panic(err)
+	}
+	statement.Exec()*/
+
+	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS conversions (userID INTEGER PRIMARY KEY, begins INTEGER NOT NULL, duration INTEGER NOT NULL, give INTEGER NOT NULL, type TEXT NOT NULL, FOREIGN KEY(userID) REFERENCES userData(userID))")
 	if err != nil {
 		panic(err)
 	}

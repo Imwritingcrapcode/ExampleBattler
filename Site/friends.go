@@ -95,13 +95,18 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 					log.Println("[FriendListPost] invalid request", session.UserID, "adding yourself.")
 					return
 				}
-				if IsFriend(session.UserID, other.UserID) { //they were already a friend
-					http.Error(w, "You have already sent a friend request to this user.", 400)
+				fromthem := IsFriend(other.UserID, session.UserID)
+				fromme := IsFriend(session.UserID, other.UserID)
+				if fromthem && fromme{
+					http.Error(w, "You are already friends with this user.", 400)
 					log.Println("[FriendListPost] invalid request", session.UserID, "adding someone who's a friend already")
+				} else if fromme { //they were already a friend
+					http.Error(w, "You have already sent a friend request to this user.", 400)
+					log.Println("[FriendListPost] invalid request", session.UserID, "adding someone who you've already sent a req to")
 				} else {
 					AddFriend(session.UserID, other.UserID)
 					w.WriteHeader(200)
-					if IsFriend(other.UserID, session.UserID) { //accepting
+					if fromthem { //accepting
 						w.Write([]byte("Accepted friend request from " + friendReq[1] + "."))
 						log.Println("[FriendListPost] added a friend", other.UserID, "for", session.UserID)
 					} else { //sending first

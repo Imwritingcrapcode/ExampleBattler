@@ -632,6 +632,10 @@ func SetLastOpponentsName(UserID1 int64, UserID2 int64) {
 	} else {
 		index := rand.Intn(len(BotNames))
 		name = BotNames[index]
+		for name == FindBaseID(UserID1).Username {
+			index = rand.Intn(len(BotNames))
+			name = BotNames[index]
+		}
 	}
 	update, err := DATABASE.Prepare("UPDATE userData SET lastOpponentsName = '" + name + "' WHERE  userID = " + strconv.FormatInt(UserID1, 10))
 	if err != nil {
@@ -854,4 +858,73 @@ func GetFriendLists(userID int64) *FriendList {
 	}
 	return &res
 
+}
+
+//CONVERSION
+func GetConversionInfo(userID int64) (bool, int, int) {
+	rows, err := DATABASE.Query("SELECT begins, duration FROM conversions WHERE userID = " + strconv.FormatInt(userID, 10))
+	if err != nil {
+		log.Println("[GetConversionInfo]", userID, err)
+	}
+	if rows.Next() {
+		var begins int64
+		var duration int
+		rows.Scan(&begins, &duration)
+		rows.Close()
+		curTime := time.Now().UnixNano()
+		secondsPassed := int(time.Duration(curTime - begins).Seconds())
+		if secondsPassed >= duration {
+			return true, duration, 0
+		} else {
+			return true, secondsPassed, duration - secondsPassed
+		}
+	} else {
+		return false, -1, -1
+	}
+}
+
+func ClaimConversion(UserID int64) {
+	isConverting, _, secondsLeft := GetConversionInfo(UserID)
+	if !isConverting || secondsLeft > 0 {
+		log.Println("[Claim Conversion] called too early")
+		return
+	}
+	//there is a ready claim. 1. Get info
+	rows, err := DATABASE.Query("SELECT give, type FROM conversions WHERE userID = " + strconv.FormatInt(UserID, 10))
+	if err != nil {
+		log.Println("[GetConversionInfo]", UserID, err)
+	}
+	rows.Next()
+	var amnt int
+	var dustType string
+	rows.Scan(&amnt, &dustType)
+	rows.Close()
+	//2. Delet the old conversion
+	del, err := DATABASE.Prepare("DELETE FROM conversions WHERE userID = " + strconv.FormatInt(UserID, 10))
+	if err != nil {
+		log.Println("[GetConversionInfo]", err)
+		return
+	}
+	_, err = del.Exec()
+	if err != nil {
+		log.Println("[GetConversionInfo]", err)
+	}
+	//3. Add the moneys
+	user := User{UserID: UserID}
+	user.SetDust(dustType, user.GetDust(dustType)+amnt)
+
+}
+
+func StartConversion(UserID int64, duration, amnt int, dustType string) {
+	begins := time.Now().UnixNano()
+	statement, err := DATABASE.Prepare("INSERT INTO conversions (userID, begins, duration, give, type) VALUES (?, ?, ?, ?, ?)")
+	if err != nil {
+		log.Println("[StartConversion]", err)
+		return
+	}
+	_, err = statement.Exec(UserID, begins, duration, amnt, dustType)
+	if err != nil {
+		log.Println(err)
+		log.Println("[StartConversion]", err)
+	}
 }

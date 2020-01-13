@@ -180,6 +180,9 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
             this.targetHP = undefined;
             this.speed = 0;
             this.framesLeft = 0;
+            this.speedMax = undefined;
+            this.targetMaxHP = undefined;
+            this.framesLeftMax = 30;
         }
         this.text = t;
         this.width = size * t.length;
@@ -247,18 +250,38 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     this.HP + this.speed < this.targetHP && this.speed > 0) { //if it's worth it yet
                     this.HP = this.HP + this.speed;
                     if (this.id === "playerHP") {
-                        setHP(this.HP, this.MaxHP)
+                        setHP(this, this.HP, this.MaxHP)
                     } else {
-                        setOppHP(this.HP, this.MaxHP)
+                        setOppHP(this, this.HP, this.MaxHP)
                     }
                 } else { //end
                     this.HP = this.targetHP;
                     if (this.id === "playerHP") {
-                        setHP(this.HP, this.MaxHP)
+                        setHP(this, this.HP, this.MaxHP)
                     } else {
-                        setOppHP(this.HP, this.MaxHP)
+                        setOppHP(this, this.HP, this.MaxHP)
                     }
                     this.framesLeft = 0;
+                }
+            }
+            if (((this.id === "playerHP" || this.id === "oppHP") && this.framesLeftMax > 0)) {
+                this.framesLeftMax--;
+                if (this.MaxHP + this.speedMax > this.targetMaxHP && this.speedMax < 0 ||
+                    this.MaxHP + this.speedMax < this.targetMaxHP && this.speedMax > 0) { //if it's worth it yet
+                    this.MaxHP = this.MaxHP + this.speedMax;
+                    if (this.id === "playerHP") {
+                        setHP(this, this.HP, this.MaxHP)
+                    } else {
+                        setOppHP(this, this.HP, this.MaxHP)
+                    }
+                } else { //end
+                    this.MaxHP = this.targetMaxHP;
+                    if (this.id === "playerHP") {
+                        setHP(this, this.HP, this.MaxHP)
+                    } else {
+                        setOppHP(this, this.HP, this.MaxHP)
+                    }
+                    this.framesLeftMax = 0;
                 }
             }
             stroke(this.textColour);
@@ -417,6 +440,12 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
         this.speed = speed;
         this.targetHP = target;
         this.framesLeft = 60;
+    };
+
+    this.startAnimationMax = function (speed, target) {
+        this.speedMax = speed;
+        this.targetMaxHP = target;
+        this.framesLeftMax = 30;
     }
 }
 
@@ -563,7 +592,7 @@ function SkillButton(x, y, type, t, id, mine) {
         this.height = 210;
     }
 
-    this.maxframes = 10;
+    this.maxframes = 7;
     this.frame = 0;
     this.destColour = this.baseColour;
     this.previousColour = this.baseColour;
@@ -770,6 +799,8 @@ function SkillButton(x, y, type, t, id, mine) {
     };
 
     this.setColour = function (stringColour) {
+        this.frame = 0;
+        this.isTransitioning = false;
         this.baseColour = color(stringColour);
         this.baseColour.setAlpha(0.87 * 255);
         this.colour = this.baseColour;
@@ -925,9 +956,9 @@ function StandardButton(x, y, s, t, size, id, col) {
         this.baseColour = color(light.toString());
     }
     this.colour = this.baseColour;
-    let hoverchange = 17;
-    let clickchange = 34;
-    this.maxframes = 10;
+    let hoverchange = 20;
+    let clickchange = 35;
+    this.maxframes = 7;
     this.frame = 0;
     this.destColour = this.baseColour;
     this.previousColour = this.baseColour;

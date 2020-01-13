@@ -10,6 +10,8 @@ func InitAsNumber(girl *Girl, number int) {
 	switch number {
 	case 1:
 		(*Storyteller)(girl).Init()
+	case 8:
+		(*Z89)(girl).Init()
 	case 9:
 		(*Euphoria)(girl).Init()
 	case 10:

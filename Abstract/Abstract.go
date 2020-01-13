@@ -172,6 +172,7 @@ var ReleasedCharacters = []int{
 
 var ReleasedCharactersNames = map[int]string{
 	1:   "Storyteller",
+	8:	  "Z89",
 	9:	 "Euphoria",
 	10:  "Ruby",
 	33:  "Speed",
@@ -181,7 +182,7 @@ var ReleasedCharactersNames = map[int]string{
 
 var ReleasedCharactersPacks = map[string][]int{
 	"ST": {},
-	"AD": {9, 33},
+	"AD": {8, 9, 33},
 	"SP": {10, 51},
 	"RP": {},
 	"LF": {1, 119},

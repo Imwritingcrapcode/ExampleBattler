@@ -39,6 +39,25 @@ func GetGirlInfo(number int) *GirlInfo {
 		//Description
 		info.Description = "The one that is the beginning and the end."
 		info.MainColour = girl.Skills[0].ColourCode
+	case 8:
+		(*Z89)(&girl).Init()
+		//Name string
+		info.Name = girl.Name
+		//Number int
+		info.Number = girl.Number
+		//Rarity string
+		info.Rarity = GetGirlRarity(girl.Number)
+		//Tags []string
+		info.Tags = []string{"Preventive", "Debuff"}
+		//Skills []string
+		info.Skills = girl.SkillsStringList()
+		//SkillColours []string
+		info.SkillColours = girl.SkillColoursToString()
+		//SkillColourCodes []string
+		info.SkillColourCodes = girl.SkillColourCodesToString()
+		//Description
+		info.Description = "The spy girl."
+		info.MainColour = girl.Skills[3].ColourCode
 	case 9:
 		(*Euphoria)(&girl).Init()
 		//Name string
@@ -48,7 +67,7 @@ func GetGirlInfo(number int) *GirlInfo {
 		//Rarity string
 		info.Rarity = GetGirlRarity(girl.Number)
 		//Tags []string
-		info.Tags = []string{"Heal", "Durable", "Preventive"}
+		info.Tags = []string{"Heal", "Durable"}
 		//Skills []string
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string

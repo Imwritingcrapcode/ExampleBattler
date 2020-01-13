@@ -212,28 +212,36 @@ function parseState(i) {
     let oppHP = getElement("oppHP");
     plHP.defenses = i.Defenses;
     oppHP.defenses = i.OppDefenses;
+
+
     //Animate HP
+
+    if (plHP.MaxHP && plHP.MaxHP !== i.MaxHP) {
+        let speed = calculateHPperFrame(plHP.MaxHP, i.MaxHP);
+        plHP.startAnimationMax(speed, i.MaxHP);
+    }
     if (plHP.HP && plHP.HP !== i.HP) {
         let speed = calculateHPperFrame(plHP.HP, i.HP);
         plHP.startAnimation(speed, i.HP)
-    }
-    else if (!plHP.HP) {
-        setHP(i.HP, i.MaxHP);
+    } else if (!plHP.HP) {
+        setHP(plHP, i.HP, i.MaxHP);
         plHP.HP = i.HP;
         plHP.MaxHP = i.MaxHP;
     }
 
+
+    if (oppHP.MaxHP && oppHP.HP && oppHP.MaxHP !== i.OppMaxHP) {
+        let speed = calculateHPperFrame(oppHP.MaxHP, i.OppMaxHP);
+        oppHP.startAnimationMax(speed, i.OppMaxHP)
+    }
     if (oppHP.HP && oppHP.HP !== i.OppHP) {
-        //calculate the amnt of frames here.
         let speed = calculateHPperFrame(oppHP.HP, i.OppHP);
         oppHP.startAnimation(speed, i.OppHP)
-    }
-    else if (!oppHP.HP) {
-        setOppHP(i.OppHP, i.OppMaxHP);
+    } else if (!oppHP.HP) {
+        setOppHP(oppHP, i.OppHP, i.OppMaxHP);
         oppHP.HP = i.OppHP;
         oppHP.MaxHP = i.OppMaxHP;
     }
-
 
     //set effects
     IMAGEBOX.clearDisplayed();
@@ -394,7 +402,7 @@ function parseInstruction(t, isMine) {
 }
 
 
-function setHP(HP, MaxHP) {
+function setHP(plHP, HP, MaxHP) {
     let c;
     let inter;
     if (HP > MaxHP / 4) {
@@ -407,13 +415,12 @@ function setHP(HP, MaxHP) {
         inter = map(HP, 0, -MaxHP / 4, 0, 1);
         c = lerpColor(color(255, 85, 85), color(255, 0, 0), inter);
     }
-    let plHP = getElement("playerHP");
     plHP.setColour(c.toString());
     let tHP = HP + "/" + MaxHP + " (" + roundUp(HP / MaxHP * 100) + "%)";
     plHP.setText(tHP);
 }
 
-function setOppHP(OppHP, OppMaxHP) {
+function setOppHP(oppHPEl, OppHP, OppMaxHP) {
     let inter;
     let c;
     if (OppHP > OppMaxHP / 4) {
@@ -427,9 +434,8 @@ function setOppHP(OppHP, OppMaxHP) {
         c = lerpColor(color(255, 85, 85), color(255, 0, 0), inter);
     }
     let toppHP = OppHP + "/" + OppMaxHP + " (" + roundUp(OppHP / OppMaxHP * 100) + "%)";
-    let opHP = getElement("oppHP");
-    opHP.setText(toppHP);
-    opHP.setColour(c.toString());
+    oppHPEl.setText(toppHP);
+    oppHPEl.setColour(c.toString());
 
 }
 

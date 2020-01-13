@@ -32,9 +32,9 @@ function InterfaceButton(p, x, y, t, size, id, type, width, height) {
     this.clickTimer = 0;
     this.baseColour = this.p.color(light.toString());
     this.colour = this.baseColour;
-    let hoverchange = 17;
-    let clickchange = 34;
-    this.maxframes = 10;
+    let hoverchange = 20;
+    let clickchange = 35;
+    this.maxframes = 7;
     this.frame = 0;
     this.destColour = this.baseColour;
     this.previousColour = this.baseColour;
@@ -459,7 +459,7 @@ function LoadingScreen(p, x, y, w, h) {
             let c = this.p.lerpColor(s[6], this.squares[prev][6], inter);
             this.p.fill(c);
             this.p.noStroke();
-            this.p.rect(-s[2] / 2, -s[3] / 2, s[2], s[3], s[2] / 20);
+            this.p.rect(-s[2] / 2, -s[3] / 2, s[2], s[3], s[2] / 9);
             //rotate back
             this.p.rotate(curr_phi * 2);
             this.p.translate(-center_x, -center_y);

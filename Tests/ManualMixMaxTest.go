@@ -12,7 +12,7 @@ func main() {
 	var DEPTH int
 	rand.Seed(time.Now().UTC().UnixNano())
 	TWOBOTS := false
-	INIT1 := 9
+	//INIT2 := 9
 	//index1 := rand.Intn(len(ReleasedCharacters))
 	//index2 := rand.Intn(len(ReleasedCharacters))
 	//INIT1 := ReleasedCharacters[index1]
@@ -22,7 +22,8 @@ func main() {
 	//for INIT2 == INIT1 {
 	//	INIT2 = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 	//}
-	// Story > E, z > E Ruby > E, Speed > E, Lana > E, Struc > E
+	// Story < E, z < E Ruby > E, Speed > E, Lana > E (1 HP!!), Struc < E
+	// Story < z, E > z Ruby > z, Speed > z, Lana > z , Struc > z
 	//
 	//INIT1 := 1
 	INIT2 := 8
@@ -30,8 +31,8 @@ func main() {
 	//INIT1 := 10
 	//INIT1 := 33
 	//INIT1 := 51
-	//INIT1 := 119
-	PLAYER := 8
+	INIT1 := 119
+	PLAYER := 3000
 
 	if INIT1 == 33 || INIT2 == 33 {
 		DEPTH = 5
