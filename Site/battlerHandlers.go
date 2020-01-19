@@ -17,7 +17,7 @@ import (
 /*
 //IMPORTANT
 //TODO frontend 2. friendlist 3. mainpage 4. icons
-//5. header of the site 6. shop. 7. conversion 8. css 9. login, 10. register new pages
+//5. header of the site 6. shop. 8. css 9. login, 10. register new pages
 //todo linux support, get a server
 //TODO DDOS protecction (not cloudflare apparently)
 
@@ -25,7 +25,6 @@ import (
 //TODO telegram bot
 //TODO random damage
 //todo quality of the pics
-//todo offline for
 //TODO global chat
 //TODO dms chat
 //TODO notifications

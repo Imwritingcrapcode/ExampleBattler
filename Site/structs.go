@@ -292,6 +292,17 @@ type ConvResponse struct {
 	IsConvertingRN       bool
 	CurrentProgress      int
 	Left      int
+	Amount      int
+	DustType      string
+	MoneyInfo `json:"MoneyInfo"`
+}
+
+type MoneyInfo struct {
+	W int `json:"w"`
+	B int `json:"b"`
+	Y int `json:"y"`
+	G int `json:"g"`
+	S int `json:"s"`
 }
 
 /*var ConversionRate = map[string]float64{
@@ -302,10 +313,10 @@ type ConvResponse struct {
 }
 
 var SecondsPerConversion = map[string]int{
-	"w": 0,
-	"b": 0,
-	"y": 0,
-	"g": 0,
+	"w": 1,
+	"b": 1,
+	"y": 1,
+	"g": 1,
 }*/
 
 var ConversionRate = map[string]float64{

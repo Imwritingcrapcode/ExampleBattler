@@ -107,7 +107,7 @@
 
 }
 
-function mousePressed() {
+function mouseClicked() {
     let x = mouseX;
     let y = mouseY;
     if (topPanel.in(x, y)) {
@@ -505,8 +505,6 @@ function enableButtons(State) {
             getElement(property).setState(State[property]);
         }
     }
-
-
 }
 
 function enableOppButtons(State) {
@@ -515,5 +513,111 @@ function enableOppButtons(State) {
         if (State.hasOwnProperty(property)) {
             getElement(property).setState(State[property]);
         }
+    }
+}
+
+function connectToServer() {
+    if (ws) {
+        return
+    }
+    let loc = window.location, new_uri;
+    if (loc.protocol === "https:") {
+        new_uri = "wss:";
+    } else {
+        new_uri = "ws:";
+    }
+    new_uri += "//" + loc.host + "/battler";
+    ws = new WebSocket(new_uri);
+
+    ws.onopen = function (evt) {
+        console.log("OPEN");
+        connected = true;
+    };
+    ws.onclose = function (evt) {
+        console.log("CLOSE");
+        ws = null;
+    };
+    ws.onmessage = function (evt) {
+        console.log("RESPONSE:");
+        //JSONED = evt.data;
+        let battleresponse = JSON.parse(evt.data);
+        console.log(battleresponse);
+        parseState(battleresponse);
+    };
+    ws.onerror = function (evt) {
+        let errs = getElement("info");
+        errs.setColour(color(red2));
+        errs.setText("Failed to connect to the server!");
+        console.log("ERROR: " + evt);
+    };
+}
+
+function keyPressed() {
+    if (key === ' ' && getElement("back") && getElement("back").clickable) {
+        getElement("back").clicked()
+    }
+    if (!Are_buttons_disabled) {
+        if ((key === 'q' || key === 'a') && getElement("Q").clickable) {
+            getElement("Q").clicked()
+        } else if ((key === 'w' || key === 'z') && getElement("W").clickable) {
+            getElement("W").clicked()
+        } else if (key === 'e' && getElement("E").clickable) {
+            getElement("E").clicked()
+        } else if (key === 'r' && getElement("R").clickable) {
+            getElement("R").clicked()
+        }
+    }
+
+}
+
+function sendSkill(Skill) {
+    if (connected) {
+        if (Are_buttons_disabled) {
+            return
+        }
+        disableButtons(0);
+        ws.send(JSON.stringify(Skill));
+    } else {
+        let info = getElement("info");
+        info.setColour(red2);
+        info.setText("You are not connected to the server.");
+        console.log("Not connected yet!\n");
+        connectToServer();
+    }
+}
+
+function getElement(id) {
+    for (obj of leftPanel.objects) {
+        if (obj.id === id) {
+            return obj
+        }
+    }
+    for (obj of rightPanel.objects) {
+        if (obj.id === id) {
+            return obj
+        }
+    }
+    for (obj of topPanel.objects) {
+        if (obj.id === id) {
+            return obj
+        }
+    }
+    for (obj of bottomPanel.objects) {
+        if (obj.id === id) {
+            return obj
+        }
+    }
+}
+
+function calculateHPperFrame(HP, targetHP) {
+    let totalFrames = 60;
+    let num = targetHP - HP;
+    if (num > 0) {
+        return Math.ceil(num / totalFrames)
+    } else if (num < 0) {
+        return Math.floor(num / totalFrames)
+    } else {
+        console.log("ERROR WITH SPEED", HP, targetHP);
+        return 0;
     }
 }

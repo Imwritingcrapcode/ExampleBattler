@@ -12,42 +12,6 @@ function sortMap(map) {
     return tupleArray;
 }
 
-function connectToServer() {
-    if (ws) {
-        return
-    }
-    let loc = window.location, new_uri;
-    if (loc.protocol === "https:") {
-        new_uri = "wss:";
-    } else {
-        new_uri = "ws:";
-    }
-    new_uri += "//" + loc.host + "/battler";
-    ws = new WebSocket(new_uri);
-
-    ws.onopen = function (evt) {
-        console.log("OPEN");
-        connected = true;
-    };
-    ws.onclose = function (evt) {
-        console.log("CLOSE");
-        ws = null;
-    };
-    ws.onmessage = function (evt) {
-        console.log("RESPONSE:");
-        //JSONED = evt.data;
-        let battleresponse = JSON.parse(evt.data);
-        console.log(battleresponse);
-        parseState(battleresponse);
-    };
-    ws.onerror = function (evt) {
-        let errs = getElement("info");
-        errs.setColour(color(red2));
-        errs.setText("Failed to connect to the server!");
-        console.log("ERROR: " + evt);
-    };
-}
-
 function countdown(value, where, yesno) {
     timeleft = value - 1;
     if (timeleft < 0) {
@@ -57,7 +21,7 @@ function countdown(value, where, yesno) {
             return;
         }
         isTicking = false;
-        console.log("turn times out");
+        console.log("countdown times out");
         displayTimer(-1);
     } else {
         displayTimer(timeleft);
@@ -78,24 +42,6 @@ function redirect(yesno) {
     doredirect = yesno;
 }
 
-function keyPressed() {
-    if (key === ' ' && getElement("back") && getElement("back").clickable) {
-        getElement("back").clicked()
-    }
-    if (!Are_buttons_disabled) {
-        if ((key === 'q' || key === 'a') && getElement("Q").clickable) {
-            getElement("Q").clicked()
-        } else if ((key === 'w' || key === 'z') && getElement("W").clickable) {
-            getElement("W").clicked()
-        } else if (key === 'e' && getElement("E").clickable) {
-            getElement("E").clicked()
-        } else if (key === 'r' && getElement("R").clickable) {
-            getElement("R").clicked()
-        }
-    }
-
-}
-
 function getTurnNum(i) {
     return Math.floor((i - 1) / 2 + 1);
 }
@@ -112,45 +58,6 @@ function getChar(event) {
     }
     return ""; // symb
 
-}
-
-function sendSkill(Skill) {
-    if (connected) {
-        if (Are_buttons_disabled) {
-            return
-        }
-        disableButtons(0);
-        ws.send(JSON.stringify(Skill));
-    } else {
-        let info = getElement("info");
-        info.setColour(red2);
-        info.setText("You are not connected to the server.");
-        console.log("Not connected yet!\n");
-        connectToServer();
-    }
-}
-
-function getElement(id) {
-    for (obj of leftPanel.objects) {
-        if (obj.id === id) {
-            return obj
-        }
-    }
-    for (obj of rightPanel.objects) {
-        if (obj.id === id) {
-            return obj
-        }
-    }
-    for (obj of topPanel.objects) {
-        if (obj.id === id) {
-            return obj
-        }
-    }
-    for (obj of bottomPanel.objects) {
-        if (obj.id === id) {
-            return obj
-        }
-    }
 }
 
 function roundUp(num) {
@@ -218,15 +125,66 @@ function displayStandardHoverBubble(hoverText, lines) {
     text(hoverText, mouseX + 10 + changerForFlipping, mouseY + changerForFlippingY + 5, 290);
 }
 
-function calculateHPperFrame(HP, targetHP) {
-    let totalFrames = 60;
-    let num = targetHP - HP;
-    if (num > 0) {
-        return Math.ceil(num / totalFrames)
-    } else if (num < 0) {
-        return Math.floor(num / totalFrames)
-    } else {
-        console.log("ERROR WITH SPEED", HP, targetHP);
-        return 0;
+function parseSeconds(n, strip) {
+    let mins = Math.floor(n / 60);
+    let rem_secs = n - mins * 60;
+    let hrs = Math.floor(mins / 60);
+    let rem_mins = mins - hrs * 60;
+    let days = Math.floor(hrs / 24);
+    let rem_hrs = hrs - days * 24;
+    let full = "";
+    if (days > 0) {
+        if (days === 1) {
+            full += days + " day";
+        } else {
+            full += days + " days";
+        }
+        if (strip) {
+            if (days > 364) {
+                return "-1"
+            } else {
+                return full
+            }
+        } else {
+            full += ", "
+        }
     }
+    if (rem_hrs > 0) {
+        if (rem_hrs === 1) {
+            full += rem_hrs + " hour";
+        } else {
+            full += rem_hrs + " hours";
+        }
+        if (strip) {
+            return full
+        } else {
+            full += ", "
+        }
+    }
+    if (rem_mins > 0) {
+        if (rem_mins === 1) {
+            full += rem_mins + " minute";
+        } else {
+            full += rem_mins + " minutes";
+        }
+        if (strip) {
+            return full
+        } else {
+            full += ", "
+        }
+    }
+    if (rem_secs >= 0) {
+        if (rem_secs === 1) {
+            full += rem_secs + " second";
+        } else {
+            full += rem_secs + " seconds";
+        }
+        if (strip) {
+            return "less than a minute"
+        } else {
+            full += "."
+        }
+    }
+
+    return full;
 }

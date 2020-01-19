@@ -13,7 +13,6 @@ CLICKEDC = 'rgba(120, 120, 200, 1)';
 HOVERC = 'rgba(255, 255, 255, 0.87)';
 WINC = 'rgb(255, 182, 13)';
 
-
 //SHORTCUTS FOR COLOURS
 RED = 'rgba(255, 65, 51, 1)';
 ORANGE = 'rgba(255, 131, 36, 1)';
@@ -27,6 +26,14 @@ GREY = 'rgba(90, 90, 90, 1)';
 BROWN = 'rgba(120, 50, 35, 1)';
 BLACK = 'rgba(0, 0, 0, 1)';
 WHITE = 'rgba(200, 200, 200, 1)';
+
+//RARITY COLOURS
+STCOLOUR = DARKC;
+ADCOLOUR = BLUE;
+SPCOLOUR = YELLOW;
+RPCOLOUR = GREEN;
+LFCOLOUR = WINC;
+
 
 EFFECTDESCRIPTIONS = [
     [0, "Doubles the damage you deal."],
@@ -61,6 +68,14 @@ let COLOURIDS = [
     ["Black", BLACK],
     ["White", WHITE],
 ];
+
+let DUSTS = new Map([
+    ["w", "White"],
+    ["b", "Blue"],
+    ["y", "Yellow"],
+    ["g", "Green"],
+    ["s", "Star"],
+]);
 
 let SKILLDESCRIPTIONS = new Map([
     ["Your Number", "Deal 10 + the remainder of your opponent's number divided by 7 Orange damage."],

@@ -198,13 +198,13 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ScriptsHandler(w http.ResponseWriter, r *http.Request) {
-	AlrdyLoggedIn, session := IsLoggedIn(r)
+	AlrdyLoggedIn, _ := IsLoggedIn(r)
 	if !AlrdyLoggedIn || r.URL.Path == "/scripts" || r.URL.Path == "/scripts/" {
 		log.Println("[SCRIPTS] access denied!")
 		Redirect(w, r, "/login")
 	} else {
-		user := FindBaseID(session.UserID)
-		log.Println("[SCRIPTS] access by", user.Username)
+		//user := FindBaseID(session.UserID)
+		//log.Println("[SCRIPTS] access by", user.Username)
 		pwd, _ := os.Getwd()
 		fs := http.FileServer(http.Dir(pwd + "\\scripts"))
 		realhandler := http.StripPrefix("/scripts/", fs).ServeHTTP

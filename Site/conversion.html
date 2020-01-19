@@ -2,24 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Battle rewards</title>
-    <script>
-        function convert(requestType, amount, dustType) {
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '/conversion', true);
-            xhr.send(JSON.stringify({
-                ReqType: requestType,
-                Amount: amount,
-                DustType: dustType}));
-            xhr.onreadystatechange = (e) => {
-                if (xhr.readyState === 4) {
-                    console.log(xhr.responseText);
-                }
-            };
+    <title>Conversion</title>
+    <script src="/scripts/p5.min.js"></script>
+    <script src="/scripts/constants.js"></script>
+    <script src="/scripts/utils.js"></script>
+    <script src="/scripts/conversion.js"></script>
+    <script src="/scripts/loading%20bar.js"></script>
+    <script src="/scripts/interface%20structs.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #E6E6E6;
+            color: #323232;
+            font-size: x-large;
         }
 
+        input[type=checkbox] {
+            /* Double-sized Checkboxes */
+            -ms-transform: scale(2); /* IE */
+            -moz-transform: scale(2); /* FF */
+            -webkit-transform: scale(2); /* Safari and Chrome */
+            -o-transform: scale(2); /* Opera */
+            padding: 10px;
+        }
 
-    </script>
+        label {
+            white-space: pre;
+            font-size: x-large;
+        }
+    </style>
 </head>
 <body>
 <table WIDTH="100%">
@@ -36,7 +47,6 @@
         <td>
             <div class="right" align="right"><a href="/logout">Logout</a></div>
         </td>
-
     </tr>
 </table>
 <br>
@@ -44,8 +54,21 @@
 <table WIDTH="100%">
     <tr>
         <td>
-            <div align="center" id="items">
+            <div id="items" align="center">
             </div>
+            <table width="1024px" align="center" border="0">
+                <tr>
+                    <td width = "10px">
+                    </td>
+                    <td width = "502px">
+                        <div align="left" id="rarityselect"></div>
+                    </td>
+                    <td width="512px">
+                        <div align="center" id="number">0</div>
+                    </td>
+
+                </tr>
+            </table>
         </td>
     </tr>
 </table>

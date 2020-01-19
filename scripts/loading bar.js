@@ -3,36 +3,41 @@ function LoadingBar(x, y, w, h, radius, id, c, c2) {
     this.clickable = false;
     this.hoverable = false;
     this.rectColour = c;
-    this.otherColour = c2;
+    this.rightColour = c2;
     this.stopColour = c;
     this.percentage = 0.0;
     this.newPercentage = 0.0;
     this.x = x;
     this.y = y;
-    this.initial_w = w;
+    this.width = w;
     this.w = 0;
     this.h = h;
     this.radius = radius;
 
     this.display = function () {
-        this.w = round(this.initial_w * this.percentage / 100);
-        this.stopColour = lerpColor(this.rectColour, this.otherColour, this.percentage / 100);
-        this.setGradient(this.x, this.y, this.w, this.h, this.radius, this.rectColour, this.stopColour);
+        this.w = round(this.width * this.percentage / 100);
+        this.stopColour = lerpColor(this.rectColour, this.rightColour, this.percentage / 100);
+        this.setGradient(this.rectColour, this.stopColour);
         stroke(this.rectColour);
         strokeWeight(1);
         noFill();
-        rect(this.x, this.y, this.initial_w, this.h, this.radius);
+        rect(this.x, this.y, this.width, this.h, this.radius);
     };
 
-    this.setPercentage = function(perc) {
+    this.setPercentage = function (perc) {
         this.percentage = perc;
     };
 
-    this.setNewPercentage = function(new_perc) {
+    this.setNewPercentage = function (new_perc) {
         this.newPercentage = new_perc;
     };
 
-    this.setGradient = function(x, y, w, h, r, c1, c2) {
+    this.setGradient = function (c1, c2) {
+        let x = this.x;
+        let y = this.y;
+        let w = this.w;
+        let h = this.h;
+        let r = this.radius;
         noFill();
         strokeWeight(2);
         //circle at the beginning
@@ -60,5 +65,26 @@ function LoadingBar(x, y, w, h, radius, id, c, c2) {
             let bot_y = y + h - r + sqrt(sq(r) - sq(i - x - w + r));
             line(i, top_y, i, bot_y);
         }
+    };
+
+    this.in = function() {
+        let x = mouseX;
+        let y = mouseY;
+        return (this.x <= x && x <= (this.width + this.x) && this.y <= y && y <= (this.h + this.y))
+    };
+
+    this.setColours = function (c1, c2) {
+        this.rectColour = c1;
+        this.rightColour = c2;
+    };
+
+    this.makeDraggable = function() {
+        this.clickable = true;
+        this.draggable = true;
+    };
+
+    this.makeNotDraggable = function() {
+        this.clickable = false;
+        this.draggable = false;
     }
 }

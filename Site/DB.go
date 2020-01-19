@@ -97,20 +97,24 @@ func GetFriendData(userID int64, mutual bool) []string {
 	var info []string
 	var name string
 	var activity int
+	var duration int64
 	if mutual { //get activity
-		rows, err := DATABASE.Query("SELECT username, activity FROM users INNER JOIN userData ON users.userID = userData.userID WHERE users.userID = " + strconv.FormatInt(userID, 10))
+		rows, err := DATABASE.Query("SELECT username, activity, lastActivityTime FROM users INNER JOIN userData ON users.userID = userData.userID WHERE users.userID = " + strconv.FormatInt(userID, 10))
 		if err != nil {
 			log.Println("[GetFriendData] " + err.Error())
 			return nil
 		}
 		if rows.Next() {
-			rows.Scan(&name, &activity)
+			rows.Scan(&name, &activity, &duration)
 			rows.Close()
 			actString := ActivitiesToString[activity]
 			info = append(info, name, actString)
 			if activity == PlayingAs {
 				charNum := GetLastPlayedAs(userID)
 				info = append(info, ReleasedCharactersNames[charNum])
+			} else if activity == Offline {
+				curTime := time.Now().UTC().UnixNano()
+				info = append(info, strconv.Itoa(int(time.Duration(curTime - duration).Seconds())))
 			}
 		} else {
 			rows.Close()
@@ -861,44 +865,37 @@ func GetFriendLists(userID int64) *FriendList {
 }
 
 //CONVERSION
-func GetConversionInfo(userID int64) (bool, int, int) {
-	rows, err := DATABASE.Query("SELECT begins, duration FROM conversions WHERE userID = " + strconv.FormatInt(userID, 10))
+func GetConversionInfo(userID int64) (bool, int, int, string, int) {
+	rows, err := DATABASE.Query("SELECT begins, duration, type, give FROM conversions WHERE userID = " + strconv.FormatInt(userID, 10))
 	if err != nil {
 		log.Println("[GetConversionInfo]", userID, err)
 	}
 	if rows.Next() {
 		var begins int64
 		var duration int
-		rows.Scan(&begins, &duration)
+		var dtype string
+		var amnt int
+		rows.Scan(&begins, &duration, &dtype, &amnt)
 		rows.Close()
 		curTime := time.Now().UnixNano()
 		secondsPassed := int(time.Duration(curTime - begins).Seconds())
 		if secondsPassed >= duration {
-			return true, duration, 0
+			return true, duration, 0, dtype, amnt
 		} else {
-			return true, secondsPassed, duration - secondsPassed
+			return true, secondsPassed, duration - secondsPassed, dtype, amnt
 		}
 	} else {
-		return false, -1, -1
+		return false, -1, -1, "", -1
 	}
 }
 
 func ClaimConversion(UserID int64) {
-	isConverting, _, secondsLeft := GetConversionInfo(UserID)
+	isConverting, _, secondsLeft, dustType, amnt := GetConversionInfo(UserID)
 	if !isConverting || secondsLeft > 0 {
 		log.Println("[Claim Conversion] called too early")
 		return
 	}
-	//there is a ready claim. 1. Get info
-	rows, err := DATABASE.Query("SELECT give, type FROM conversions WHERE userID = " + strconv.FormatInt(UserID, 10))
-	if err != nil {
-		log.Println("[GetConversionInfo]", UserID, err)
-	}
-	rows.Next()
-	var amnt int
-	var dustType string
-	rows.Scan(&amnt, &dustType)
-	rows.Close()
+
 	//2. Delet the old conversion
 	del, err := DATABASE.Prepare("DELETE FROM conversions WHERE userID = " + strconv.FormatInt(UserID, 10))
 	if err != nil {

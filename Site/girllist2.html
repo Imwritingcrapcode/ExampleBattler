@@ -20,48 +20,9 @@
             padding: 10px;
         }
 
-        div #name {
-            font-weight: bold;
-            font-size: xx-large;
-        }
-
-        #buttonsdiv {
-            width: 1024px;
-        }
-
         label {
             white-space: pre;
             font-size: x-large;
-        }
-
-        .girlnamebutton {
-            vertical-align: top;
-            font-size: 25px;
-            width: 100%;
-            height: 70px;
-            float: top;
-        }
-
-        .basicbutton {
-            vertical-align: top;
-            font-size: 20px;
-            height: 70px;
-            width: 150px;
-        }
-
-        .battlebutton {
-            vertical-align: top;
-            font-size: 35px;
-        }
-
-        #preloader {
-            display: inline-block;
-            vertical-align: center;
-            float: right;
-        }
-
-        #battle {
-            float: right;
         }
 
         span {
@@ -186,23 +147,23 @@
         switch (curGirl.Rarity) {
             case "LF":
                 //star
-                getElementRight("rarity").setColour(WINC);
+                getElementRight("rarity").setColour(LFCOLOUR);
                 break;
             case "RP":
                 //green
-                getElementRight("rarity").setColour(GREEN);
+                getElementRight("rarity").setColour(RPCOLOUR);
                 break;
             case "SP":
                 //yellow
-                getElementRight("rarity").setColour(YELLOW);
+                getElementRight("rarity").setColour(SPCOLOUR);
                 break;
             case "AD":
                 //blue
-                getElementRight("rarity").setColour(BLUE);
+                getElementRight("rarity").setColour(ADCOLOUR);
                 break;
             case "ST":
                 //white
-                getElementRight("rarity").setColour(DARKC);
+                getElementRight("rarity").setColour(STCOLOUR);
                 break;
             default:
                 console.log("EXCUSE ME");

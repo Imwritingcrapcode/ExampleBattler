@@ -155,6 +155,7 @@ function ImageBox() {
 }
 
 function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
+    this.visible = true;
     this.id = id;
     this.x = x;
     this.y = y;
@@ -198,98 +199,116 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     }
     this.hoverText = "";
 
-    this.display = function () {
-        /*let temp_c = color(rightc.toString());
-        temp_c.setAlpha(150);
-        stroke(temp_c);
-        strokeWeight(2);
-        temp_c.setAlpha(50);
-        fill(temp_c);
-        if (this.type !== "info") {
-            rect(this.x, this.y-this.height, this.width, this.height);
-        } else {
-            rect(this.x, this.y, this.width, this.height);
-        }*/
 
-        //do the rest
-        if (this.type === "effects") {
-            stroke(this.textColour);
-            strokeWeight(1);
-            fill(this.textColour);
-            textSize(this.textSize);
-            let asc = textAscent();
-            let desc = textDescent();
-            if (this.id[this.id.length - 1] === "2") {
-                textAlign(RIGHT);
-                for (let i = this.text.length - 1; i >= 0; i--) {
-                    this.images[i].display();
-                    let y_pos = asc - desc + this.images[i].height / 4;
-                    text(this.text[i], this.x + this.width - this.images[i].width - 5, this.y - this.height + this.images[i].height * (i) + y_pos);
-                }
+    this.hide = function () {
+        this.visible = false;
+        this.wasClickable = this.clickable;
+        this.wasHoverable = this.hoverable;
+        this.clickable = false;
+        this.hoverable = false;
+    };
+
+    this.show = function() {
+        this.visible = true;
+        this.clickable = this.wasClickable;
+        this.hoverable = this.wasHoverable;
+
+    };
+
+    this.display = function () {
+        if (this.visible) {
+            /*let temp_c = color(rightc.toString());
+            temp_c.setAlpha(150);
+            stroke(temp_c);
+            strokeWeight(2);
+            temp_c.setAlpha(50);
+            fill(temp_c);
+            if (this.type !== "info") {
+                rect(this.x, this.y-this.height, this.width, this.height);
             } else {
+                rect(this.x, this.y, this.width, this.height);
+            }*/
+
+            //do the rest
+            if (this.type === "effects") {
+                stroke(this.textColour);
+                strokeWeight(1);
+                fill(this.textColour);
+                textSize(this.textSize);
+                let asc = textAscent();
+                let desc = textDescent();
+                if (this.id[this.id.length - 1] === "2") {
+                    textAlign(RIGHT);
+                    for (let i = this.text.length - 1; i >= 0; i--) {
+                        this.images[i].display();
+                        let y_pos = asc - desc + this.images[i].height / 4;
+                        text(this.text[i], this.x + this.width - this.images[i].width - 5, this.y - this.height + this.images[i].height * (i) + y_pos);
+                    }
+                } else {
+                    textAlign(LEFT);
+                    for (let i = 0; i < this.text.length; i++) {
+                        this.images[i].display();
+                        let y_pos = asc - desc + this.images[i].height / 4;
+                        text(this.text[i], this.x + this.images[i].width + 5, this.y - this.height + this.images[i].height * (i) + y_pos);
+                    }
+                }
+            }
+            else if (this.type === "info") {
+                stroke(this.textColour);
+                strokeWeight(1);
+                fill(this.textColour);
+                textSize(this.textSize);
+                textAlign(CENTER);
+                text(this.text, this.x, this.y, this.width);
+            }
+            else {
+                if ((this.id === "playerHP" || this.id === "oppHP") && this.framesLeft > 0) {
+                    this.framesLeft--;
+                    if (this.HP + this.speed > this.targetHP && this.speed < 0 ||
+                        this.HP + this.speed < this.targetHP && this.speed > 0) { //if it's worth it yet
+                        this.HP = this.HP + this.speed;
+                        if (this.id === "playerHP") {
+                            setHP(this, this.HP, this.MaxHP)
+                        } else {
+                            setOppHP(this, this.HP, this.MaxHP)
+                        }
+                    } else { //end
+                        this.HP = this.targetHP;
+                        if (this.id === "playerHP") {
+                            setHP(this, this.HP, this.MaxHP)
+                        } else {
+                            setOppHP(this, this.HP, this.MaxHP)
+                        }
+                        this.framesLeft = 0;
+                    }
+                }
+                if (((this.id === "playerHP" || this.id === "oppHP") && this.framesLeftMax > 0)) {
+                    this.framesLeftMax--;
+                    if (this.MaxHP + this.speedMax > this.targetMaxHP && this.speedMax < 0 ||
+                        this.MaxHP + this.speedMax < this.targetMaxHP && this.speedMax > 0) { //if it's worth it yet
+                        this.MaxHP = this.MaxHP + this.speedMax;
+                        if (this.id === "playerHP") {
+                            setHP(this, this.HP, this.MaxHP)
+                        } else {
+                            setOppHP(this, this.HP, this.MaxHP)
+                        }
+                    } else { //end
+                        this.MaxHP = this.targetMaxHP;
+                        if (this.id === "playerHP") {
+                            setHP(this, this.HP, this.MaxHP)
+                        } else {
+                            setOppHP(this, this.HP, this.MaxHP)
+                        }
+                        this.framesLeftMax = 0;
+                    }
+                }
+                stroke(this.textColour);
+                strokeWeight(1);
+                fill(this.textColour);
+                textSize(this.textSize);
                 textAlign(LEFT);
-                for (let i = 0; i < this.text.length; i++) {
-                    this.images[i].display();
-                    let y_pos = asc - desc + this.images[i].height / 4;
-                    text(this.text[i], this.x + this.images[i].width + 5, this.y - this.height + this.images[i].height * (i) + y_pos);
-                }
+                text(this.text, this.x, this.y - 5);
             }
-        }
-        else if (this.type === "info") {
-            stroke(this.textColour);
-            strokeWeight(1);
-            fill(this.textColour);
-            textSize(this.textSize);
-            textAlign(CENTER);
-            text(this.text, this.x, this.y, this.width);
-        }
-        else {
-            if ((this.id === "playerHP" || this.id === "oppHP") && this.framesLeft > 0) {
-                this.framesLeft--;
-                if (this.HP + this.speed > this.targetHP && this.speed < 0 ||
-                    this.HP + this.speed < this.targetHP && this.speed > 0) { //if it's worth it yet
-                    this.HP = this.HP + this.speed;
-                    if (this.id === "playerHP") {
-                        setHP(this, this.HP, this.MaxHP)
-                    } else {
-                        setOppHP(this, this.HP, this.MaxHP)
-                    }
-                } else { //end
-                    this.HP = this.targetHP;
-                    if (this.id === "playerHP") {
-                        setHP(this, this.HP, this.MaxHP)
-                    } else {
-                        setOppHP(this, this.HP, this.MaxHP)
-                    }
-                    this.framesLeft = 0;
-                }
-            }
-            if (((this.id === "playerHP" || this.id === "oppHP") && this.framesLeftMax > 0)) {
-                this.framesLeftMax--;
-                if (this.MaxHP + this.speedMax > this.targetMaxHP && this.speedMax < 0 ||
-                    this.MaxHP + this.speedMax < this.targetMaxHP && this.speedMax > 0) { //if it's worth it yet
-                    this.MaxHP = this.MaxHP + this.speedMax;
-                    if (this.id === "playerHP") {
-                        setHP(this, this.HP, this.MaxHP)
-                    } else {
-                        setOppHP(this, this.HP, this.MaxHP)
-                    }
-                } else { //end
-                    this.MaxHP = this.targetMaxHP;
-                    if (this.id === "playerHP") {
-                        setHP(this, this.HP, this.MaxHP)
-                    } else {
-                        setOppHP(this, this.HP, this.MaxHP)
-                    }
-                    this.framesLeftMax = 0;
-                }
-            }
-            stroke(this.textColour);
-            strokeWeight(1);
-            fill(this.textColour);
-            textSize(this.textSize);
-            textAlign(LEFT);
-            text(this.text, this.x, this.y - 5);
         }
     };
 
@@ -550,7 +569,7 @@ function TurnLog(x, y, colour, size, id, width, height, hoverable) {
             this.isTransitioning = true;
             this.transitioningUp = true;
         } else {
-            this.frame = Math.ceil((this.maxFramesDown - this.frame)/this.maxFramesDown*this.maxFramesUp);
+            this.frame = Math.ceil((this.maxFramesDown - this.frame) / this.maxFramesDown * this.maxFramesUp);
             //this.frame = this.maxframes - this.frame;
         }
     };
@@ -561,7 +580,7 @@ function TurnLog(x, y, colour, size, id, width, height, hoverable) {
             this.isTransitioning = true;
             this.transitioningUp = false;
         } else {
-            this.frame = Math.ceil((this.maxFramesUp - this.frame)/this.maxFramesUp*this.maxFramesDown);
+            this.frame = Math.ceil((this.maxFramesUp - this.frame) / this.maxFramesUp * this.maxFramesDown);
             //this.frame = this.maxframes - this.frame;
         }
     };
@@ -982,27 +1001,45 @@ function StandardButton(x, y, s, t, size, id, col) {
         this.hoverTimer = 0;
         this.hoverLinger = 180;
     }
+    this.visible = true;
+
+    this.hide = function () {
+        this.visible = false;
+        this.wasClickable = this.clickable;
+        this.wasHoverable = this.hoverable;
+        this.clickable = false;
+        this.hoverable = false;
+    };
+
+    this.show = function() {
+        this.visible = true;
+        this.clickable = this.wasClickable;
+        this.hoverable = this.wasHoverable;
+
+    };
 
     this.display = function () {
-        if (this.isTransitioning) {
-            if (this.frame <= this.maxframes) {
-                this.frame++;
-                this.colour = lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
-            } else {
-                this.frame = 0;
-                this.isTransitioning = false;
+        if (this.visible) {
+            if (this.isTransitioning) {
+                if (this.frame <= this.maxframes) {
+                    this.frame++;
+                    this.colour = lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
+                } else {
+                    this.frame = 0;
+                    this.isTransitioning = false;
+                }
             }
+            noStroke();
+            fill(this.colour);
+            strokeWeight(1);
+            textSize(this.textSize);
+            rect(this.x, this.y, this.width, this.height, this.smooth);
+            stroke(this.textColour);
+            fill(this.textColour);
+            textAlign(LEFT, CENTER);
+            text(this.text, this.x + 5, this.y + this.height / 2);
+            textAlign(LEFT, BASELINE);
         }
-        noStroke();
-        fill(this.colour);
-        strokeWeight(1);
-        textSize(this.textSize);
-        rect(this.x, this.y, this.width, this.height, this.smooth);
-        stroke(this.textColour);
-        fill(this.textColour);
-        textAlign(LEFT, CENTER);
-        text(this.text, this.x + 5, this.y + this.height / 2);
-        textAlign(LEFT, BASELINE);
     };
 
     this.in = function () {
@@ -1019,12 +1056,12 @@ function StandardButton(x, y, s, t, size, id, col) {
             window.location = '/afterbattle';
             return
         }
-        if (!this.warned) {
+        if (!this.warned && this.id === "GiveUp") {
             this.warned = true;
             let info = getElement("info");
             info.setColour(dark);
             info.setText("Are you sure you want to give up? If so, click this button again.");
-        } else {
+        } else if (this.id === "GiveUp") {
             sendSkill(this.id);
         }
     };
@@ -1040,7 +1077,7 @@ function StandardButton(x, y, s, t, size, id, col) {
     this.setText = function (t) {
         this.text = t;
         textSize(this.textSize);
-        this.width = textWidth(t);
+        this.width = textWidth(t) + 10;
     };
 
     this.hovered = function () {

@@ -43,6 +43,7 @@
             border-top: 1px solid #ccc;
         }
     </style>
+    <script src="/scripts/utils.js"></script>
     <script>
         friends = [];
         incoming = [];
@@ -89,7 +90,16 @@
                     console.log("you have friends");
                     let prefix = friend[0] + " " + friend[1];
                     if (friend.length === 3) {
-                        prefix += " " + friend[2];
+                        if (friend[1] === "Playing as") {
+                            prefix += " " + friend[2];
+                        } else if (friend[1] === "Offline") {
+                            let time = parseSeconds(parseInt(friend[2]), true);
+                            if (time === "-1") {
+                                console.log("so long omg", friend[0])
+                            } else {
+                                prefix += " for " + time;
+                            }
+                        }
                     }
                     let postfix = " <button class=\"removefriend\" onclick='removeFriend(\"" + friend[0] + "\")'>✖</button><br>";
                     innerHTML += prefix + postfix;
