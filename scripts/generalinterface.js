@@ -519,7 +519,6 @@ function LoadingScreen(p, x, y, w, h) {
     }
 }
 
-
 function interfaceCalculateLines(p, hoverText, width, size) {
     if (!width) {
         width = 290;

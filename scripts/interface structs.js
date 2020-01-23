@@ -181,9 +181,9 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
             this.targetHP = undefined;
             this.speed = 0;
             this.framesLeft = 0;
-            this.speedMax = undefined;
             this.targetMaxHP = undefined;
-            this.framesLeftMax = 30;
+            this.speedMax = 0;
+            this.framesLeftMax = 0;
         }
         this.text = t;
         this.width = size * t.length;
@@ -275,7 +275,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     } else { //end
                         this.HP = this.targetHP;
                         if (this.id === "playerHP") {
-                            setHP(this, this.HP, this.MaxHP)
+                            setHP(this, this.HP, this.MaxHP);
                         } else {
                             setOppHP(this, this.HP, this.MaxHP)
                         }
@@ -283,19 +283,20 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     }
                 }
                 if (((this.id === "playerHP" || this.id === "oppHP") && this.framesLeftMax > 0)) {
-                    this.framesLeftMax--;
+                    this.framesLeftMax-=1;
                     if (this.MaxHP + this.speedMax > this.targetMaxHP && this.speedMax < 0 ||
                         this.MaxHP + this.speedMax < this.targetMaxHP && this.speedMax > 0) { //if it's worth it yet
                         this.MaxHP = this.MaxHP + this.speedMax;
                         if (this.id === "playerHP") {
-                            setHP(this, this.HP, this.MaxHP)
+                            setHP(this, this.HP, this.MaxHP, 1);
+                            console.log(this.MaxHP);
                         } else {
                             setOppHP(this, this.HP, this.MaxHP)
                         }
                     } else { //end
                         this.MaxHP = this.targetMaxHP;
                         if (this.id === "playerHP") {
-                            setHP(this, this.HP, this.MaxHP)
+                            setHP(this, this.HP, this.MaxHP);
                         } else {
                             setOppHP(this, this.HP, this.MaxHP)
                         }
@@ -653,6 +654,21 @@ function SkillButton(x, y, type, t, id, mine) {
         let height = this.textSize;
         let len = this.text.length;
         switch (this.type) {
+            case 5:
+                stroke(border);
+                fill(c);
+                strokeWeight(this.borderWidth);
+                rect(this.x, this.y, this.width, this.height, 15, 15, 15, 15);
+                noStroke();
+                fill(this.textColour);
+                textAlign(CENTER);
+                textSize(this.textSize);
+                /*stroke(color(255, 0, 0));
+                line(x, y + h/2, x+w, y + h/2);*/
+                for (let i = 0; i < len; i++) {
+                    text(t[i], x + w / 2, y + h / 2 + height * (i + 1 - len / 2) - 5);
+                }
+                break;
             case 1:
                 //shape
                 stroke(border);
@@ -857,7 +873,9 @@ function SkillButton(x, y, type, t, id, mine) {
 
     this.setText = function (t) {
         this.hoverText = SKILLDESCRIPTIONS.get(t);
-        this.hoverLines = calculateLines(this.hoverText);
+        if (!!this.hoverText) {
+            this.hoverLines = calculateLines(this.hoverText);
+        }
         this.text = split(t, " ");
         let w = this.width;
         this.textSize = 50;
@@ -868,7 +886,6 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.textSize--;
                 textSize(this.textSize);
                 width = textWidth(word);
-
             }
         }
     };
@@ -930,14 +947,18 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.borderWidth = 3;
                 break;
             default:
-                this.baseColour.setAlpha(0.5 * 255);
-                this.hoverColour.setAlpha(0.5 * 255);
-                this.clickedColour.setAlpha(0.5 * 255);
-                this.textColour = color(light.toString());
-                this.textColour.setAlpha(0.5 * 255);
-                this.borderColour = light;
-                this.clickable = false;
-                this.borderWidth = 3;
+                this.baseColour.setAlpha(0.87 * 255);
+                this.hoverColour.setAlpha(0.87 * 255);
+                this.clickedColour.setAlpha(0.87 * 255);
+                if (isLight(this.baseColour)) {
+                    this.textColour = color(dark.toString())
+                } else {
+                    this.textColour = color(light.toString())
+                }
+                this.textColour.setAlpha(0.87 * 255);
+                this.borderColour = dark;
+                this.clickable = this.isMine;
+                this.borderWidth = 4.5;
                 break;
         }
     };
