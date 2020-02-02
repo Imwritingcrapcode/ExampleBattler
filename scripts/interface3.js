@@ -1,7 +1,7 @@
 ﻿function setup() {
     //textFont('Calibri');
-    TESTING = true;
-    //TESTING = false;
+    //TESTING = true;
+    TESTING = false;
     PICS = true;
     //PICS = false;
     if (TESTING) {

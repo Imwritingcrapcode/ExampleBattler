@@ -752,14 +752,16 @@ func DeleteSession(session *Session) {
 
 func (user *User) GatherFreeData() *UserFree {
 	data := UserFree{}
+	moneyI := MoneyInfo{}
+	moneyI.W = user.GetDust("w")
+	moneyI.B = user.GetDust("b")
+	moneyI.Y = user.GetDust("y")
+	moneyI.P = user.GetDust("p")
+	moneyI.S = user.GetDust("s")
+	data.Monies = moneyI
 	data.Username = user.Username
 	data.BattlesTotal = user.GetBattles()
 	data.BattlesWon = user.GetWonBattles()
-	data.WhiteDust = user.GetDust("w")
-	data.BlueDust = user.GetDust("b")
-	data.YellowDust = user.GetDust("y")
-	data.GreenDust = user.GetDust("g")
-	data.StarDust = user.GetDust("s")
 	return &data
 }
 

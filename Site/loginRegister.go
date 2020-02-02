@@ -4,7 +4,6 @@ import (
 	. "../Abstract"
 	"encoding/json"
 	"golang.org/x/crypto/bcrypt"
-	. "html/template"
 	"log"
 	"net/http"
 	"os"
@@ -175,16 +174,17 @@ func Welcome(w http.ResponseWriter, r *http.Request) {
 		SetState(user.UserID, MainPage)
 		if r.Method == http.MethodGet {
 			log.Println("[Welcome] GET WELCOME")
-			userfree := *user.GatherFreeData()
+			//userfree := *user.GatherFreeData()
 			Path := "/Site/main.html"
 			pwd, _ := os.Getwd()
 			Path = strings.Replace(pwd+Path, "/", "\\", -1)
 			log.Println(Path)
-			template, err := ParseFiles(Path)
+			/*template, err := ParseFiles(Path)
 			if err != nil {
 				panic(err)
 			}
-			template.Execute(w, userfree)
+			template.Execute(w, userfree)*/
+			http.ServeFile(w, r, Path)
 		}
 	} else {
 		log.Println("[Welcome] UNWELCOMED")

@@ -47,12 +47,6 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 				ClaimConversion(user.UserID)
 			}
 			var response ConvResponse
-			monies := MoneyInfo{}
-			monies.W = user.GetDust("w")
-			monies.B = user.GetDust("b")
-			monies.Y = user.GetDust("y")
-			monies.G = user.GetDust("g")
-			monies.S = user.GetDust("s")
 			if convR.ReqType != "!" && isConverting {
 				response = ConvResponse{
 					ConversionRate:       nil,
@@ -62,7 +56,6 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 					Left:                 secondsLeft,
 					DustType:             dust,
 					Amount:               amnt,
-					MoneyInfo:            monies,
 				}
 			} else {
 				response = ConvResponse{
@@ -71,7 +64,6 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 					IsConvertingRN:       false,
 					CurrentProgress:      -1,
 					Left:                 -1,
-					MoneyInfo:            monies,
 				}
 			}
 
@@ -103,8 +95,8 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			case "b":
 				newDustType = "y"
 			case "y":
-				newDustType = "g"
-			case "g":
+				newDustType = "p"
+			case "p":
 				newDustType = "s"
 			default:
 				log.Println("[Conversion] what is this type of dust D:")
@@ -129,18 +121,10 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			user.SetDust(dust, user.GetDust(dust)-cost)
 			//start converting
 			StartConversion(user.UserID, time, get, newDustType)
-			//prepareMonies
-			moneyI := MoneyInfo{}
-			moneyI.W = user.GetDust("w")
-			moneyI.B = user.GetDust("b")
-			moneyI.Y = user.GetDust("y")
-			moneyI.G = user.GetDust("g")
-			moneyI.S = user.GetDust("s")
 			//send Info
 			response.Left = time
 			response.DustType = newDustType
 			response.Amount = get
-			response.MoneyInfo = moneyI
 			ready, err := json.Marshal(&response)
 			if err != nil {
 				log.Println("[Conversion] Marshalling error for", user.Username, err)

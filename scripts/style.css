@@ -1,0 +1,41 @@
+body {
+    font-family: sans-serif;
+    background: #E6E6E6;
+    color: #323232;
+    font-size: x-large;
+}
+
+.middlec {
+    text-align: center;
+    font-size: large;
+}
+
+.username {
+    font-weight: bold;
+}
+
+.centerc {
+    vertical-align: top;
+}
+
+.rightc {
+    vertical-align: text-top;
+}
+
+#moneytable {
+    font-size: xx-large;
+}
+
+input[type=checkbox] {
+    /* Double-sized Checkboxes */
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+    padding: 10px;
+}
+
+label {
+    white-space: pre;
+    font-size: x-large;
+}

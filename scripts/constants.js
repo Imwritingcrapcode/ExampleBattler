@@ -72,7 +72,7 @@ let DUSTS = new Map([
     ["w", "White"],
     ["b", "Blue"],
     ["y", "Yellow"],
-    ["g", "Green"],
+    ["p", "Purple"],
     ["s", "Star"],
 ]);
 

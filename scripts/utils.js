@@ -188,3 +188,28 @@ function parseSeconds(n, strip) {
 
     return full;
 }
+
+function UpdateFreeData(after) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', '/freeinfo', true);
+    xhr.send();
+    xhr.onreadystatechange = (e) => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                console.log(response);
+                document.getElementById("username").innerText = "Welcome, " + response.Username;
+                document.getElementById("wDust").innerText = response.MoneyInfo["w"];
+                document.getElementById("bDust").innerText = response.MoneyInfo["b"];
+                document.getElementById("yDust").innerText = response.MoneyInfo["y"];
+                document.getElementById("pDust").innerText = response.MoneyInfo["p"];
+                document.getElementById("sDust").innerText = response.MoneyInfo["s"];
+                if (after) {
+                    after(response);
+                }
+            } else {
+                console.log(xhr.responseText);
+            }
+        }
+    };
+}

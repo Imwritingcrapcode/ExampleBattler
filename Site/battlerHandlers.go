@@ -16,8 +16,9 @@ import (
 
 /*
 //IMPORTANT
-//TODO frontend 2. friendlist 3. mainpage 4. icons
-//5. header of the site 6. shop. 8. css 9. login, 10. register new pages
+// DOING frontend, putting the header everywhere, css
+//TODO frontend 2. friendlist
+//6. shop. 8. css 9. login, 10. register new pages
 //todo linux support, get a server
 //TODO DDOS protecction (not cloudflare apparently)
 
@@ -34,6 +35,8 @@ import (
 //TODO ability draft, 2v2
 //TODO character wiki
 //TODO euphoria and z89
+//TODO news page
+//TODO choose your pfp
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {

@@ -119,7 +119,7 @@ var DustMap = map[string]string{
 	"w": "wdust",
 	"b": "bdust",
 	"y": "ydust",
-	"g": "gdust",
+	"p": "pdust",
 	"s": "sdust",
 }
 
@@ -211,14 +211,18 @@ type RegData struct {
 }
 
 type UserFree struct {
-	Username     string `json:"Username"`
-	BattlesTotal int    `json:"BattlesTotal"`
-	BattlesWon   int    `json:"BattlesWon"`
-	WhiteDust    int    `json:"WhiteDust"`
-	BlueDust     int    `json:"BlueDust"`
-	YellowDust   int    `json:"YellowDust"`
-	GreenDust    int    `json:"GreenDust"`
-	StarDust     int    `json:"StarDust"`
+	Username     string    `json:"Username"`
+	BattlesTotal int       `json:"BattlesTotal"`
+	BattlesWon   int       `json:"BattlesWon"`
+	Monies       MoneyInfo `json:"MoneyInfo"`
+}
+
+type MoneyInfo struct {
+	W int `json:"w"`
+	B int `json:"b"`
+	Y int `json:"y"`
+	P int `json:"p"`
+	S int `json:"s"`
 }
 
 //servmain
@@ -264,7 +268,7 @@ func GetItemByID(ID string) (bool, ShopItem) {
 		exists = len(ReleasedCharactersPacks[Rarities[3]]) != 0
 		item.Name = Rarities[3] + " pack"
 		item.Cost = 72
-		item.Dust = "g"
+		item.Dust = "p"
 		item.Type = "pack"
 		item.ID = ID
 	case Rarities[4]:
@@ -291,43 +295,34 @@ type ConvResponse struct {
 	SecondsPerConversion map[string]int
 	IsConvertingRN       bool
 	CurrentProgress      int
-	Left      int
-	Amount      int
-	DustType      string
-	MoneyInfo `json:"MoneyInfo"`
-}
-
-type MoneyInfo struct {
-	W int `json:"w"`
-	B int `json:"b"`
-	Y int `json:"y"`
-	G int `json:"g"`
-	S int `json:"s"`
+	Left                 int
+	Amount               int
+	DustType             string
 }
 
 /*var ConversionRate = map[string]float64{
 	"w": 0.5,
 	"b": 0.5,
 	"y": 0.5,
-	"g": 0.5,
+	"p": 0.5,
 }
 
 var SecondsPerConversion = map[string]int{
 	"w": 1,
 	"b": 1,
 	"y": 1,
-	"g": 1,
+	"p": 1,
 }*/
 
 var ConversionRate = map[string]float64{
 	"w": 0.5,
 	"b": 0.4,
 	"y": 0.25,
-	"g": 0.2,
+	"p": 0.2,
 }
 var SecondsPerConversion = map[string]int{
 	"w": 24,
 	"b": 30,
 	"y": 45,
-	"g": 60,
+	"p": 60,
 }

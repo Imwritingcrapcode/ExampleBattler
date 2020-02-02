@@ -1,69 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
     <meta charset="UTF-8">
-    <title>Main page</title>
-    <style>
-        div {
-            font-size: xx-large;
+    <title>My profile</title>
+    <script src="/scripts/utils.js"></script>
+    <script>
+        function after(data) {
+            document.getElementById("username2").innerText = data.Username;
+            document.getElementById("battles2").innerText = "Battle stats: " + data.BattlesWon + "/" + data.BattlesTotal + " (" + roundUp(data.BattlesWon/data.BattlesTotal*100) + "%)";
         }
-        span {
-            color: #FF0000;
-            font-size: 20px;
-            white-space: pre;
-        }
-    </style>
+        UpdateFreeData(after);
+    </script>
 </head>
 <body>
 
 <table WIDTH="100%">
     <tr>
         <td>
-            <div class="left" align="center">Welcome, {{.Username}}</div>
+            <table width="300px" border="0px">
+                <tr>
+                    <td>
+                        <div align="center" id="username"></div>
+                    </td>
+                </tr>
+            </table>
+            <table id="moneytable" style="width: 300px;" border="0px">
+                <tr>
+                    <td width="33%" class="middlec">
+                        <img src="/images/locked/white_dust.png" style="width:40px;height:40px;"
+                             alt="white dust"><br><div id="wDust">0
+                        </div>
+                    </td>
+                    <td width="33%" class="middlec">
+                        <img src="/images/locked/blue_dust.png" style="width:40px;height:40px;"
+                             alt="blue dust"><br><div id="bDust">0
+                        </div>
+                    </td>
+                    <td width="33%" class="middlec">
+                        <img src="/images/locked/yellow_dust.png" style="width:40px;height:40px;"
+                             alt="yellow dust"><br><div id="yDust">0
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="33%" class="middlec">
+                        <img src="/images/locked/purple_dust.png" style="width:40px;height:40px;"
+                             alt="purple dust"><br><div id="pDust">0
+                        </div>
+                    </td>
+                    <td width="33%" class="middlec">
+                        <img src="/images/locked/star_dust.png" style="width:40px;height:40px;"
+                             alt="stardust"><br><div id="sDust">0
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </td>
-        <td>
-            <div class="center" align="center"><a href="/friends">Friend list</a></div>
+        <td class="centerc">
+            <div align="center"><a href="/girllist">Choose chars</a></div>
         </td>
-        <td>
-            <div class="center" align="center"><a href="/girllist">Choose chars</a></div>
+        <td class="centerc">
+            <div align="center"><a href="/conversion">Converison</a></div>
         </td>
-        <td>
-            <div class="right" align="right"><a href="/logout">Logout</a></div>
+        <td class="centerc">
+            <div align="center"><a href="/shop">Shop</a></div>
         </td>
-
+        <td class="centerc">
+            <div align="center"><a href="/friends">Friend list</a></div>
+        </td>
+        <td class="rightc">
+            <div align="right"><a href="/logout">Logout</a></div>
+        </td>
     </tr>
 </table>
-
-<br>
 <div align="center">
-    <div><b>My profile</b></div>
-        <span id="warnings"></span>
-        <br>
-    <div id="username" class="username " align="center">{{.Username}}</div>
-    <div id="battleswon" class="battleswon" align="center">{{.BattlesWon}}</div>
-    /
-    <div id="battleswon" class="battleswon" align="center">{{.BattlesTotal}}</div>
-        <br>
-    <table width="120px" border="1px">
-        <tr>
-            <td width="24px">White dust</td>
-            <td width="24px">Blue dust</td>
-            <td width="24px">Yellow dust</td>
-            <td width="24px">Green dust</td>
-            <td width="24px">Star dust</td>
-        </tr>
-        <tr>
-            <td>{{.WhiteDust}}</td>
-            <td>{{.BlueDust}}</td>
-            <td>{{.YellowDust}}</td>
-            <td>{{.GreenDust}}</td>
-            <td>{{.StarDust}}</td>
-        </tr>
-    </table>
-        <br>
+    <div><b>My profile:</b></div>
+    <div id="username2" class="username" align="center"></div>
+    <br>
+    <div id="battles2" class="battleswon" align="center"></div>
 </div>
 </body>
 </html>

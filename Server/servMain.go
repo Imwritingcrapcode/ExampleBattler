@@ -67,13 +67,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	statement, err := DATABASE.Prepare("CREATE TABLE IF NOT EXISTS userData (userID INTEGER PRIMARY KEY, battlesTotal INTEGER DEFAULT 0, battlesWon INTEGER DEFAULT 0, lastBattleResult INTEGER DEFAULT 0, lastLoginTime INTEGER NOT NULL, wdust INTEGER DEFAULT 0, bdust INTEGER DEFAULT 0, ydust INTEGER DEFAULT 0, gdust INTEGER DEFAULT 0, sdust INTEGER DEFAULT 0, activity INTEGER DEFAULT 0, lastActivityTime INTEGER DEFAULT 0, lastPlayedAs INTEGER DEFAULT 0, lastOpponentsName TEXT DEFAULT \"\")")
+	statement, err := DATABASE.Prepare("CREATE TABLE IF NOT EXISTS userData (userID INTEGER PRIMARY KEY, battlesTotal INTEGER DEFAULT 0, battlesWon INTEGER DEFAULT 0, lastBattleResult INTEGER DEFAULT 0, lastLoginTime INTEGER NOT NULL, wdust INTEGER DEFAULT 0, bdust INTEGER DEFAULT 0, ydust INTEGER DEFAULT 0, pdust INTEGER DEFAULT 0, sdust INTEGER DEFAULT 0, activity INTEGER DEFAULT 0, lastActivityTime INTEGER DEFAULT 0, lastPlayedAs INTEGER DEFAULT 0, lastOpponentsName TEXT DEFAULT \"\")")
 	if err != nil {
 		panic(err)
 	}
 	statement.Exec()
 
-	/*statement, err = DATABASE.Prepare("ALTER TABLE userData ADD lastActivityTime INTEGER DEFAULT 0")
+	/*statement, err = DATABASE.Prepare("ALTER TABLE userData RENAME COLUMN gdust TO pdust")
 	if err != nil {
 		panic(err)
 	}
@@ -153,6 +153,8 @@ func main() {
 	http.HandleFunc("/shop", Shop)
 	http.HandleFunc("/shopitems", ShopItems)
 	http.HandleFunc("/conversion", Conversion)
+	http.HandleFunc("/freeinfo", FreeInfo)
+
 
 	go OfflinePeople()
 	err = http.ListenAndServe(":1119", nil)

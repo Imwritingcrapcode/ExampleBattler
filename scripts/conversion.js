@@ -9,7 +9,7 @@ function setup() {
     light = color(LIGHTC);
     blueDust = color(ADCOLOUR);
     yellowDust = color(SPCOLOUR);
-    greenDust = color(RPCOLOUR);
+    purpleDust = color(RPCOLOUR);
     starDust = color(LFCOLOUR);
     maxValue = 0;
     currentType = "";
@@ -27,8 +27,7 @@ function setup() {
     };
     convobjects.push(bar);
     textSize(tSize);
-    let bw =  textWidth(text) + 10;
-    let B = new StandardButton(768 - bw/2, 9, 10, text, tSize, "c");
+    let B = new StandardButton(768 - (textWidth(text) + 10)/2, 9, 10, text, tSize, "c");
     B.hide();
     B.clicked = function () {
         let inner = document.getElementById("number").innerText;
@@ -38,7 +37,7 @@ function setup() {
             document.getElementById("w").disabled = true;
             document.getElementById("b").disabled = true;
             document.getElementById("y").disabled = true;
-            document.getElementById("g").disabled = true;
+            document.getElementById("p").disabled = true;
             document.getElementById("s").disabled = true;
             console.log(inner);
             convert("!", int(inner), currentType);
@@ -135,8 +134,11 @@ function convert(requestType, amount, dustType) {
             MONIESTEXT = "{\"w\" : 100, \"b\" : 200, \"y\" : 250, \"g\" : 10, \"s\" : 322}";*/
             console.log(xhr.responseText);
             let response = JSON.parse(xhr.responseText);
-            MONIES = new Map(Object.entries(response.MoneyInfo));
-            parse(response, MONIES);
+            let after = function(data) {
+                MONIES = new Map(Object.entries(data.MoneyInfo));
+                parse(response, MONIES);
+            };
+            UpdateFreeData(after);
         }
     };
 }
@@ -151,7 +153,7 @@ function setDustType(type, amnt) {
             document.getElementById("w").checked = true;
             document.getElementById("b").checked = false;
             document.getElementById("y").checked = false;
-            document.getElementById("g").checked = false;
+            document.getElementById("p").checked = false;
             document.getElementById("s").checked = false;
             break;
         case "b":
@@ -159,7 +161,7 @@ function setDustType(type, amnt) {
             document.getElementById("w").checked = false;
             document.getElementById("b").checked = true;
             document.getElementById("y").checked = false;
-            document.getElementById("g").checked = false;
+            document.getElementById("p").checked = false;
             document.getElementById("s").checked = false;
             break;
         case "y":
@@ -167,15 +169,15 @@ function setDustType(type, amnt) {
             document.getElementById("w").checked = false;
             document.getElementById("b").checked = false;
             document.getElementById("y").checked = true;
-            document.getElementById("g").checked = false;
+            document.getElementById("p").checked = false;
             document.getElementById("s").checked = false;
             break;
-        case "g":
-            bar.setColours(color(dark.toString()), lerpColor(color(greenDust.toString()), color(255), 0.2));
+        case "p":
+            bar.setColours(color(dark.toString()), lerpColor(color(purpleDust.toString()), color(255), 0.2));
             document.getElementById("w").checked = false;
             document.getElementById("b").checked = false;
             document.getElementById("y").checked = false;
-            document.getElementById("g").checked = true;
+            document.getElementById("p").checked = true;
             document.getElementById("s").checked = false;
             break;
         case "s":
@@ -183,7 +185,7 @@ function setDustType(type, amnt) {
             document.getElementById("w").checked = false;
             document.getElementById("b").checked = false;
             document.getElementById("y").checked = false;
-            document.getElementById("g").checked = false;
+            document.getElementById("p").checked = false;
             document.getElementById("s").checked = true;
             getElement("c").clickable = false;
             break;
@@ -240,7 +242,7 @@ function parse(r, m) {
             c.setText("Convert!");
             getElement("c").show();
         }
-            setMoney(r.ConversionRate, m);
+        setMoney(r.ConversionRate, m);
         bar.makeDraggable();
     } else if (r.IsConvertingRN && r.Left > 0) { //CONVERTING
         console.log("currently converting...");
