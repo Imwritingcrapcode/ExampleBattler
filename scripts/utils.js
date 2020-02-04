@@ -181,8 +181,6 @@ function parseSeconds(n, strip) {
         }
         if (strip) {
             return "less than a minute"
-        } else {
-            full += "."
         }
     }
 
@@ -198,7 +196,11 @@ function UpdateFreeData(after) {
             if (xhr.status === 200) {
                 let response = JSON.parse(xhr.responseText);
                 console.log(response);
-                document.getElementById("username").innerText = "Welcome, " + response.Username;
+                if ( ("Welcome, " + response.Username).length > 19) {
+                    document.getElementById("username").innerText = "Hi, " + response.Username;
+                } else {
+                    document.getElementById("username").innerText = "Welcome, " + response.Username;
+                }
                 document.getElementById("wDust").innerText = response.MoneyInfo["w"];
                 document.getElementById("bDust").innerText = response.MoneyInfo["b"];
                 document.getElementById("yDust").innerText = response.MoneyInfo["y"];

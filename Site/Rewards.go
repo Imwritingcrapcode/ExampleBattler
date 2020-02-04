@@ -2,7 +2,6 @@ package Site
 
 import (
 	"encoding/json"
-	. "html/template"
 	"log"
 	"net/http"
 	"os"
@@ -18,18 +17,12 @@ func AfterBattle(w http.ResponseWriter, r *http.Request) {
 	}
 	client := FindBaseID(session.UserID)
 	if r.Method == http.MethodGet {
-		userfree := client.GatherFreeData()
 		Path := "/Site/rewards.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		log.Println("[rewards] " + Path)
-		template, err := ParseFiles(Path)
-		if err != nil {
-			panic(err)
-		}
-		template.Execute(w, userfree)
+		http.ServeFile(w, r, Path)
 	} else {
-
 		rewards := *GetRewards(client)
 		DeleteRewards(client)
 		w.WriteHeader(200)

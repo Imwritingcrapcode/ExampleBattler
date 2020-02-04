@@ -11,7 +11,11 @@
     <script>
         function after(data) {
             document.getElementById("username2").innerText = data.Username;
-            document.getElementById("battles2").innerText = "Battle stats: " + data.BattlesWon + "/" + data.BattlesTotal + " (" + roundUp(data.BattlesWon/data.BattlesTotal*100) + "%)";
+            if (data.BattlesTotal > 0) {
+                document.getElementById("battles2").innerText = "Battle stats: " + data.BattlesWon + "/" + data.BattlesTotal + " (" + roundUp(data.BattlesWon/data.BattlesTotal*100) + "% winrate)";
+            } else {
+                document.getElementById("battles2").innerText = "Battle stats: " + 0 + "/" + 0 + " (" + 0 + "% winrate)";
+            }
         }
         UpdateFreeData(after);
     </script>
@@ -64,7 +68,7 @@
             <div align="center"><a href="/girllist">Choose chars</a></div>
         </td>
         <td class="centerc">
-            <div align="center"><a href="/conversion">Converison</a></div>
+            <div align="center"><a href="/conversion">Conversion</a></div>
         </td>
         <td class="centerc">
             <div align="center"><a href="/shop">Shop</a></div>

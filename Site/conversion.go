@@ -2,7 +2,6 @@ package Site
 
 import (
 	"encoding/json"
-	. "html/template"
 	"log"
 	"net/http"
 	"os"
@@ -20,16 +19,11 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 	}
 	user := FindBaseID(session.UserID)
 	if r.Method == http.MethodGet {
-		userfree := user.GatherFreeData()
 		Path := "/Site/conversion.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		log.Println("[Conversion] " + Path)
-		template, err := ParseFiles(Path)
-		if err != nil {
-			panic(err)
-		}
-		template.Execute(w, userfree)
+		http.ServeFile(w, r, Path)
 	} else if r.Method == http.MethodPost {
 		convR := ConvRequest{}
 		//type, amount, dusttype

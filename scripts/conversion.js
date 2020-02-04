@@ -27,11 +27,12 @@ function setup() {
     };
     convobjects.push(bar);
     textSize(tSize);
-    let B = new StandardButton(768 - (textWidth(text) + 10)/2, 9, 10, text, tSize, "c");
+    let B = new StandardButton(768 - (textWidth(text) + 10) / 2, 9, 10, text, tSize, "c");
     B.hide();
     B.clicked = function () {
         let inner = document.getElementById("number").innerText;
-        if (inner > 0) {
+        let get = parseFloat(CONVINFO.ConversionRate[currentType]) * int(inner);
+        if (inner > 0 && get >= 1.0) {
             this.hide();
             bar.makeNotDraggable();
             document.getElementById("w").disabled = true;
@@ -41,12 +42,14 @@ function setup() {
             document.getElementById("s").disabled = true;
             console.log(inner);
             convert("!", int(inner), currentType);
+        } else if (get < 1) {
+            document.getElementById("number").innerText = "You need to convert at least " + Math.ceil(1/CONVINFO.ConversionRate[currentType]) + " dust!";
         }
     };
     convobjects.push(B);
     let t2 = "Claim!";
     let bw2 = textWidth(t2) + 10;
-    let claim = new StandardButton(768 - bw2/2, 9, 10, t2, tSize, "cl");
+    let claim = new StandardButton(768 - bw2 / 2, 9, 10, t2, tSize, "cl");
     claim.hide();
     claim.clicked = function () {
         this.hide();
@@ -113,9 +116,18 @@ function draw() {
 }
 
 function getElement(id) {
-    for (obj of convobjects) {
+    for (let obj of convobjects) {
         if (obj.id === id) {
             return obj
+        }
+    }
+}
+
+function removeElement(id) {
+    for (let i = 0; i < convobjects.length; i++) {
+        let obj = convobjects[i];
+        if (obj.id === id) {
+            convobjects.splice(i, 1);
         }
     }
 }
@@ -130,15 +142,19 @@ function convert(requestType, amount, dustType) {
     }));
     xhr.onreadystatechange = (e) => {
         if (xhr.readyState === 4) {
-            /*STUFF = "{\"ConversionRate\":{\"b\":0.4,\"g\":0.2,\"w\":0.5,\"y\":0.25},\"SecondsPerConversion\":{\"b\":30,\"g\":60,\"w\":24,\"y\":45},\"IsConvertingRN\":false,\"CurrentProgress\":-1,\"Left\":-1,\"Amount\":0,\"DustType\":\"\"}";
-            MONIESTEXT = "{\"w\" : 100, \"b\" : 200, \"y\" : 250, \"g\" : 10, \"s\" : 322}";*/
-            console.log(xhr.responseText);
-            let response = JSON.parse(xhr.responseText);
-            let after = function(data) {
-                MONIES = new Map(Object.entries(data.MoneyInfo));
-                parse(response, MONIES);
-            };
-            UpdateFreeData(after);
+            if (xhr.status === 200) {
+                /*STUFF = "{\"ConversionRate\":{\"b\":0.4,\"g\":0.2,\"w\":0.5,\"y\":0.25},\"SecondsPerConversion\":{\"b\":30,\"g\":60,\"w\":24,\"y\":45},\"IsConvertingRN\":false,\"CurrentProgress\":-1,\"Left\":-1,\"Amount\":0,\"DustType\":\"\"}";
+                MONIESTEXT = "{\"w\" : 100, \"b\" : 200, \"y\" : 250, \"g\" : 10, \"s\" : 322}";*/
+                console.log(xhr.responseText);
+                CONVINFO = JSON.parse(xhr.responseText);
+                let after = function (data) {
+                    MONIES = new Map(Object.entries(data.MoneyInfo));
+                    parse(CONVINFO, MONIES);
+                };
+                UpdateFreeData(after);
+            } else if (xhr.status === 400) {
+                convert("?");
+            }
         }
     };
 }
@@ -261,11 +277,13 @@ function parse(r, m) {
         textSize(50);
         let bw = textWidth(get);
         let emntEl = getElement("willGet");
-        emntEl.x = 768  - bw/2;
+        emntEl.x = 768 - bw / 2 + 65 / 2;
         emntEl.setText(get);
         if (!emntEl.visible) {
             emntEl.show();
         }
+        let im = new CanvasImage(emntEl.x - 65, emntEl.y - 50, "/images/locked/" + DUSTS.get(dustType) + "_dust.png", "dustpic", DUSTS.get(dustType) + "_dust.png", 50, 50);
+        convobjects.push(im);
         redirect(false);
         setwhere(undefined);
         countdown(left);
@@ -273,7 +291,9 @@ function parse(r, m) {
         console.log("available for claiming!");
         bar.makeNotDraggable();
         let get = r.Amount;
-        document.getElementById("number").innerText = "" + get;
+        let n = document.getElementById("number");
+        let dustType = r.DustType;
+        n.innerHTML = " <img src=\"/images/locked/" + DUSTS.get(dustType) + "_dust.png\" style=\"width:40px;height:40px;\" alt=\"" + DUSTS.get(dustType) + " dust\"><br>" + get;
         let emntEl = getElement("willGet");
         if (emntEl.visible) {
             emntEl.hide();
@@ -281,13 +301,14 @@ function parse(r, m) {
         let conv = getElement("c");
         if (conv.visible) {
             conv.hide();
+
         }
+        removeElement("dustpic");
         let c = getElement("cl");
         if (!c.visible) {
             c.show();
         }
         setMoney(r.ConversionRate, m);
-        let dustType = r.DustType;
         setDustType(dustType, m.get(dustType));
         bar.setPercentage(100);
     } else { //ERROR
@@ -295,15 +316,14 @@ function parse(r, m) {
     }
 }
 
-
 function displayTimer(number) {
     let timer = document.getElementById("number");
     if (number < 0) {
         timer.innerText = "";
         convert("?");
     } else {
-        timer.innerText = "" + parseSeconds(number);
+        timer.innerText = "" + parseSeconds(number) + " left.";
         bar.left = number;
-        bar.setPercentage((bar.total-bar.left)/bar.total*100);
+        bar.setPercentage((bar.total - bar.left) / bar.total * 100);
     }
 }

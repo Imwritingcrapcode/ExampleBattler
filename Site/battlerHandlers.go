@@ -16,9 +16,9 @@ import (
 
 /*
 //IMPORTANT
-// DOING frontend, putting the header everywhere, css
+// DOING frontend, css
 //TODO frontend 2. friendlist
-//6. shop. 8. css 9. login, 10. register new pages
+//6. shop with drops. 8. css 9. login, 10. register new pages
 //todo linux support, get a server
 //TODO DDOS protecction (not cloudflare apparently)
 

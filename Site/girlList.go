@@ -4,7 +4,6 @@ import (
 	. "../Abstract"
 	. "../Characters"
 	"encoding/json"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -16,20 +15,12 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 	if AlrdyLoggedIn {
 		log.Println("[GIRLLIST] "+"accessing GirlList for", session.UserID)
 		if r.Method == http.MethodGet {
-			client := FindBaseID(session.UserID)
-			userfree := User{
-				Username: client.Username,
-			}
 			//Path := "/Site/girllist.html" //old path lolololol
 			Path := "/Site/girllist2.html"
 			pwd, _ := os.Getwd()
 			Path = strings.Replace(pwd+Path, "/", "\\", -1)
 			log.Println("[GIRLLIST] " + Path)
-			template1, err := template.ParseFiles(Path)
-			if err != nil {
-				panic(err)
-			}
-			template1.Execute(w, userfree)
+			http.ServeFile(w, r, Path)
 
 		} else {
 			user := FindBaseID(session.UserID)

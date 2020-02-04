@@ -151,7 +151,6 @@ function ImageBox() {
         return false;
     };
 
-
 }
 
 function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {

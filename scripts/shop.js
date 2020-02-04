@@ -13,31 +13,51 @@ function setup() {
     SP = color(SPCOLOUR);
     RP = color(RPCOLOUR);
     LF = color(LFCOLOUR);
-    let b1 = new SkillButton(60, 115, 2, "ST", "ST", true);
+    let b1 = new SkillButton(60, 6, 2, "ST", "ST", true);
     b1.setColour(ST.toString());
     b1.setText("ST pack");
     b1.setState(-100);
-    let b2 = new SkillButton(252, 115, 2, "AD", "AD", true);
+    let pic1 = new CanvasImage(65, 231, "", "STimage", "STimage", 40, 40);
+    let text1 = new TextInfo(115, 271, light, "???", 40, "STtext");
+    let b2 = new SkillButton(252, 5, 2, "AD", "AD", true);
     b2.setColour(AD.toString());
     b2.setText("AD pack");
     b2.setState(-100);
-    let b3 = new SkillButton(444, 115, 5, "SP", "SP", true);
+    let pic2 = new CanvasImage(257, 231, "", "ADimage", "ADimage", 40, 40);
+    let text2 = new TextInfo(307, 271, light, "???", 40, "ADtext");
+    let b3 = new SkillButton(444, 6, 5, "SP", "SP", true);
     b3.setColour(lerpColor(SP, color("ffffff"), 0.3).toString());
     b3.setText("SP pack");
     b3.setState(-100);
-    let b4 = new SkillButton(636, 115, 3, "RP", "RP", true);
+    let pic3 = new CanvasImage(449, 231, "", "SPimage", "SPimage", 40, 40);
+    let text3 = new TextInfo(499, 271, light, "???", 40, "SPtext");
+    let b4 = new SkillButton(636, 6, 3, "RP", "RP", true);
     b4.setColour(RP.toString());
     b4.setText("RP pack");
     b4.setState(-100);
-    let b5 = new SkillButton(828, 115, 3, "LF", "LF", true);
+    let pic4 = new CanvasImage(641, 231, "", "RPimage", "RPimage", 40, 40);
+    let text4 = new TextInfo(691, 271, light, "???", 40, "RPtext");
+    let b5 = new SkillButton(828, 6, 3, "LF", "LF", true);
     b5.setColour(lerpColor(LF, color("ffffff"), 0.2).toString());
     b5.setText("LF pack");
     b5.setState(-100);
+    let pic5 = new CanvasImage(833, 226, "", "LFimage", "LFimage", 40, 40);
+    let text5 = new TextInfo(883, 266, light, "???", 40, "LFtext");
     shopobjects.push(b1);
+    shopobjects.push(text1);
+    shopobjects.push(pic1);
     shopobjects.push(b2);
+    shopobjects.push(text2);
+    shopobjects.push(pic2);
     shopobjects.push(b3);
+    shopobjects.push(text3);
+    shopobjects.push(pic3);
     shopobjects.push(b4);
+    shopobjects.push(text4);
+    shopobjects.push(pic4);
     shopobjects.push(b5);
+    shopobjects.push(text5);
+    shopobjects.push(pic5);
     init();
 }
 
@@ -89,11 +109,28 @@ function init() {
         if (xhr.readyState === 4) {
             let response = JSON.parse(xhr.responseText);
             console.log(response);
-            for (let item of response) {
-                let ID = item.ID;
-                let el = getElement(ID);
-                el.setState(0);
+
+            function after(data) {
+                for (let item of response) {
+                    let ID = item.ID;
+                    let cost = item.Cost;
+                    let letter = item.Dust;
+                    let el = getElement(ID);
+                    let im = getElement(ID + "image");
+                    let txt = getElement(ID + "text");
+                    if (cost > int(data.MoneyInfo[letter])) {
+                        el.setState(0);
+                        txt.setColour(dark);
+                    } else {
+                        el.setState(-1);
+                        txt.setColour(light);
+                    }
+                    txt.setText(cost);
+                    im.image = loadImage("/images/locked/" + DUSTS.get(item.Dust) + "_dust.png");
+                }
             }
+
+            UpdateFreeData(after);
         }
     };
 }

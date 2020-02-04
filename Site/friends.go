@@ -3,7 +3,6 @@ package Site
 import (
 	. "../Abstract"
 	"encoding/json"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -12,24 +11,17 @@ import (
 )
 
 func FriendsHandler(w http.ResponseWriter, r *http.Request) {
-	AlrdyLoggedIn, session := IsLoggedIn(r)
+	AlrdyLoggedIn, _ := IsLoggedIn(r)
 	if !AlrdyLoggedIn || r.Method != http.MethodGet {
 		log.Print("[friends] " + "redirected to /login")
 		Redirect(w, r, "/login")
 		return
 	}
-	client := FindBaseID(session.UserID)
-	userfree := client.GatherFreeData()
 	Path := "/Site/friends.html"
 	pwd, _ := os.Getwd()
 	Path = strings.Replace(pwd+Path, "/", "\\", -1)
 	log.Println("[friends] " + Path)
-	template1, err := template.ParseFiles(Path)
-	if err != nil {
-		panic(err)
-	}
-	template1.Execute(w, userfree)
-}
+	http.ServeFile(w, r, Path)}
 
 func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
@@ -122,7 +114,5 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "You sent an invalid friend request.", 400)
 			log.Println("[FriendListPost] invalid request", session.UserID, "not a valid action")
 		}
-
 	}
-
 }
