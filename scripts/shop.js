@@ -69,27 +69,26 @@ function draw() {
             if (obj.clickTimer === 0) {
                 obj.unclick();
             }
-            obj.display();
         } else if (obj.hoverable && obj.in()) { //found an "in"
             if (!current) { //outside to something
                 current = obj;
                 obj.hovered();
-                obj.display();
-            } else if (current.id === obj.id) { //currently hovered
-                obj.display();
-            } else { //switched from another 2 this
+            } else if (current.id !== obj.id) { //switched from another 2 this
                 current.unhovered();
                 current = obj;
                 obj.hovered();
-                obj.display();
             }
         } else if (obj.hoverable && current && obj.id === current.id) { //went outside
             obj.unhovered();
             current = undefined;
-            obj.display();
-        } else {
-            obj.display();
         }
+            if (!!obj.transparency) {
+                tint(255, obj.transparency);
+                obj.display();
+                tint(255, 255);
+            } else {
+                obj.display();
+            }
     }
 }
 
@@ -118,12 +117,14 @@ function init() {
                     let el = getElement(ID);
                     let im = getElement(ID + "image");
                     let txt = getElement(ID + "text");
-                    if (cost > int(data.MoneyInfo[letter])) {
+                    if (cost <= int(data.MoneyInfo[letter])) {
                         el.setState(0);
                         txt.setColour(dark);
+                        im.transparency = 255;
                     } else {
                         el.setState(-1);
                         txt.setColour(light);
+                        im.transparency = 126;
                     }
                     txt.setText(cost);
                     im.image = loadImage("/images/locked/" + DUSTS.get(item.Dust) + "_dust.png");

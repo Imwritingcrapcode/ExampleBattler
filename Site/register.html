@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>Register</title>
+    <script>
+        function register() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let password2 = document.getElementById("password2").value;
+            if (username.length < 3 || username.length > 32) {
+                document.getElementById("warnings").style = "color: #FF4133;";
+                document.getElementById("warnings").innerText = "Username should be between 3 and 32 chars long.";
+                return;
+            }
+            if (password.length < 6 || password.length > 32) {
+                document.getElementById("warnings").style = "color: #FF4133;";
+                document.getElementById("warnings").innerText = "Password should be between 6 and 32 chars long.";
+                return;
+            }
+            if (password !== password2) {
+                document.getElementById("warnings").style = "color: #FF4133;";
+                document.getElementById("warnings").innerText = "Passwords do not match.";
+                return;
+            }
+            let regex = /[^ぁ-ンa-zA-Zа-яА-Я0-9\-_.•ёЁ]+/;
+            if (username.match(regex) !== null) {
+                document.getElementById("warnings").style = "color: #FF4133;";
+                document.getElementById("warnings").innerText = "Username should only contain latin, cyrillic letters, kana, numbers, or -_.•";
+                return;
+            }
+            let regex2 = /\s/;
+            if (password.match(regex2) !== null) {
+                document.getElementById("warnings").style = "color: #FF4133;";
+                document.getElementById("warnings").innerText = "Password should not contain whitespaces!";
+                return;
+            }
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/register', true);
+            xhr.send(JSON.stringify({"username": username, "password": password}));
+            xhr.onreadystatechange = (e) => {
+                if (xhr.readyState <= 4) {
+                    document.getElementById("preloader").setAttribute("style", "");
+                }
+                if (xhr.readyState === 4) {
+                    document.getElementById("preloader").setAttribute("style", "visibility: hidden");
+                    if (xhr.status === 200) {
+                        console.log(xhr.responseText);
+                        location = xhr.responseText;
+                    } else if (xhr.status === 400) {
+                        document.getElementById("warnings").style = "color: #FF4133;";
+                        document.getElementById("warnings").innerText = xhr.responseText;
+                    } else {
+                        document.getElementById("warnings").style = "color: #323232;";
+                        document.getElementById("warnings").innerText = xhr.responseText;
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div align="center">
+    <form>
+        <h2><b><a href="/registerbyID">Have you been given an ID?</a></b></h2>
+        <br><h2><b>Please enter your profile info</b></h2>
+        <br>
+        <input type="text" id="username" placeholder="Username or ID" autofocus
+               onkeypress="if (event.keyCode === 13) { document.getElementById('password').focus()}"/>
+        <br>
+        <input type="password" id="password" placeholder="Password"
+               onkeypress="if (event.keyCode === 13) {document.getElementById('password2').focus()}"/>
+        <br>
+        <input type="password" id="password2" placeholder="Repeat your password"
+               onkeypress="if (event.keyCode === 13) {register()}"/>
+        <br>
+        <div id="warnings" style="color: #FF4133;"></div>
+        <br>
+        <button id="register" type="button" onclick="register()" style="background-color: #aaaaaa;
+                float: top;
+                border-radius: 5px;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                font-size: large">Request registration
+        </button>
+        <br>
+        <img id="preloader" class="preloader" style="visibility: hidden;"
+             src="/images/loading.gif" width="28px" height="28px">
+        <br>
+        <a href="/login">Already have an account?</a>
+    </form>
+</div>
+</body>
+</html>

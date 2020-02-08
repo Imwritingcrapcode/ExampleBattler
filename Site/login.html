@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>Login</title>
+</head>
+<body>
+<div align="center">
+    <form>
+        <h2><b>Welcome home</b></h2>
+        <br><br>
+        <input type="text" id="username" placeholder="Username or ID"
+               onkeypress="if (event.keyCode === 13) { document.getElementById('password').focus()}"/>
+        <br>
+        <input type="password" id="password" placeholder="Password" onkeypress="if (event.keyCode === 13) {login()}"/>
+        <br>
+        <label class="checkbox"><input type="checkbox" id="remember">Keep me logged in</label>
+        <div id="warnings" style="color: #FF4133;"></div>
+        <button id="login" type="button" onclick="login()" style="background-color: #aaaaaa;
+                float: top;
+                border-radius: 5px;
+                border: none;
+                padding: 5px 10px;
+                outline: none;
+                cursor: pointer;
+                transition: 0.3s;
+                font-size: x-large">Login
+        </button>
+        <br>
+        <img id="preloader" class="preloader" style="visibility: hidden;"
+             src="/images/loading.gif" width="28px" height="28px">
+        <br>
+        <a href="/register">Or register instead</a>
+    </form>
+</div>
+<script>
+    function login() {
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        if (username === '' || password === '') {
+            document.getElementById("warnings").style = "color: #FF4133;";
+            document.getElementById("warnings").innerText = "Please fill in both username and password!";
+            return;
+        }
+        if (username.length > 32) {
+            document.getElementById("warnings").style = "color: #FF4133;";
+            document.getElementById("warnings").textContent = "Your username must be shorter (32 symbols max).";
+            return;
+        }
+        if (password.length > 32) {
+            document.getElementById("warnings").style = "color: #FF4133;";
+            document.getElementById("warnings").textContent = "Your password must be shorter (32 symbols max).";
+
+            return;
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/login', true);
+        xhr.send(JSON.stringify({
+            "username": username,
+            "password": password,
+            "rememberme": document.getElementById("remember").checked
+        }));
+        xhr.onreadystatechange = (e) => {
+            if (xhr.readyState <= 4) {
+                document.getElementById("preloader").setAttribute("style", "");
+            }
+            if (xhr.readyState === 4) {
+                document.getElementById("preloader").setAttribute("style", "visibility: hidden");
+                if (xhr.status === 200) {
+                    location = xhr.responseText;
+                } else if (xhr.status === 400) {
+                    document.getElementById("warnings").style = "color: #FF4133;";
+                    document.getElementById("warnings").innerText = xhr.responseText;
+                } else {
+                    document.getElementById("warnings").style = "color: #323232;";
+                    document.getElementById("warnings").innerText = xhr.responseText;
+                }
+            }
+        };
+    }
+
+    document.activeElement.blur();
+</script>
+</body>
+</html>

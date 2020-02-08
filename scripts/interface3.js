@@ -352,7 +352,7 @@ function parseState(i) {
 
 function parseInstruction(t, isMine) {
     //instruction can be empty; Animation: (used skill, add to turn log), Input (you have typed something wrong)
-    // and Error.
+    // or Error.
     //display Input and Error somewhere else, like below the top panel or in a separate window.
     let errs = getElement("info");
     if (t !== "") {

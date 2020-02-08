@@ -16,11 +16,9 @@ import (
 
 /*
 //IMPORTANT
-// DOING frontend, css
-//TODO frontend 2. friendlist
-//6. shop with drops. 8. css 9. login, 10. register new pages
+//6. shop with drops.
 //todo linux support, get a server
-//TODO DDOS protecction (not cloudflare apparently)
+//TODO DDOS protection (not cloudflare apparently)
 
 //FLAVOR
 //TODO telegram bot

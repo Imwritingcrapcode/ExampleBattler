@@ -155,7 +155,6 @@ func main() {
 	http.HandleFunc("/conversion", Conversion)
 	http.HandleFunc("/freeinfo", FreeInfo)
 
-
 	go OfflinePeople()
 	err = http.ListenAndServe(":1119", nil)
 	if err != nil {
@@ -201,7 +200,7 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 
 func ScriptsHandler(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, _ := IsLoggedIn(r)
-	if !AlrdyLoggedIn || r.URL.Path == "/scripts" || r.URL.Path == "/scripts/" {
+	if !strings.HasSuffix(r.URL.Path, ".css") && (!AlrdyLoggedIn || r.URL.Path == "/scripts" || r.URL.Path == "/scripts/") {
 		log.Println("[SCRIPTS] access denied!")
 		Redirect(w, r, "/login")
 	} else {

@@ -34,12 +34,12 @@ func IsLoggedIn(r *http.Request) (bool, *Session) {
 
 func IsLegit(reg_data *RegData) bool {
 	var verdict bool
-	re := regexp.MustCompile(`[^a-zA-Zа-яА-Я0-9\-_.•ёЁ]+`)
+	re := regexp.MustCompile(`[^ぁ-ンa-zA-Zа-яА-Я0-9\-_.•ёЁ]+`)
 	re2 := regexp.MustCompile(`\s`)
 	if re.MatchString(reg_data.Username) ||
 		re2.MatchString(reg_data.Password) ||
-		len(reg_data.Username) > 64 ||
-		len(reg_data.Password) > 64 ||
+		len(reg_data.Username) > 32 ||
+		len(reg_data.Password) > 32 ||
 		len(reg_data.Password) < 6 ||
 		len(reg_data.Username) < 3 {
 		verdict = false
