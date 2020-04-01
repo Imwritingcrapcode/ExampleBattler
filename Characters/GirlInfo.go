@@ -48,7 +48,7 @@ func GetGirlInfo(number int) *GirlInfo {
 		//Rarity string
 		info.Rarity = GetGirlRarity(girl.Number)
 		//Tags []string
-		info.Tags = []string{"Preventive", "Debuff"}
+		info.Tags = []string{"Preventive", "Control", "Nuke"}
 		//Skills []string
 		info.Skills = girl.SkillsStringList()
 		//SkillColours []string
@@ -56,7 +56,7 @@ func GetGirlInfo(number int) *GirlInfo {
 		//SkillColourCodes []string
 		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
-		info.Description = "The spy girl."
+		info.Description = "The spy girl. Euphoria's twin sister."
 		info.MainColour = girl.Skills[3].ColourCode
 	case 9:
 		(*Euphoria)(&girl).Init()
@@ -75,7 +75,7 @@ func GetGirlInfo(number int) *GirlInfo {
 		//SkillColourCodes []string
 		info.SkillColourCodes = girl.SkillColourCodesToString()
 		//Description
-		info.Description = "Her prayers were heard, rejoice."
+		info.Description = "The happy girl. Z89's twin sister."
 		info.MainColour = girl.Skills[0].ColourCode
 	case 10:
 		(*Ruby)(&girl).Init()

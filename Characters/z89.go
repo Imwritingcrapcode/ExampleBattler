@@ -30,7 +30,7 @@ func (self *Z89) Init() {
 		false,
 		1, 0, 0,
 		Black,
-		"Z89 Q",
+		"Scarcity",
 		Z89Q,
 		"rgb(9, 15, 26)",
 	}
@@ -38,7 +38,7 @@ func (self *Z89) Init() {
 		false,
 		2, 0, 3,
 		Cyan,
-		"Cold Gaze",
+		"Indifference",
 		Z89W,
 		"rgb(37, 247, 247)",
 	}
@@ -54,7 +54,7 @@ func (self *Z89) Init() {
 		true,
 		2, 0, 17,
 		Blue,
-		"Z89 R",
+		"Despondency",
 		Z89Ulti,
 		"rgb(22, 63, 145)",
 	}
