@@ -3,6 +3,8 @@ body {
     background: #E6E6E6;
     color: #323232;
     font-size: x-large;
+    padding: 0;
+    margin: 0;
 }
 
 .middlec {
@@ -27,6 +29,33 @@ body {
     font-size: xx-large;
 }
 
+label {
+    font-size: x-large;
+}
+
+/* Style the buttons inside the tab */
+.standardbutton {
+    background-color: #aaaaaa;
+    float: top;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 15px;
+    transition: 0.3s;
+    font-size: large;
+}
+
+/* Change background color of buttons on hover */
+.standardbutton:hover {
+    background-color: #878787;
+}
+
+/* Create an active/current tablink class */
+.standardbutton.active {
+    background-color: #878787;
+}
+
 input[type=checkbox] {
     /* Double-sized Checkboxes */
     -ms-transform: scale(2); /* IE */
@@ -36,11 +65,7 @@ input[type=checkbox] {
     margin: 10px;
 }
 
-label {
-    font-size: x-large;
-}
-
-input[type="text"], input[type="password"] {
+input[type=text], input[type=password] {
     min-width: 350px;
     font-size: x-large;
     border: 2px solid #aaaaaa;
@@ -59,16 +84,22 @@ input:focus {
     outline: none;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
-    border: 2px solid #323232;
-    -webkit-text-fill-color: #323232;
-    transition: 0.3s;
+input:-webkit-autofill{
+    font-family: sans-serif;
+    font-size: x-large;
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #323232 !important;
 }
+
+input:-webkit-autofill:hover {
+    font-family: sans-serif;
+    color: #323232;
+    font-size: x-large;
+}
+
+input:-webkit-autofill:focus {
+    font-family: sans-serif;
+    color: #323232;
+    font-size: x-large;
+}
+

@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"log"
 )
 
 //This file is for structs and functions we use to support other game objects.
@@ -75,61 +74,57 @@ func Damage(player, opp *Girl, deal int, ignoreDef bool, colour Colour) int {
 	if opp.HasEffect(Invulnerable) {
 		return 0
 	}
-	if ignoreDef {
-		opp.CurrHP -= deal
-		return deal
+	var dmg, atkred, turnthr, turnred, mul, add int
+	dmg = deal
+	if player.HasEffect(DmgMul) {
+		mul = player.GetEffect(DmgMul).State
 	} else {
-		var dmg, atkred, turnthr, turnred, mul, add int
-		dmg = deal
-
-		if player.HasEffect(DmgMul) {
-			mul = player.GetEffect(DmgMul).State
-		} else {
-			mul = 1
-		}
-
-		if player.HasEffect(DmgAdd) {
-			add = player.GetEffect(DmgAdd).State
-		} else {
-			add = 0
-		}
-
-		if opp.HasEffect(AtkReduc) {
-			atkred = opp.GetEffect(AtkReduc).State
-			opp.RemoveEffect(AtkReduc)
-		} else {
-			atkred = 0
-		}
-		if player.HasEffect(TurnReduc) {
-			turnred = player.GetEffect(TurnReduc).State
-		} else {
-			turnred = 0
-		}
-		if opp.HasEffect(TurnThreshold) {
-			turnthr = opp.GetEffect(TurnThreshold).State
-			log.Println("THRESHOLD", turnthr)
-		} else {
-			turnthr = 0
-		}
-		/*fmt.Println("DMG", dmg)
-		fmt.Println("DMGMUL", mul)
-		fmt.Println("DMGADD", add)
-		fmt.Println("TURN RED", turnred)
-		fmt.Println("ATK RED", atkred)
-		fmt.Println("DEF", opp.Defences[colour])*/
-		dmg = dmg*mul + add - atkred - turnred - opp.Defenses[colour]
-		if dmg > turnthr {
-			opp.CurrHP -= dmg
-		} else {
-			dmg = 0
-		}
-		opp.LastDmgTaken = dmg
-		return dmg
+		mul = 1
 	}
+
+	if player.HasEffect(DmgAdd) {
+		add = player.GetEffect(DmgAdd).State
+	} else {
+		add = 0
+	}
+
+	if opp.HasEffect(AtkReduc) {
+		atkred = opp.GetEffect(AtkReduc).State
+		opp.RemoveEffect(AtkReduc)
+	} else {
+		atkred = 0
+	}
+	if player.HasEffect(TurnReduc) {
+		turnred = player.GetEffect(TurnReduc).State
+	} else {
+		turnred = 0
+	}
+	if opp.HasEffect(TurnThreshold) {
+		turnthr = opp.GetEffect(TurnThreshold).State
+	} else {
+		turnthr = 0
+	}
+	/*fmt.Println("DMG", dmg)
+	fmt.Println("DMGMUL", mul)
+	fmt.Println("DMGADD", add)
+	fmt.Println("TURN RED", turnred)
+	fmt.Println("ATK RED", atkred)
+	fmt.Println("DEF", opp.Defences[colour])*/
+	dmg = dmg*mul + add - atkred - turnred
+	if !ignoreDef {
+		dmg -= opp.Defenses[colour]
+	}
+	if dmg > turnthr {
+		opp.CurrHP -= dmg
+	} else {
+		dmg = 0
+	}
+	opp.LastDmgTaken = dmg
+	return dmg
 }
 
 func Heal(player *Girl, heal int) int {
-	if !player.HasEffect(CantHeal) || heal < 0 {
+	if !player.HasEffect(CantHeal) && heal > 0 {
 		if player.CurrHP+heal < player.MaxHP {
 			player.CurrHP += heal
 		} else {

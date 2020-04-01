@@ -9,7 +9,6 @@ type CharInt interface {
 	Copy() CharInt
 	Equals(other *Girl) bool
 	IsAlive() bool
-	CanHeal() bool
 	SkillQ(opp *Girl, turn int)
 	SkillW(opp *Girl, turn int)
 	SkillE(opp *Girl, turn int)

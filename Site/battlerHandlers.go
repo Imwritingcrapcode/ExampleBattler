@@ -16,14 +16,16 @@ import (
 
 /*
 //IMPORTANT
+//todo queue sends stuff in a channel
 //6. shop with drops.
+//todo login is not a function
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
 
 //FLAVOR
 //TODO telegram bot
 //TODO random damage
-//todo quality of the pics
+//todo glittering loading bar
 //TODO global chat
 //TODO dms chat
 //TODO notifications
@@ -35,6 +37,7 @@ import (
 //TODO euphoria and z89
 //TODO news page
 //TODO choose your pfp
+//todo quality of the pics
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {

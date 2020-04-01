@@ -147,8 +147,15 @@ func Turn2Channels(girl1, girl2 CharInt, turnnum int, p1, p2 *ClientChannels) bo
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
-	} else if player.HasEffect(EuphoricHeal) {
+		if opp.GetEffect(EuphoricHeal).Duration == 1 {
+			opp.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if player.HasEffect(EuphoricHeal) {
 		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 	return false
 }
@@ -359,8 +366,15 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
-	} else if player.HasEffect(EuphoricHeal) {
+		if opp.GetEffect(EuphoricHeal).Duration == 1 {
+			opp.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if player.HasEffect(EuphoricHeal) {
 		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 	return false
 }
@@ -419,8 +433,15 @@ func TurnApply(girl1, girl2 CharInt, turnnum int, strat []int) {
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
-	} else if player.HasEffect(EuphoricHeal) {
+		if opp.GetEffect(EuphoricHeal).Duration == 1 {
+			opp.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if player.HasEffect(EuphoricHeal) {
 		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 
 }
@@ -485,7 +506,14 @@ func TurnKeyboard(girl1, girl2 CharInt, turnnum int) {
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
-	} else if player.HasEffect(EuphoricHeal) {
+		if opp.GetEffect(EuphoricHeal).Duration == 1 {
+			opp.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if player.HasEffect(EuphoricHeal) {
 		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 }

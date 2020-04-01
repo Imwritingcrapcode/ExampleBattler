@@ -10,35 +10,35 @@ type Euphoria Girl
 func (self *Euphoria) Init() {
 	self.Name = "Euphoria"
 	self.Number = 9
-	self.MaxHP = 112
+	self.MaxHP = 117
 	self.CurrHP = self.MaxHP
-	self.Defenses = map[Colour]int{ //3, main color - pink(orange)
-		Red:    0,
-		Orange: 0,
+	self.Defenses = map[Colour]int{ //-2, main color - pink(orange)
+		Red: 0,
+		Orange: 2,
 		Yellow: 0,
-		Green:  0,
-		Cyan:   0,
-		Blue:   0,
+		Green: 0,
+		Cyan: -2,
+		Blue: 0,
 		Violet: 0,
-		Pink:   0,
-		Gray:   0,
-		Brown:  0,
-		Black:  0,
-		White:  0}
+		Pink: 3,
+		Gray: 0,
+		Brown: -3,
+		Black: 0,
+		White: 0}
 	self.Skills = make([]*Skill, 4)
 	self.Skills[0] = &Skill{
 		false,
 		1, 0, 0,
 		Orange,
-		"High Spirits",
+		"Ampleness",
 		EuphoriaQ,
 		"rgb(255,173,135)",
 	}
 	self.Skills[1] = &Skill{
 		false,
-		2, 0, 3,
+		2, 0, 0,
 		Orange,
-		"Unstudied",
+		"Exuberance",
 		EuphoriaW,
 		"rgb(255,173,135)",
 	}
@@ -52,7 +52,7 @@ func (self *Euphoria) Init() {
 	}
 	self.Skills[3] = &Skill{
 		true,
-		3, 0, 9,
+		20, 0, 7,
 		Pink,
 		"Euphoria",
 		EuphoriaUlti,
@@ -76,54 +76,53 @@ func EupCheck(player, opp *Girl, turn, skill int) bool {
 		return true
 	default:
 		panic("HOW DID YOU EVEN " + strconv.Itoa(skill))
-
 	}
-
 }
 
 func EuphoriaQ(player, opp *Girl, turn int) {
+	AMNT := 12
 	if player.HasEffect(EuphoricSource) {
-		player.GetEffect(EuphoricSource).State += 9
+		player.GetEffect(EuphoricSource).State += AMNT
 	} else {
-		eff := player.CreateEff(EuphoricSource, opp, 21, 9)
+		eff := player.CreateEff(EuphoricSource, opp, 21, AMNT)
 		player.AddEffect(eff)
 	}
-	Heal(player, 9)
-	Heal(opp, 9)
-
+	player.MaxHP += AMNT
+	opp.MaxHP += AMNT
 }
 
 func EuphoriaW(player, opp *Girl, turn int) {
-	if turn < opp.Skills[3].StrT {
-		opp.Skills[3].StrT += 2
+	var AMNT int
+	if turn <= opp.Skills[3].StrT {
+		if (opp.Skills[3].StrT - 2) >= 0 {
+			opp.Skills[3].StrT -= 2
+		}
+		AMNT = 10
+	} else {
+		AMNT = 20
+	}
 		if player.HasEffect(EuphoricSource) {
-			player.GetEffect(EuphoricSource).State += 16
+			player.GetEffect(EuphoricSource).State += AMNT
 		} else {
-			eff := player.CreateEff(EuphoricSource, opp, 21, 16)
+			eff := player.CreateEff(EuphoricSource, opp, 21, AMNT)
 			player.AddEffect(eff)
 		}
-	}
+		player.MaxHP += AMNT
+		opp.MaxHP += AMNT
+		Heal(player, AMNT)
 }
 
 func EuphoriaE(player, opp *Girl, turn int) {
-	//fmt.Println("E, dmg with an addition")
-	var DMG, ADDITIONAL int
-	DMG = 5
-	if player.HasEffect(EuphoricSource) {
-		ADDITIONAL = player.GetEffect(EuphoricSource).State
-	} else {
-		ADDITIONAL = 0
-	}
-	Damage(player, opp, DMG+ADDITIONAL, false, player.Skills[2].Colour)
+	DMG := 12
+	Damage(player, opp, DMG, false, player.Skills[2].Colour)
+	player.MaxHP += DMG
+	opp.MaxHP += DMG
+
 }
 
 func EuphoriaUlti(player, opp *Girl, turn int) {
 	if player.HasEffect(EuphoricSource) && !player.HasEffect(EuphoricHeal) {
-		eff := player.CreateEff(EuphoricHeal, opp, 4, 0)
+		eff := player.CreateEff(EuphoricHeal, opp, 21, 0)
 		player.AddEffect(eff)
-	} /* else if player.HasEffect(EuphoricSource) && player.HasEffect(EuphoricHeal) {
-		player.GetEffect(EuphoricSource).State *= 2
-		eff := player.CreateEff(EuphoricHeal, opp, 3, 0)
-		player.AddEffect(eff)
-	}*/
+	}
 }

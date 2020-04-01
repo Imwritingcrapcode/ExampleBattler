@@ -84,4 +84,17 @@ func TurnChance(girl1, girl2 CharInt, turnnum int) {
 		opp.RemoveEffect(TurnThreshold)
 	}
 
+	if opp.HasEffect(EuphoricHeal) {
+		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
+		if opp.GetEffect(EuphoricHeal).Duration == 1 {
+			opp.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if player.HasEffect(EuphoricHeal) {
+		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
+	}
+
 }

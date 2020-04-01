@@ -10,21 +10,21 @@ type Z89 Girl
 func (self *Z89) Init() {
 	self.Name = "Z89"
 	self.Number = 8
-	self.MaxHP = 116
+	self.MaxHP = 111
 	self.CurrHP = self.MaxHP
 	self.Defenses = map[Colour]int{ //3, main color - blue green black?
-		Red: 0,
+		Red: -1,
 		Orange: 0,
-		Yellow: 0,
-		Green: 0,
-		Cyan: 0,
-		Blue: 0,
-		Violet: 0,
-		Pink: 0,
+		Yellow: -1,
+		Green: 2,
+		Cyan: 3,
+		Blue: 2,
+		Violet: -1,
+		Pink: -1,
 		Gray: 0,
 		Brown: 0,
-		Black: 0,
-		White: 0}
+		Black: 2,
+		White: -1}
 	self.Skills = make([]*Skill, 4)
 	self.Skills[0] = &Skill{
 		false,
@@ -36,7 +36,7 @@ func (self *Z89) Init() {
 	}
 	self.Skills[1] = &Skill{
 		false,
-		0, 0, 0,
+		2, 0, 3,
 		Cyan,
 		"Cold Gaze",
 		Z89W,
@@ -52,7 +52,7 @@ func (self *Z89) Init() {
 	}
 	self.Skills[3] = &Skill{
 		true,
-		2, 0, 11,
+		2, 0, 17,
 		Blue,
 		"Z89 R",
 		Z89Ulti,
@@ -69,7 +69,7 @@ func Z89Check(player, opp *Girl, turn, skill int) bool {
 	case 0:
 		return true
 	case 1:
-		return true
+		return turn <= opp.Skills[3].StrT
 	case 2:
 		return true
 	case 3:
@@ -82,25 +82,17 @@ func Z89Check(player, opp *Girl, turn, skill int) bool {
 }
 
 func Z89Q(player, opp *Girl, turn int) {
-	opp.MaxHP -= 12
-	if opp.CurrHP > opp.MaxHP {
-		opp.CurrHP = opp.MaxHP
+	Damage(player, opp, 12, false, player.Skills[0].Colour)
+	if opp.CurrHP < opp.MaxHP {
+		opp.MaxHP = opp.CurrHP
 	}
 }
 
 func Z89W(player, opp *Girl, turn int) {
-	DMG := 0
-	for i := 0; i < TOTALEFFECTS; i++ {
-		if opp.HasEffect(EffectID(i)) {
-			if opp.GetEffect(EffectID(i)).Duration <= 2 {
-				opp.RemoveEffect(EffectID(i))
-				Damage(player, opp, 15, true, player.Skills[1].Colour)
-				DMG += 15
-			}
+	if turn <= opp.Skills[3].StrT {
+		if (opp.Skills[3].StrT + 2) <= 19 {
+			opp.Skills[3].StrT += 2
 		}
-	}
-	if DMG == 0 {
-		Damage(player,opp, 5, true, player.Skills[1].Colour)
 	}
 }
 
@@ -108,7 +100,7 @@ func Z89E(player, opp *Girl, turn int) {
 	var CURR, MAX, BASEDMG int
 	CURR = opp.CurrHP
 	MAX = opp.MaxHP
-	BASEDMG = 20
+	BASEDMG = 15
 	DMG := BASEDMG - (MAX - CURR)
 	if DMG > 0 {
 		Damage(player, opp, DMG, false, player.Skills[2].Colour)
@@ -116,8 +108,8 @@ func Z89E(player, opp *Girl, turn int) {
 }
 
 func Z89Ulti(player, opp *Girl, turn int) {
-	DMG := 50
+	DMG := 40
 	MAXHP := opp.MaxHP
 	THRESHOLD := 70
-	Damage(player, opp, DMG - (MAXHP - THRESHOLD), false, player.Skills[3].Colour)
+	Damage(player, opp, DMG-(MAXHP-THRESHOLD), false, player.Skills[3].Colour)
 }

@@ -5,6 +5,7 @@ function Panel(x, y, w, h, s) {
     this.height = h;
     this.smooth = s;
     this.objects = [];
+    this.toplayerobjs = [];
 
     this.display = function () {
         for (obj of this.objects) {
@@ -40,11 +41,38 @@ function Panel(x, y, w, h, s) {
         noFill();
         strokeWeight(3);
         rect(this.x, this.y, this.width, this.height, this.smooth);
+        for (let obj of this.toplayerobjs) {
+            if (obj.clickable && obj.clickTimer > 0) {
+                obj.clickTimer--;
+                if (obj.clickTimer === 0) {
+                    obj.unclick();
+                }
+                obj.display();
+            } else if (obj.hoverable && obj.in()) { //found an "in"
+                if (!current) { //outside to something
+                    current = obj;
+                    obj.hovered();
+                    obj.display();
+                } else if (current.id === obj.id) { //currently hovered
+                    obj.display();
+                } else { //switched from another 2 this
+                    current.unhovered();
+                    current = obj;
+                    obj.hovered();
+                    obj.display();
+                }
+            } else if (obj.hoverable && current && obj.id === current.id) { //went outside
+                obj.unhovered();
+                current = undefined;
+                obj.display();
+            } else {
+                obj.display();
+            }
+        }
         //display hover
         if (current && current.in()) {
             current.displayHover();
         }
-
     };
 
     this.in = function () {
@@ -55,7 +83,11 @@ function Panel(x, y, w, h, s) {
 
     this.add = function (obj) {
         this.objects.push(obj)
-    }
+    };
+
+    this.addTopLayer = function (obj) {
+        this.toplayerobjs.push(obj)
+    };
 }
 
 function CanvasImage(x, y, path, id, name, width, height) {
@@ -207,7 +239,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
         this.hoverable = false;
     };
 
-    this.show = function() {
+    this.show = function () {
         this.visible = true;
         this.clickable = this.wasClickable;
         this.hoverable = this.wasHoverable;
@@ -282,7 +314,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     }
                 }
                 if (((this.id === "playerHP" || this.id === "oppHP") && this.framesLeftMax > 0)) {
-                    this.framesLeftMax-=1;
+                    this.framesLeftMax -= 1;
                     if (this.MaxHP + this.speedMax > this.targetMaxHP && this.speedMax < 0 ||
                         this.MaxHP + this.speedMax < this.targetMaxHP && this.speedMax > 0) { //if it's worth it yet
                         this.MaxHP = this.MaxHP + this.speedMax;
@@ -1031,7 +1063,7 @@ function StandardButton(x, y, s, t, size, id, col) {
         this.hoverable = false;
     };
 
-    this.show = function() {
+    this.show = function () {
         this.visible = true;
         this.clickable = this.wasClickable;
         this.hoverable = this.wasHoverable;

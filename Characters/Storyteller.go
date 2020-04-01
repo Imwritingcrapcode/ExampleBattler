@@ -70,7 +70,8 @@ func StTCheck(player, opp *Girl, turn, skill int) bool {
 	case 0:
 		return true
 	case 1:
-		switch opp.Name {
+		return true
+		/*switch opp.Name {
 		case "Ruby":
 			//return opp.Skills[opp.LastUsed].Colour == Red
 			return true
@@ -86,7 +87,7 @@ func StTCheck(player, opp *Girl, turn, skill int) bool {
 			return true
 		default:
 			panic("And everybody wants to know who is that girl: " + opp.Name)
-		}
+		}*/
 	case 2:
 		return !(player.HasEffect(CantHeal) || player.CurrHP == player.MaxHP)
 	case 3:

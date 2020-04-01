@@ -12,18 +12,24 @@ func allow(self, opp *Girl, turn int) {
 }
 
 func delayed(self, opp *Girl, turn int) {
-	if self.IsAlive() && self.CanHeal() {
+	if self.IsAlive() {
 		Heal(self, self.MaxHP)
 	}
 }
 
 func euphoricHeal(self, opp *Girl, turn int) {
-	if self.HasEffect(EuphoricSource) && self.GetEffect(EuphoricSource).State > 0 && self.CanHeal() {
-		Heal(self, self.GetEffect(EuphoricSource).State)
-		if self.GetEffect(EuphoricSource).State >= 10 {
-			self.GetEffect(EuphoricSource).State -= 10
-		} else {
-			self.GetEffect(EuphoricSource).State = 0
+	if self.HasEffect(EuphoricSource) {
+		var SAUCE = self.GetEffect(EuphoricSource).State
+		if SAUCE > 0 {
+			Heal(self, SAUCE)
+			Heal(opp, SAUCE)
+			var DRAIN int
+			DRAIN = 9
+			if SAUCE >= DRAIN {
+				self.GetEffect(EuphoricSource).State -= DRAIN
+			} else {
+				self.RemoveEffect(EuphoricSource)
+			}
 		}
 	}
 }

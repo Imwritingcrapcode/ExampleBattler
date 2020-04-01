@@ -587,22 +587,22 @@ function sendSkill(Skill) {
 }
 
 function getElement(id) {
-    for (obj of leftPanel.objects) {
+    for (let obj of leftPanel.objects) {
         if (obj.id === id) {
             return obj
         }
     }
-    for (obj of rightPanel.objects) {
+    for (let obj of rightPanel.objects) {
         if (obj.id === id) {
             return obj
         }
     }
-    for (obj of topPanel.objects) {
+    for (let obj of topPanel.objects) {
         if (obj.id === id) {
             return obj
         }
     }
-    for (obj of bottomPanel.objects) {
+    for (let obj of bottomPanel.objects) {
         if (obj.id === id) {
             return obj
         }

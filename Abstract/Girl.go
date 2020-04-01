@@ -118,12 +118,8 @@ func (self *Girl) IsAlive() bool {
 	return self.CurrHP > 0
 }
 
-func (self *Girl) CanHeal() bool {
-	return !self.HasEffect(CantHeal)
-}
-
 func (self *Girl) TurnEnd(opp *Girl) {
-
+	//TODO handle turnend effects like Structure heal, Euphoria heal etc ?
 }
 
 func (self *Girl) Init() {
