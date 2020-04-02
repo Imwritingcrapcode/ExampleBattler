@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
+	"../Abstract"
 )
 
 func main() {
-	var duration int
-	duration = 94608000
-	fmt.Println(duration)
+	fmt.Println(int(Abstract.EuphoricHeal))
 
 }

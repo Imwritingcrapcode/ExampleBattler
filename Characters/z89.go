@@ -8,11 +8,11 @@ import (
 type Z89 Girl
 
 func (self *Z89) Init() {
-	self.Name = "Z89"
 	self.Number = 8
+	self.Name = ReleasedCharactersNames[self.Number]
 	self.MaxHP = 111
 	self.CurrHP = self.MaxHP
-	self.Defenses = map[Colour]int{ //3, main color - blue green black?
+	self.Defenses = map[Colour]int{ //4, main color - blue green black?
 		Red: -1,
 		Orange: 0,
 		Yellow: -1,
@@ -40,7 +40,7 @@ func (self *Z89) Init() {
 		Cyan,
 		"Indifference",
 		Z89W,
-		"rgb(37, 247, 247)",
+		"rgb(165, 252, 252)",
 	}
 	self.Skills[2] = &Skill{
 		false,
@@ -48,7 +48,7 @@ func (self *Z89) Init() {
 		Green,
 		"Green Sphere",
 		Z89E,
-		"rgb(20, 179, 46)",
+		"rgb(16, 143, 38)",
 	}
 	self.Skills[3] = &Skill{
 		true,

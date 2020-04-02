@@ -955,7 +955,7 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.textColour.setAlpha(0.5 * 255);
                 this.borderColour = light;
                 this.clickable = false;
-                this.borderWidth = 3;
+                this.borderWidth = 4.5;
                 break;
             case -2:
                 this.baseColour.setAlpha(0.5 * 255);
@@ -965,7 +965,7 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.textColour.setAlpha(0.5 * 255);
                 this.borderColour = light;
                 this.clickable = false;
-                this.borderWidth = 3;
+                this.borderWidth = 2.5;
                 break;
             case -100:
                 this.baseColour.setAlpha(0.3 * 255);
@@ -975,20 +975,16 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.textColour.setAlpha(0.3 * 255);
                 this.borderColour = light;
                 this.clickable = false;
-                this.borderWidth = 3;
+                this.borderWidth = 2.5;
                 break;
             default:
-                this.baseColour.setAlpha(0.87 * 255);
-                this.hoverColour.setAlpha(0.87 * 255);
-                this.clickedColour.setAlpha(0.87 * 255);
-                if (isLight(this.baseColour)) {
-                    this.textColour = color(dark.toString())
-                } else {
-                    this.textColour = color(light.toString())
-                }
-                this.textColour.setAlpha(0.87 * 255);
-                this.borderColour = dark;
-                this.clickable = this.isMine;
+                this.baseColour.setAlpha(0.5 * 255);
+                this.hoverColour.setAlpha(0.5 * 255);
+                this.clickedColour.setAlpha(0.5 * 255);
+                this.textColour = color(light.toString());
+                this.textColour.setAlpha(0.5 * 255);
+                this.borderColour = light;
+                this.clickable = false;
                 this.borderWidth = 4.5;
                 break;
         }

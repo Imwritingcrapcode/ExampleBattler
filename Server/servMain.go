@@ -186,7 +186,7 @@ func ImageHandler(w http.ResponseWriter, r *http.Request) {
 		} else if strings.HasSuffix(Path, ".png") {
 			w.Header().Set("Content-Type", "image/png")
 		}
-		w.Header().Set("Cache-Control", "max-age=31536000, private")
+		w.Header().Set("Cache-Control", "max-age=31536000")
 		w.Write(img)
 	} else {
 		if AlrdyLoggedIn {

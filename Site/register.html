@@ -7,7 +7,7 @@
     <meta http-equiv="Expires" content="0"/>
     <title>Register</title>
     <script>
-        function register() {
+        function registerFunc() {
             let username = document.getElementById("username").value;
             let password = document.getElementById("password").value;
             let password2 = document.getElementById("password2").value;
@@ -75,11 +75,11 @@
                onkeypress="if (event.keyCode === 13) {document.getElementById('password2').focus()}"/>
         <br>
         <input type="password" id="password2" placeholder="Repeat your password"
-               onkeypress="if (event.keyCode === 13) {register()}"/>
+               onkeypress="if (event.keyCode === 13) {registerFunc()}"/>
         <br>
         <div id="warnings" style="color: #FF4133;"></div>
         <br>
-        <button id="register" type="button" onclick="register()" class="standardbutton">Request registration
+        <button id="register" type="button" onclick="registerFunc()" class="standardbutton">Request registration
         </button>
         <br>
         <img id="preloader" class="preloader" style="visibility: hidden;"

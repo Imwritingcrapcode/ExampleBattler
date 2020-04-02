@@ -137,13 +137,11 @@ func Turn2Channels(girl1, girl2 CharInt, turnnum int, p1, p2 *ClientChannels) bo
 		opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(DelayedHeal)
 	}
-	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
-		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
-		opp.RemoveEffect(CantHeal)
-	}
-	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
-		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
-		opp.RemoveEffect(TurnThreshold)
+	if player.HasEffect(EuphoricHeal) {
+		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
@@ -151,11 +149,13 @@ func Turn2Channels(girl1, girl2 CharInt, turnnum int, p1, p2 *ClientChannels) bo
 			opp.RemoveEffect(EuphoricHeal)
 		}
 	}
-	if player.HasEffect(EuphoricHeal) {
-		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
-		if player.GetEffect(EuphoricHeal).Duration == 1 {
-			player.RemoveEffect(EuphoricHeal)
-		}
+	if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration == 1 {
+		player.GetEffect(CantHeal).Remove(player, opp, turnnum)
+		player.RemoveEffect(CantHeal)
+	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
 	}
 	return false
 }
@@ -352,17 +352,16 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 	}
 	//Remove Effects, decrease duration
 	player.DecreaseEffects(opp, turnnum)
+
 	if opp.HasEffect(DelayedHeal) {
 		opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(DelayedHeal)
 	}
-	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
-		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
-		opp.RemoveEffect(CantHeal)
-	}
-	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
-		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
-		opp.RemoveEffect(TurnThreshold)
+	if player.HasEffect(EuphoricHeal) {
+		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
@@ -370,11 +369,14 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 			opp.RemoveEffect(EuphoricHeal)
 		}
 	}
-	if player.HasEffect(EuphoricHeal) {
-		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
-		if player.GetEffect(EuphoricHeal).Duration == 1 {
-			player.RemoveEffect(EuphoricHeal)
-		}
+	if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration == 1 {
+		player.GetEffect(CantHeal).Remove(player, opp, turnnum)
+		player.RemoveEffect(CantHeal)
+	}
+
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
 	}
 	return false
 }
@@ -423,13 +425,11 @@ func TurnApply(girl1, girl2 CharInt, turnnum int, strat []int) {
 		opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(DelayedHeal)
 	}
-	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
-		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
-		opp.RemoveEffect(CantHeal)
-	}
-	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
-		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
-		opp.RemoveEffect(TurnThreshold)
+	if player.HasEffect(EuphoricHeal) {
+		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
@@ -437,11 +437,14 @@ func TurnApply(girl1, girl2 CharInt, turnnum int, strat []int) {
 			opp.RemoveEffect(EuphoricHeal)
 		}
 	}
-	if player.HasEffect(EuphoricHeal) {
-		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
-		if player.GetEffect(EuphoricHeal).Duration == 1 {
-			player.RemoveEffect(EuphoricHeal)
-		}
+	if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration == 1{
+		player.GetEffect(CantHeal).Remove(player, opp, turnnum)
+		player.RemoveEffect(CantHeal)
+	}
+
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
 	}
 
 }
@@ -496,13 +499,11 @@ func TurnKeyboard(girl1, girl2 CharInt, turnnum int) {
 		opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
 		opp.RemoveEffect(DelayedHeal)
 	}
-	if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
-		opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
-		opp.RemoveEffect(CantHeal)
-	}
-	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
-		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
-		opp.RemoveEffect(TurnThreshold)
+	if player.HasEffect(EuphoricHeal) {
+		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration == 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
 	}
 	if opp.HasEffect(EuphoricHeal) {
 		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
@@ -510,10 +511,13 @@ func TurnKeyboard(girl1, girl2 CharInt, turnnum int) {
 			opp.RemoveEffect(EuphoricHeal)
 		}
 	}
-	if player.HasEffect(EuphoricHeal) {
-		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
-		if player.GetEffect(EuphoricHeal).Duration == 1 {
-			player.RemoveEffect(EuphoricHeal)
-		}
+	if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration == 1 {
+		player.GetEffect(CantHeal).Remove(player, opp, turnnum)
+		player.RemoveEffect(CantHeal)
 	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
+	}
+
 }

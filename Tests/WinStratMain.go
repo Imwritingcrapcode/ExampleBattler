@@ -10,7 +10,7 @@ import (
 
 func main() {
 	//for tests, I start with the girl as turn 1
-	INIT1 := 9
+	INIT1 :=  9
 	INIT2 := 119
 	test := 119
 	wins, err := os.OpenFile("C:/Users/~C-o-L/GoglandProjects/ExampleBattler/TestFiles/WinStrats.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -85,8 +85,8 @@ func main() {
 			//losses.WriteString("lost to: " + ToStringStrat(enemyStrat) + "\n")
 		} else if verdict == 1 || verdict == -1 {
 			wins.WriteString(ToStringStrat(strat) + "\n")
-			fmt.Println("found a win!")
-			break
+			//fmt.Println("found a win!")
+			//break
 		} else {
 			//brokens.WriteString(ToStringStrat(strat) + "\n")
 		}

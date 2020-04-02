@@ -8,8 +8,8 @@ import (
 type Euphoria Girl
 
 func (self *Euphoria) Init() {
-	self.Name = "Euphoria"
 	self.Number = 9
+	self.Name = ReleasedCharactersNames[self.Number]
 	self.MaxHP = 117
 	self.CurrHP = self.MaxHP
 	self.Defenses = map[Colour]int{ //-2, main color - pink(orange)

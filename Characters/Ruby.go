@@ -73,7 +73,7 @@ func RubCheck(player, opp *Girl, turn, skill int) bool {
 	case 1:
 		return true
 	case 2:
-		return float64(opp.CurrHP) < float64(opp.MaxHP)*0.2 || opp.HasEffect(DelayedHeal)
+		return true
 	case 3:
 		return float64(opp.CurrHP) < float64(opp.MaxHP)*0.1 ||
 			(float64(opp.CurrHP) < float64(opp.MaxHP)*0.2 && opp.HasEffect(CantHeal))
@@ -98,13 +98,15 @@ func RubyW(player, opp *Girl, turn int) {
 func RubyE(player, opp *Girl, turn int) {
 	DURATION := 2
 	if !opp.HasEffect(Unseen) {
-		eff := opp.CreateEff(CantHeal, player, DURATION, 0)
+		eff := opp.CreateEff(CantHeal, player, DURATION, 1)
 		opp.AddEffect(eff)
 	}
+	eff := player.CreateEff(CantHeal, opp, DURATION+1, -1)
+	player.AddEffect(eff)
 }
 func RubyUlti(player, opp *Girl, turn int) {
 	THRESHOLD := 10.0 / 100.0
-	if opp.HasEffect(CantHeal) {
+	if player.HasEffect(CantHeal) {
 		THRESHOLD = 20.0 / 100.0
 	}
 	if float64(opp.CurrHP) < float64(opp.MaxHP)*(float64(THRESHOLD)) {

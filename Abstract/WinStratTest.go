@@ -91,13 +91,11 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 							copyOpp.(*Girl).GetEffect(DelayedHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
 							copyOpp.(*Girl).RemoveEffect(DelayedHeal)
 						}
-						if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-							copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
-							copyPlayer.(*Girl).RemoveEffect(CantHeal)
-						}
-						if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-							copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
-							copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+						if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
+							copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
+							if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
+								copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
+							}
 						}
 						if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 							copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
@@ -105,11 +103,13 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 								copyOpp.(*Girl).RemoveEffect(EuphoricHeal)
 							}
 						}
-						if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
-							copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
-							if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-								copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
-							}
+						if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
+							copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
+							copyPlayer.(*Girl).RemoveEffect(CantHeal)
+						}
+						if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+							copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
+							copyOpp.(*Girl).RemoveEffect(TurnThreshold)
 						}
 						//send deeper?..
 						if turnplayer == 0 {
@@ -211,27 +211,27 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 						copyOpp.(*Girl).GetEffect(DelayedHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
 						copyOpp.(*Girl).RemoveEffect(DelayedHeal)
 					}
-					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
-						copyPlayer.(*Girl).RemoveEffect(CantHeal)
-					}
-					if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
-						copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
-					}
-
-					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
-						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
-						if copyOpp.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-							copyOpp.(*Girl).RemoveEffect(EuphoricHeal)
-						}
-					}
 					if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
 						copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
 						if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
 							copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
 						}
 					}
+					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
+						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
+						if copyOpp.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
+							copyOpp.(*Girl).RemoveEffect(EuphoricHeal)
+						}
+					}
+					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
+						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
+						copyPlayer.(*Girl).RemoveEffect(CantHeal)
+					}
+					if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+						copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
+						copyOpp.(*Girl).RemoveEffect(TurnThreshold)
+					}
+
 					//send deeper
 					if turnplayer == 0 {
 						//player, opp
@@ -300,27 +300,28 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 					opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
 					opp.RemoveEffect(DelayedHeal)
 				}
-				if opp.HasEffect(CantHeal) && opp.GetEffect(CantHeal).Duration == 1 {
-					opp.GetEffect(CantHeal).Remove(opp, player, turnnum)
-					opp.RemoveEffect(CantHeal)
-				}
-				if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
-					opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
-					opp.RemoveEffect(TurnThreshold)
-				}
 
-				if opp.HasEffect(EuphoricHeal) {
-					opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
-					if opp.GetEffect(EuphoricHeal).Duration == 1 {
-						player.RemoveEffect(EuphoricHeal)
-					}
-				}
 				if player.HasEffect(EuphoricHeal) {
 					player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
 					if player.GetEffect(EuphoricHeal).Duration == 1 {
 						player.RemoveEffect(EuphoricHeal)
 					}
 				}
+				if opp.HasEffect(EuphoricHeal) {
+					opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
+					if opp.GetEffect(EuphoricHeal).Duration == 1 {
+						player.RemoveEffect(EuphoricHeal)
+					}
+				}
+				if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration == 1 {
+					player.GetEffect(CantHeal).Remove(player, opp, turnnum)
+					player.RemoveEffect(CantHeal)
+				}
+				if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
+					opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+					opp.RemoveEffect(TurnThreshold)
+				}
+
 				if turnplayer == 0 {
 					//player, opp
 					_, response, finalverd = TestStrat(player, opp, turnnum+1, strat, response, num, verd)
@@ -364,13 +365,11 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 						copyOpp.(*Girl).GetEffect(DelayedHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
 						copyOpp.(*Girl).RemoveEffect(DelayedHeal)
 					}
-					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
-						copyPlayer.(*Girl).RemoveEffect(CantHeal)
-					}
-					if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnnum)
-						copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+					if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
+						copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
+						if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
+							copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
+						}
 					}
 					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
@@ -378,11 +377,13 @@ func TestStrat(char1, char2 CharInt, turnnum int, strat, response []int, num int
 							copyOpp.(*Girl).RemoveEffect(EuphoricHeal)
 						}
 					}
-					if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
-						copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
-						if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-							copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
-						}
+					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
+						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnnum)
+						copyPlayer.(*Girl).RemoveEffect(CantHeal)
+					}
+					if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+						copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnnum)
+						copyOpp.(*Girl).RemoveEffect(TurnThreshold)
 					}
 					//send deeper
 					if turnplayer == 0 {

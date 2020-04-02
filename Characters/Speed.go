@@ -75,7 +75,7 @@ func SpdCheck(player, opp *Girl, turn, skill int) bool {
 			(player.HasEffect(BlackToken) && player.GetEffect(BlackToken).State > 4)) &&
 			!(player.HasEffect(SpedUp) && player.GetEffect(SpedUp).Duration == 2)
 	case 3:
-		return player.HasEffect(BlackToken) || player.HasEffect(GreenToken)
+		return player.HasEffect(GreenToken) || player.HasEffect(BlackToken)
 	default:
 		panic("HOW DID YOU EVEN " + strconv.Itoa(skill))
 

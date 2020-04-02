@@ -69,7 +69,7 @@ func MlnCheck(player, opp *Girl, turn, skill int) bool {
 	case 0:
 		return true
 	case 1:
-		return player.CurrHP < player.MaxHP && player.HasEffect(StolenHP) && player.GetEffect(StolenHP).State > 0
+		return player.HasEffect(StolenHP) && player.GetEffect(StolenHP).State > 0
 	case 2:
 		return true
 	case 3:

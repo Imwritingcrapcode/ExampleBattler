@@ -56,6 +56,12 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 						copyOpp.(*Girl).GetEffect(DelayedHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
 						copyOpp.(*Girl).RemoveEffect(DelayedHeal)
 					}
+					if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
+						copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
+						if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
+							copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
+						}
+					}
 					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 						//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
 						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
@@ -64,19 +70,13 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 						}
 						//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
 					}
-					if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
-						copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
-						if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-							copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
-						}
-					}
 					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
+						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
 						copyPlayer.(*Girl).RemoveEffect(CantHeal)
 					}
-					if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
-						copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+					if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+						copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
+						copyOpp.(*Girl).RemoveEffect(TurnThreshold)
 					}
 
 					//send deeper
@@ -153,6 +153,12 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 					copyOpp.(*Girl).RemoveEffect(DelayedHeal)
 					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
 				}
+				if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
+					copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
+					if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
+						copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
+					}
+				}
 				if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
 					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
 					copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
@@ -161,19 +167,13 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 					}
 					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
 				}
-				if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
-					copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
-					if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-						copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
-					}
-				}
 				if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-					copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
+					copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
 					copyPlayer.(*Girl).RemoveEffect(CantHeal)
 				}
-				if copyPlayer.(*Girl).HasEffect(TurnThreshold) && copyPlayer.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-					copyPlayer.(*Girl).GetEffect(TurnThreshold).Remove(copyPlayer.(*Girl), copyPlayer.(*Girl), turnNum)
-					copyPlayer.(*Girl).RemoveEffect(TurnThreshold)
+				if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
+					copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
+					copyOpp.(*Girl).RemoveEffect(TurnThreshold)
 				}
 
 				//send deeper

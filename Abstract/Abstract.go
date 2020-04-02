@@ -26,7 +26,7 @@ const TOTALCOLOURS = 12
 const MAXTAILSNUMBER = 3
 
 const (
-	None Colour = iota
+	None   Colour = iota
 	Red
 	Orange
 	Yellow
@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	Basic EffectType = iota
+	Basic       EffectType = iota
 	Prohibiting
 	Control
 	Debuff
@@ -54,7 +54,7 @@ const (
 const (
 	//Basic
 	DmgMul EffectID = iota
-	DmgAdd          //Not yet in the game but...
+	DmgAdd  //Not yet in the game but...
 	//Prohibiting
 	CantHeal
 	CantUse
@@ -116,21 +116,21 @@ var EffectNames = map[EffectID]string{
 	DmgMul: "Damage Multiplied:", //state
 	DmgAdd: "Additional Damage:", //state
 	//Prohibiting
-	CantHeal: "Can't Heal!",         //none
+	CantHeal: "Can't Heal",         //none
 	CantUse:  "Can't use a colour:", //colour
 	//Control
-	ControlledByStT: "Controlled by Storyteller!", //none
+	ControlledByStT: "Controlled by Storyteller", //none
 	//Debuff
-	TurnReduc:     "Damage reduced this turn by:",        //state
+	TurnReduc: "Damage reduced this turn by:", //state
 	//Buff
-	TurnThreshold: "Damage min this turn:",               //state
+	TurnThreshold: "Damage min this turn:",                     //state
 	AtkReduc:      "Next opp's attack's damage is reduced by:", //state
 	//State
-	Unseen:       "Unseen for:",              //duration
-	SpedUp:       "SpedUp for:",              //duration
-	DelayedHeal:  "Delayed Heal for:",        //duration
-	Invulnerable: "Invulnerable for:",        //duration
-	EuphoricHeal: "Healing from Source for:", //duration
+	Unseen:       "Unseen for:",       //duration
+	SpedUp:       "SpedUp for:",       //duration
+	DelayedHeal:  "Delayed Heal for:", //duration
+	Invulnerable: "Invulnerable for:", //duration
+	EuphoricHeal: "Euphoric",        //none
 	//Numerical
 	GreenToken:     "Green Tokens:",        //state
 	BlackToken:     "Black Tokens:",        //state
@@ -149,19 +149,20 @@ var Rarities = []string{
 }
 
 type GirlInfo struct {
-	Name         string
-	Number       int
-	Rarity       string
-	Tags         []string
-	Skills       []string
-	SkillColours []string
+	Name             string
+	Number           int
+	Rarity           string
+	Tags             []string
+	Skills           []string
+	SkillColours     []string
 	SkillColourCodes []string
-	Description  string
-	MainColour   string
+	Description      string
+	MainColour       string
 }
 
 var ReleasedCharacters = []int{
 	1,
+	8,
 	9,
 	10,
 	33,
@@ -171,8 +172,8 @@ var ReleasedCharacters = []int{
 
 var ReleasedCharactersNames = map[int]string{
 	1:   "Storyteller",
-	8:	  "Z89",
-	9:	 "Euphoria",
+	8:   "Z89",
+	9:   "Euphoria",
 	10:  "Ruby",
 	33:  "Speed",
 	51:  "Milana",

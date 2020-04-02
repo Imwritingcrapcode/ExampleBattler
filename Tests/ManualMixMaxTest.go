@@ -27,15 +27,15 @@ func main() {
 	//INIT1 := 33
 	//INIT1 := 51
 	//INIT1 := 119
-	INIT1 :=8
-	INIT2 := 9
-	PLAYER := 51
-	TWOBOTS := !(PLAYER == INIT1 || PLAYER == INIT2)
+	INIT1 := 51
+	INIT2 := 8
+	PLAYER := 5100
 	TWOPLAYERS := false
+	TWOBOTS := !(PLAYER == INIT1 || PLAYER == INIT2)
 	if INIT1 == 33 || INIT2 == 33 {
 		DEPTH = 5
 	} else {
-		DEPTH = 6
+		DEPTH = 10
 	}
 
 	/*coin := rand.Intn(2)

@@ -127,7 +127,7 @@ function init() {
                         im.transparency = 126;
                     }
                     txt.setText(cost);
-                    im.image = loadImage("/images/locked/" + DUSTS.get(item.Dust) + "_dust.png");
+                    //im.image = loadImage("/images/locked/" + DUSTS.get(item.Dust) + "_dust.png");
                 }
             }
 

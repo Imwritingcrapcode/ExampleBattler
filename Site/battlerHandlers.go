@@ -18,6 +18,7 @@ import (
 //IMPORTANT
 //todo queue sends stuff in a channel
 //6. shop with drops.
+//TODO fix shop lags bc of pictures (lower res ?), interface not in fullscreen, long hold on touchscreen.
 //todo login is not a function
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
@@ -375,7 +376,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 				botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
 			p1.PlayingAs, char2 = FindValidCombination(p1.ChosenGirls, botChosen)
-			DEPTH := rand.Intn(3) + 3 //3 to 5.
+			DEPTH := rand.Intn(3) + 4 //3 to 6.
 			log.Println("[BOTGAME] bot is", DEPTH, "yrs old.")
 			SetLastPlayedAs(p1.UserID, p1.PlayingAs)
 			SetLastOpponentsName(p1.UserID, p1.UserID)

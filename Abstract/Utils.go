@@ -335,7 +335,7 @@ func DescribeEffects(player *Girl) *map[int]string {
 	desc := make(map[int]string)
 	for i := 0; i < TOTALEFFECTS; i++ {
 		if player.HasEffect(EffectID(i)) {
-			if EffectID(i) == ControlledByStT || EffectID(i) == CantHeal {
+			if EffectID(i) == ControlledByStT || EffectID(i) == CantHeal || EffectID(i) == EuphoricHeal {
 				desc[int(EffectID(i))] = ""
 			} else if EffectID(i) == CantUse {
 				desc[int(EffectID(i))] = ColoursToString[Colour(player.GetEffect(EffectID(i)).State)]
@@ -355,7 +355,7 @@ func ToStringEffects(player *Girl, res *strings.Builder) {
 		for i := 0; i < TOTALEFFECTS; i++ {
 			if player.HasEffect(EffectID(i)) {
 				j += 1
-				if EffectID(i) == ControlledByStT || EffectID(i) == CantHeal {
+				if EffectID(i) == ControlledByStT || EffectID(i) == CantHeal || EffectID(i) == EuphoricHeal {
 					res.WriteString(EffectNames[EffectID(i)] + ";")
 				} else if EffectID(i) == CantUse {
 					res.WriteString(EffectNames[EffectID(i)] + " " + ColoursToString[Colour(player.GetEffect(EffectID(i)).State)] + ";")
