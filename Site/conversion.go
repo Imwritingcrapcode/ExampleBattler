@@ -103,16 +103,20 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			}
 			//the amnt they'll get
 			get := int(math.Floor(rate * float64(amnt)))
-			if get < 1 {
+			cost := float64(get) / rate
+			for cost != math.Trunc(cost) {
+				get--
+				cost = (float64(get) / rate)
+			}
+			if get < 1 || cost < 1 { //|| (float64(get)/rate != math.Trunc(float64(get)/rate)){
 				w.WriteHeader(400)
-				w.Write([]byte("you will get less than 1 dust"))
+				w.Write([]byte("you will get less than 1 dust or need to convert more"))
 				return
 			}
-			cost := int(float64(get) / rate)
 			//how much time it will take in seconds!
 			time := get * SecondsPerConversion[dust]
 			//pay up
-			user.SetDust(dust, user.GetDust(dust)-cost)
+			user.SetDust(dust, user.GetDust(dust)-int(cost))
 			//start converting
 			StartConversion(user.UserID, time, get, newDustType)
 			//send Info
@@ -134,3 +138,4 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+

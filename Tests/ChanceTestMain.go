@@ -14,8 +14,8 @@ import (
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	MAXTEST := 2500119
-	test, err := os.OpenFile("C:/Users/~C-o-L/GoglandProjects/Battler/TestFiles/ChanceTest.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	MAXTEST := 100000
+	test, err := os.OpenFile("C:/Users/~C-o-L/GoglandProjects/ExampleBattler/TestFiles/ChanceTest.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -24,7 +24,7 @@ func main() {
 	fmt.Println(testingHeader)
 	test.WriteString(testingHeader)
 	var g1, g2 CharInt
-	var totalWins, totalDiff, totalLen int
+	var totalWins, totalDiff, totalLen int64
 	var WinRates map[int]float64
 	g1 = new(Girl)
 	g2 = new(Girl)
@@ -37,13 +37,12 @@ func main() {
 				totalDiff = 0
 				totalWins = 0
 				totalLen = 0
-				currLen := 21
+				currLen := 20
 				for i := 0; i < MAXTEST; i++ {
 					InitAsNumber(gi1, INIT1)
 					InitAsNumber(gi2, INIT2)
 					for i := 1; i < 21; i++ {
 						if i%2 == 1 {
-
 							TurnChance(gi1, gi2, i)
 						} else {
 							TurnChance(gi2, gi1, i)
@@ -54,13 +53,13 @@ func main() {
 
 						}
 					}
-					totalLen += GetTurnNum(currLen)
-					totalDiff += gi1.CurrHP - gi2.CurrHP
+					totalLen += int64(GetTurnNum(currLen))
+					totalDiff += int64(gi1.CurrHP - gi2.CurrHP)
 					if gi1.CurrHP >= gi2.CurrHP {
 						totalWins += 1
 					}
 				}
-				WinRates[gi2.Number] += float64(MAXTEST - totalWins)
+				WinRates[gi2.Number] += float64(int64(MAXTEST) - totalWins)
 				WinRates[gi1.Number] += float64(totalWins)
 				result := gi1.Name + " \t- " + gi2.Name + ", wins with " +
 					strconv.FormatFloat(float64(totalWins)/float64(MAXTEST)*100.0, 'f', 3, 64) +

@@ -31,7 +31,16 @@ function setup() {
     B.hide();
     B.clicked = function () {
         let inner = document.getElementById("number").innerText;
-        let get = parseFloat(CONVINFO.ConversionRate[currentType]) * int(inner);
+        let get = int(Math.floor(CONVINFO.ConversionRate[currentType]) * int(inner));
+        let cost = parseFloat(get / CONVINFO.ConversionRate[currentType]);
+        if (cost < 1 || get < 1) {
+            while (cost !== Math.trunc(cost) || get < 1) {
+                get++;
+                cost = parseFloat(get / CONVINFO.ConversionRate[currentType]);
+            }
+            document.getElementById("number").innerText = "You need to convert at least " + cost + " dust!";
+            return
+        }
         if (inner > 0 && get >= 1.0) {
             this.hide();
             bar.makeNotDraggable();
@@ -42,8 +51,6 @@ function setup() {
             document.getElementById("s").disabled = true;
             console.log(inner);
             convert("!", int(inner), currentType);
-        } else if (get < 1) {
-            document.getElementById("number").innerText = "You need to convert at least " + Math.ceil(1/CONVINFO.ConversionRate[currentType]) + " dust!";
         }
     };
     convobjects.push(B);

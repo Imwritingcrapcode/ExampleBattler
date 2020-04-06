@@ -28,9 +28,9 @@ func main() {
 	//INIT1 := 51
 	//INIT1 := 119
 	INIT1 := 51
-	INIT2 := 8
+	INIT2 := 119
 	PLAYER := 5100
-	TWOPLAYERS := false
+	TWOPLAYERS := true
 	TWOBOTS := !(PLAYER == INIT1 || PLAYER == INIT2)
 	if INIT1 == 33 || INIT2 == 33 {
 		DEPTH = 5

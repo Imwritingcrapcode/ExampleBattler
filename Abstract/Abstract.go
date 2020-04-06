@@ -5,7 +5,7 @@ package Abstract
 //Current main interface.
 type CharInt interface {
 	Init()
-	TurnEnd(opp *Girl)
+	TurnEnd(opp *Girl, turn int)
 	Copy() CharInt
 	Equals(other *Girl) bool
 	IsAlive() bool
@@ -188,15 +188,18 @@ var ReleasedCharactersPacks = map[string][]int{
 	"LF": {1, 119},
 }
 
-var BetaCharacters = append(ReleasedCharacters, []int{8, 9, 118}...)
+var BetaCharacters = append(ReleasedCharacters, []int{21, 56, 64, 77, 101, 113}...)
 
 var BetaCharactersNames = func() map[int]string {
 	m := make(map[int]string)
 	for key, value := range ReleasedCharactersNames {
 		m[key] = value
 	}
-	m[8] = "z89"
-	m[9] = "Euphoria"
-	m[118] = "Void"
+	m[21] = "Silence"
+	m[56] = "Sun/Emily"
+	m[64] = "Tsunami"
+	m[77] = "Calla"
+	m[101] = "Ials"
+	m[113] = "Shear"
 	return m
 }()

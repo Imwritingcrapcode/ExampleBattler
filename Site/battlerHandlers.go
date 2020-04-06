@@ -16,10 +16,11 @@ import (
 
 /*
 //IMPORTANT
-//todo queue sends stuff in a channel
+//TODO notifications
+//todo queue sends stuff in a channel + skill level
 //6. shop with drops.
-//TODO fix shop lags bc of pictures (lower res ?), interface not in fullscreen, long hold on touchscreen.
-//todo login is not a function
+//TODO interface not in fullscreen, long hold on touchscreen.
+//todo weighted starting characters
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
 
@@ -29,16 +30,13 @@ import (
 //todo glittering loading bar
 //TODO global chat
 //TODO dms chat
-//TODO notifications
 //TODO prompt reconnect >_<
 //TODO speech bubbles
 //TODO skins
 //TODO ability draft, 2v2
 //TODO character wiki
-//TODO euphoria and z89
 //TODO news page
 //TODO choose your pfp
-//todo quality of the pics
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {
@@ -368,11 +366,8 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 			var char2 int
 			botChosen := make([]int, 2)
 			botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			for botChosen[0] == 9 || botChosen[0] == 8 {
-				botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			}
 			botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			for botChosen[1] == botChosen[0] || botChosen[1] == 9 || botChosen[1] == 8 {
+			for botChosen[1] == botChosen[0]{
 				botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
 			p1.PlayingAs, char2 = FindValidCombination(p1.ChosenGirls, botChosen)

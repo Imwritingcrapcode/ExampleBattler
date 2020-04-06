@@ -10,9 +10,9 @@ import (
 
 func main() {
 	//for tests, I start with the girl as turn 1
-	INIT1 :=  9
-	INIT2 := 119
-	test := 119
+	INIT1 :=  8
+	INIT2 := 9
+	test := 9
 	wins, err := os.OpenFile("C:/Users/~C-o-L/GoglandProjects/ExampleBattler/TestFiles/WinStrats.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		panic(err)

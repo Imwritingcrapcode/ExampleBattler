@@ -71,31 +71,5 @@ func TurnChance(girl1, girl2 CharInt, turnnum int) {
 
 	//Remove Effects, decrease duration
 	player.DecreaseEffects(opp, turnnum)
-	if opp.HasEffect(DelayedHeal) {
-		opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
-		opp.RemoveEffect(DelayedHeal)
-	}
-	if player.HasEffect(EuphoricHeal) {
-		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
-		if player.GetEffect(EuphoricHeal).Duration == 1 {
-			player.RemoveEffect(EuphoricHeal)
-		}
-	}
-	if opp.HasEffect(EuphoricHeal) {
-		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
-		if opp.GetEffect(EuphoricHeal).Duration == 1 {
-			opp.RemoveEffect(EuphoricHeal)
-		}
-	}
-	if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration == 1 {
-		player.GetEffect(CantHeal).Remove(player, opp, turnnum)
-		player.RemoveEffect(CantHeal)
-	}
-	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration == 1 {
-		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
-		opp.RemoveEffect(TurnThreshold)
-	}
-
-	
-
+	player.TurnEnd(opp, turnnum)
 }

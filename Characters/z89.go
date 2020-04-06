@@ -52,7 +52,7 @@ func (self *Z89) Init() {
 	}
 	self.Skills[3] = &Skill{
 		true,
-		2, 0, 17,
+		20, 0, 17,
 		Blue,
 		"Despondency",
 		Z89Ulti,

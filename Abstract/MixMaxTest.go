@@ -52,33 +52,7 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 					copyPlayer.(*Girl).LastUsed = skill
 					//decrease effects
 					copyPlayer.(*Girl).DecreaseEffects(copyOpp.(*Girl), turnNum)
-					if copyOpp.(*Girl).HasEffect(DelayedHeal) {
-						copyOpp.(*Girl).GetEffect(DelayedHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
-						copyOpp.(*Girl).RemoveEffect(DelayedHeal)
-					}
-					if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
-						copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
-						if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-							copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
-						}
-					}
-					if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
-						//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
-						copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
-						if copyOpp.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-							copyOpp.(*Girl).RemoveEffect(EuphoricHeal)
-						}
-						//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
-					}
-					if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-						copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
-						copyPlayer.(*Girl).RemoveEffect(CantHeal)
-					}
-					if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-						copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
-						copyOpp.(*Girl).RemoveEffect(TurnThreshold)
-					}
-
+					copyPlayer.(*Girl).TurnEnd(copyOpp.(*Girl), turnNum)
 					//send deeper
 					if isMaximizerTurn {
 						valArray[currStrat], lengthArray[currStrat], movesArray[currStrat] = MiniMax(copyPlayer, copyOpp, turnNum+1, depth-1, !isMaximizerTurn, append(bestStrat, toUse...))
@@ -147,35 +121,7 @@ func MiniMax(girl1, girl2 CharInt, turnNum, depth int, isMaximizerTurn bool, bes
 				copyPlayer.(*Girl).LastUsed = i
 				//decrease effs
 				copyPlayer.(*Girl).DecreaseEffects(copyOpp.(*Girl), turnNum)
-				if copyOpp.(*Girl).HasEffect(DelayedHeal) {
-					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
-					copyOpp.(*Girl).GetEffect(DelayedHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
-					copyOpp.(*Girl).RemoveEffect(DelayedHeal)
-					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
-				}
-				if copyPlayer.(*Girl).HasEffect(EuphoricHeal) {
-					copyPlayer.(*Girl).GetEffect(EuphoricHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
-					if copyPlayer.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-						copyPlayer.(*Girl).RemoveEffect(EuphoricHeal)
-					}
-				}
-				if copyOpp.(*Girl).HasEffect(EuphoricHeal) {
-					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
-					copyOpp.(*Girl).GetEffect(EuphoricHeal).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
-					if copyOpp.(*Girl).GetEffect(EuphoricHeal).Duration == 1 {
-						copyOpp.(*Girl).RemoveEffect(EuphoricHeal)
-					}
-					//fmt.Println("THIS IS TURN NUMBER,", turnNum, "HP", copyOpp.(*Girl).CurrHP)
-				}
-				if copyPlayer.(*Girl).HasEffect(CantHeal) && copyPlayer.(*Girl).GetEffect(CantHeal).Duration == 1 {
-					copyPlayer.(*Girl).GetEffect(CantHeal).Remove(copyPlayer.(*Girl), copyOpp.(*Girl), turnNum)
-					copyPlayer.(*Girl).RemoveEffect(CantHeal)
-				}
-				if copyOpp.(*Girl).HasEffect(TurnThreshold) && copyOpp.(*Girl).GetEffect(TurnThreshold).Duration == 1 {
-					copyOpp.(*Girl).GetEffect(TurnThreshold).Remove(copyOpp.(*Girl), copyPlayer.(*Girl), turnNum)
-					copyOpp.(*Girl).RemoveEffect(TurnThreshold)
-				}
-
+				copyPlayer.(*Girl).TurnEnd(copyOpp.(*Girl), turnNum)
 				//send deeper
 				if isMaximizerTurn {
 					valArray[currStrat], lengthArray[currStrat], movesArray[currStrat] = MiniMax(copyPlayer, copyOpp, turnNum+1, depth-1, !isMaximizerTurn, append(bestStrat, []int{i, -1}...))

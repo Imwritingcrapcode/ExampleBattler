@@ -118,13 +118,37 @@ func (self *Girl) IsAlive() bool {
 	return self.CurrHP > 0
 }
 
-func (self *Girl) TurnEnd(opp *Girl) {
-	//TODO handle turnend effects like Structure heal, Euphoria heal etc ?
+//handles effects that trigger at the end of each turn, after other effects tick
+func (player *Girl) TurnEnd(opp *Girl, turnnum int) {
+	if opp.HasEffect(DelayedHeal) {
+		opp.GetEffect(DelayedHeal).Remove(opp, player, turnnum)
+		opp.RemoveEffect(DelayedHeal)
+	}
+	if player.HasEffect(EuphoricHeal) {
+		player.GetEffect(EuphoricHeal).Remove(player, opp, turnnum)
+		if player.GetEffect(EuphoricHeal).Duration < 1 {
+			player.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if opp.HasEffect(EuphoricHeal) {
+		opp.GetEffect(EuphoricHeal).Remove(opp, player, turnnum)
+		if opp.GetEffect(EuphoricHeal).Duration < 1 {
+			opp.RemoveEffect(EuphoricHeal)
+		}
+	}
+	if player.HasEffect(CantHeal) && player.GetEffect(CantHeal).Duration < 1 {
+		player.GetEffect(CantHeal).Remove(player, opp, turnnum)
+		player.RemoveEffect(CantHeal)
+	}
+	if opp.HasEffect(TurnThreshold) && opp.GetEffect(TurnThreshold).Duration < 1 {
+		opp.GetEffect(TurnThreshold).Remove(opp, player, turnnum)
+		opp.RemoveEffect(TurnThreshold)
+	}
 }
 
 func (self *Girl) Init() {
-
 }
+
 func (self *Girl) DecreaseCooldowns() {
 	for _, k := range self.Skills {
 		if k.CurrCD > 0 {
@@ -132,10 +156,11 @@ func (self *Girl) DecreaseCooldowns() {
 		}
 	}
 }
+
 func (player *Girl) DecreaseEffects(opp *Girl, turn int) {
 	for i := 0; i < TOTALEFFECTS; i++ {
 		if player.HasEffect(EffectID(i)) {
-			if player.GetEffect(EffectID(i)).DecreaseDuration() {
+			if player.GetEffect(EffectID(i)).DecreaseDuration() && !player.GetEffect(EffectID(i)).TicksAtTheEnd {
 				//fmt.Println("REMOVED", EffectNames[EffectID(i)])
 				player.GetEffect(EffectID(i)).Remove(player, opp, turn)
 				player.RemoveEffect(EffectID(i))

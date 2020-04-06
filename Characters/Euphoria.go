@@ -17,12 +17,12 @@ func (self *Euphoria) Init() {
 		Orange: 2,
 		Yellow: 0,
 		Green: 0,
-		Cyan: -2,
+		Cyan: -3,
 		Blue: 0,
 		Violet: 0,
 		Pink: 3,
 		Gray: 0,
-		Brown: -3,
+		Brown: -4,
 		Black: 0,
 		White: 0}
 	self.Skills = make([]*Skill, 4)

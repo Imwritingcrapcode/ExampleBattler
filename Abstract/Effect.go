@@ -6,13 +6,14 @@ import (
 
 type Effect struct {
 	//+condition
-	ID       EffectID
-	Duration int
-	State    int
-	Type     EffectType
-	wielder  *Girl
-	Activate func(self, opp *Girl, turn int)
-	Remove   func(self, opp *Girl, turn int)
+	ID         EffectID
+	Duration   int
+	State      int
+	Type       EffectType
+	wielder    *Girl
+	Activate   func(self, opp *Girl, turn int)
+	Remove     func(self, opp *Girl, turn int)
+	TicksAtTheEnd bool
 }
 
 func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Effect {
@@ -28,6 +29,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 
 	case DmgAdd:
@@ -39,6 +41,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 		//Prohibiting
 	case CantHeal:
@@ -50,6 +53,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			true,
 		}
 	case CantUse:
 		s = Effect{
@@ -60,6 +64,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 		//Control
 	case ControlledByStT:
@@ -71,6 +76,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 		//Debuff
 	case TurnReduc:
@@ -82,6 +88,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 		//Buff
 	case AtkReduc:
@@ -93,6 +100,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case TurnThreshold:
 		s = Effect{
@@ -103,6 +111,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			true,
 		}
 		//State
 	case Unseen:
@@ -114,6 +123,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			allow,
 			dummy,
+			false,
 		}
 	case SpedUp:
 		s = Effect{
@@ -124,6 +134,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case DelayedHeal:
 		s = Effect{
@@ -134,6 +145,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			delayed,
+			true,
 		}
 	case Invulnerable:
 		s = Effect{
@@ -144,6 +156,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case EuphoricHeal:
 		s = Effect{
@@ -154,6 +167,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			euphoricHeal,
+			true,
 		}
 		//Numerical
 	case GreenToken:
@@ -165,6 +179,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case BlackToken:
 		s = Effect{
@@ -175,6 +190,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case StolenHP:
 		s = Effect{
@@ -185,6 +201,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case BoostShock:
 		s = Effect{
@@ -195,6 +212,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case BoostLayers:
 		s = Effect{
@@ -205,6 +223,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 	case EuphoricSource:
 		s = Effect{
@@ -215,6 +234,7 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			self,
 			dummy,
 			dummy,
+			false,
 		}
 
 	default:
