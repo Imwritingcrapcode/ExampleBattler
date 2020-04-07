@@ -16,10 +16,9 @@ import (
 
 /*
 //IMPORTANT
-//TODO notifications
+//TODO notifications backend
 //todo queue sends stuff in a channel + skill level
-//6. shop with drops.
-//TODO interface not in fullscreen, long hold on touchscreen.
+//TODO. shop with drops.
 //todo weighted starting characters
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
@@ -37,6 +36,7 @@ import (
 //TODO character wiki
 //TODO news page
 //TODO choose your pfp
+//TODO emojis (almost done but pasting in chat)
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {

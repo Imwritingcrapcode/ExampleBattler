@@ -1,4 +1,5 @@
 ﻿function setup() {
+    fullscreen(is_touch_device4());
     //textFont('Calibri');
     //TESTING = true;
     TESTING = false;
@@ -106,6 +107,26 @@
         //parseState(S2);
     }
 }
+
+function is_touch_device4() {
+
+    let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
+
+    let mq = function (query) {
+        return window.matchMedia(query).matches;
+    };
+
+    if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+        return true;
+    }
+
+    // include the 'heartz' as a way to have a non matching MQ to help terminate the join
+    // https://git.io/vznFH
+    let query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
+    return mq(query);
+}
+
+console.log(is_touch_device4());
 
 function mouseClicked() {
     let x = mouseX;

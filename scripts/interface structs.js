@@ -1,3 +1,5 @@
+const hoverLinger = 300;
+
 function Panel(x, y, w, h, s) {
     this.x = x;
     this.y = y;
@@ -226,7 +228,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     this.hoverable = hoverable;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = 180;
+        this.hoverLinger = hoverLinger;
     }
     this.hoverText = "";
 
@@ -660,7 +662,7 @@ function SkillButton(x, y, type, t, id, mine) {
     this.clickTimer = 0;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = 180;
+        this.hoverLinger = hoverLinger;
     }
 
     this.display = function () {
@@ -1047,7 +1049,7 @@ function StandardButton(x, y, s, t, size, id, col) {
     this.clickTimer = 0;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = 180;
+        this.hoverLinger = hoverLinger;
     }
     this.visible = true;
 

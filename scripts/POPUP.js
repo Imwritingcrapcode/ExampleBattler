@@ -1,6 +1,5 @@
 idCounter = 0;
 transitionEvent = whichTransitionEvent();
-document.body += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
 
 function whichTransitionEvent() {
     let t;
@@ -20,7 +19,6 @@ function whichTransitionEvent() {
 }
 
 function showPopup(id) {
-    console.log("show", id);
     let popup = document.getElementById(id);
     if (popup.classList.contains("remove")) {
         popup.classList.remove("remove");
@@ -30,8 +28,18 @@ function showPopup(id) {
     }
 }
 
-function setText(id, text) {
-    document.getElementById(id).innerText = text;
+function setText(id, t) {
+    let regExpEmoji = /:([a-zA-Z0-9_]+):/;
+    let regExpNextEmojiName = /(?<=:)[a-zA-Z0-9_]+(?=:)/;
+    //let name = "blue_dust_small";
+    //let imageTemplate = "<img class='notifImage' src='../images/locked/" + name + ".png'>";
+    let final_text= t;
+    let emoji = final_text.match(regExpNextEmojiName);
+    while (emoji) {
+        final_text = final_text.replace(regExpEmoji, "<img class='notifImage' src='/images/locked/" + emoji + ".png'>");
+        emoji = final_text.match(regExpNextEmojiName);
+    }
+    document.getElementById(id).innerHTML = final_text;
 }
 
 function addPopup(text, where, ma) {
