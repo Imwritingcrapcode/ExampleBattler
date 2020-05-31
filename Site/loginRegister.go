@@ -96,7 +96,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func  Login(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
 	if AlrdyLoggedIn {
 		log.Print("[Log In] " + strconv.FormatInt(session.UserID, 10) + " redirected to /")
@@ -207,6 +207,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		SetState(user.UserID, Offline)
+		DeleteNotifications(user.UserID, "all")
 		log.Println("[Logout] see you,", session.UserID)
 		DeleteSession(session)
 	}

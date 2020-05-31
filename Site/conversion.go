@@ -8,6 +8,7 @@ import (
 	"strings"
 	"strconv"
 	"math"
+	. "../Abstract"
 )
 
 func Conversion(w http.ResponseWriter, r *http.Request) {
@@ -19,6 +20,7 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 	}
 	user := FindBaseID(session.UserID)
 	if r.Method == http.MethodGet {
+		SetState(user.UserID, ConversionPage)
 		Path := "/Site/conversion.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
@@ -35,7 +37,7 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("you sent a bad request"))
 			return
 		}
-		isConverting, secondsPassed, secondsLeft, dust, amnt := GetConversionInfo(user.UserID)
+		isConverting, secondsPassed, secondsLeft, dust, amnt, _ := GetConversionInfo(user.UserID)
 		if convR.ReqType == "?" || convR.ReqType == "!" && isConverting && secondsLeft < 1 { // how much & state & convert
 			if convR.ReqType != "?" {
 				ClaimConversion(user.UserID)

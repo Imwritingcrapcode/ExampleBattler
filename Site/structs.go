@@ -123,6 +123,14 @@ var DustMap = map[string]string{
 	"s": "sdust",
 }
 
+var DustTypesToFilesMap = map[string]string{
+	"w": "white",
+	"b": "blue",
+	"y": "yellow",
+	"p": "purple",
+	"s": "star",
+}
+
 var DATABASE *sql.DB
 
 type RewardsObj struct {

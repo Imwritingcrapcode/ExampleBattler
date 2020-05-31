@@ -23,13 +23,12 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, Path)
 
 		} else {
-			user := FindBaseID(session.UserID)
-			if user.GetState() <= Queuing { //TODO you know.
+			if GetState(session.UserID) <= Queuing { //TODO you know.
 				//basically if they were queuing what disrupts the queue? and prompt to reconnect. ty
-				SetState(user.UserID, BrowsingCharacters)
+				SetState(session.UserID, BrowsingCharacters)
 			}
 			//1. Get a list (slice) of all the girls unlocked from the db
-			userGirls := GetGirls(user)
+			userGirls := GetGirls(session.UserID)
 			// 2. getinfo for each of those girls
 			//2.5 put a GirlInfo inside
 			info := make([]GirlInfo, len(userGirls))
@@ -71,7 +70,7 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 			w.WriteHeader(200)
-			log.Println("[GIRLLIST] "+"sending", len(userGirls), "girls to "+user.Username+".")
+			log.Println("[GIRLLIST] "+"sending", len(userGirls), "girls to", session.UserID, ".")
 			w.Write(res)
 
 		}

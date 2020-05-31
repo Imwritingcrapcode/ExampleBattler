@@ -17,7 +17,7 @@ function countdown(value, where, yesno) {
     if (timeleft < 0) {
         if (yesno) {
             console.log("RELOCATED!~", where);
-            window.location = where;
+            //window.location = where;
             return;
         }
         isTicking = false;

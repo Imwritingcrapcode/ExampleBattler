@@ -113,6 +113,10 @@ function getResolution(num) {
     switch (num) {
         case 1:
             return [384, 550];
+        case 8:
+            return [211, 550];
+        case 9:
+            return [218, 550];
         case 10:
             return [535, 550];
         case 33:
@@ -129,6 +133,10 @@ function getResolution(num) {
 function existsPortrait(num) {
     switch (num) {
         case 1:
+            return true;
+        case 8:
+            return true;
+        case 9:
             return true;
         case 10:
             return true;

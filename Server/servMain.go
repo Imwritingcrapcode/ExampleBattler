@@ -122,7 +122,13 @@ func main() {
 	}
 	statement.Exec()*/
 
-	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS conversions (userID INTEGER PRIMARY KEY, begins INTEGER NOT NULL, duration INTEGER NOT NULL, give INTEGER NOT NULL, type TEXT NOT NULL, FOREIGN KEY(userID) REFERENCES userData(userID))")
+	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS conversions (userID INTEGER PRIMARY KEY, begins INTEGER NOT NULL, duration INTEGER NOT NULL, give INTEGER NOT NULL, type TEXT NOT NULL, notified INTEGER NOT NULL, FOREIGN KEY(userID) REFERENCES userData(userID))")
+	if err != nil {
+		panic(err)
+	}
+	statement.Exec()
+
+	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS notifications (NotifID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, text TEXT NOT NULL, redirect TEXT, seen INTEGER, FOREIGN KEY(userID) REFERENCES userData(userID))")
 	if err != nil {
 		panic(err)
 	}
@@ -154,6 +160,7 @@ func main() {
 	http.HandleFunc("/shopitems", ShopItems)
 	http.HandleFunc("/conversion", Conversion)
 	http.HandleFunc("/freeinfo", FreeInfo)
+	http.HandleFunc("/notifications", Notifications)
 
 	go OfflinePeople()
 	err = http.ListenAndServe(":1119", nil)
@@ -219,13 +226,13 @@ func OfflinePeople() {
 		<-ticker.C
 		log.Println("[OfflinePeople] ticked")
 		idsToOffline := make([]int64, 0)
-		rows, err := DATABASE.Query("SELECT userID, lastActivityTime FROM userData WHERE activity > 0")
+		rows, err := DATABASE.Query("SELECT userID, lastActivityTime, activity FROM userData WHERE activity > 0")
 		if err != nil {
 			log.Println("[OfflinePeople]", err)
 		}
 		for rows.Next() {
-			var userID, lastActivityTime int64
-			rows.Scan(&userID, &lastActivityTime)
+			var userID, lastActivityTime, activity int64
+			rows.Scan(&userID, &lastActivityTime, &activity)
 			_, present := ClientConnections[userID]
 			timePassed := time.Now().UnixNano() - lastActivityTime
 			if timePassed > (OfflineEvery).Nanoseconds() && !present {

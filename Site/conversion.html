@@ -10,6 +10,7 @@
     <script src="/scripts/conversion.js"></script>
     <script src="/scripts/loading%20bar.js"></script>
     <script src="/scripts/interface%20structs.js"></script>
+    <script src="/scripts/POPUP.js"></script>
 </head>
 <body>
 <table WIDTH="100%">
@@ -101,5 +102,9 @@
         </td>
     </tr>
 </table>
+<script>
+    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
+    getNotifications();
+</script>
 </body>
 </html>

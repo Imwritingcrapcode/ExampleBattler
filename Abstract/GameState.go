@@ -5,9 +5,11 @@ import (
 )
 
 const (
-	Offline = iota
+	Offline            = iota
 	MainPage
 	BrowsingFriendList
+	ConversionPage
+	Shopping
 	//the new ones go above this line -----
 	BrowsingCharacters
 	Queuing
@@ -28,7 +30,7 @@ const CONNECTWAITTIME = 10
 //SkillStates that are sent to front end
 const (
 	Available = 0
-	//On CD = amount of turns left
+	//On CD = amount of turns left (> 0)
 	NotUnlockedYet   = -1
 	DisabledByEffect = -2
 	Disabled         = -100
@@ -36,7 +38,7 @@ const (
 
 //EndGame states
 const (
-	GameContinue = iota
+	GameContinue  = iota
 	GameWon
 	GameLost
 	GameDraw
@@ -49,6 +51,8 @@ var ActivitiesToString = map[int]string{
 	Offline:             "Offline",
 	MainPage:            "Main Page",
 	BrowsingFriendList:  "Browsing their friend list",
+	ConversionPage:      "Converting currency",
+	Shopping:            "Shopping",
 	BrowsingCharacters:  "Browsing character gallery",
 	Queuing:             "Queuing for a game",
 	ReadyingForTheGame:  "Just found an opponent",

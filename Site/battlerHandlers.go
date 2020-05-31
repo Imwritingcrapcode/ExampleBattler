@@ -4,7 +4,6 @@ import (
 	. "../Abstract"
 	. "../Game"
 	"github.com/gorilla/websocket"
-	. "html/template"
 	"log"
 	"math/rand"
 	"net/http"
@@ -15,16 +14,27 @@ import (
 )
 
 /*
+//CURRENTLY WORKING
+notifications, issue: main page doesn't set your status.
+temporarily set the game and notifications not to redirect on click
+then: fullscreen check, afterbattle, button sending
+after: queue & skill level
+//KNOWN ISSUES
+TODO - sending buttons only if interface is active - supposed to happen already !!!
+ TODO- fullscreen check
+TODO- give up doesnt count as a loss - fix frontend with % so that in counts only current level and toadd
+TODO - no % if gave up on rewards screen
 //IMPORTANT
-//TODO notifications backend
+//TODO notifications backend fix lots of issues q_q write a proper algorithm of how it's supposed to work
 //todo queue sends stuff in a channel + skill level
 //TODO. shop with drops.
 //todo weighted starting characters
+//todo fix long hold on touch
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
 
 //FLAVOR
-//TODO telegram bot
+//TODO bot
 //TODO random damage
 //todo glittering loading bar
 //TODO global chat
@@ -32,11 +42,12 @@ import (
 //TODO prompt reconnect >_<
 //TODO speech bubbles
 //TODO skins
-//TODO ability draft, 2v2
 //TODO character wiki
 //TODO news page
 //TODO choose your pfp
+//TODO battle your friends
 //TODO emojis (almost done but pasting in chat)
+//TODO ability draft, 2v2, ...
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {
@@ -175,12 +186,8 @@ func Game(p1, p2 *ClientChannels) {
 	SetState(p2.UserID, JustFinishedTheGame)
 	IncreaseBattles(p1.UserID, p1Won)
 	IncreaseBattles(p2.UserID, p2Won)
-	if state1.EndState != GameGaveUp {
-		IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won)
-	}
-	if state2.EndState != GameGaveUp {
-		IncreaseMatchesAs(p2.UserID, p2.PlayingAs, p2Won)
-	}
+	IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won, state1.EndState == GameGaveUp)
+	IncreaseMatchesAs(p2.UserID, p2.PlayingAs, p2Won, state2.EndState == GameGaveUp)
 	EndGame(p1)
 }
 
@@ -260,9 +267,7 @@ func BotGame(p1 *ClientChannels, botChar int, DEPTH int) {
 	p1.Send(state1)
 	SetState(p1.UserID, JustFinishedTheGame)
 	IncreaseBattles(p1.UserID, p1Won)
-	if state1.EndState != GameGaveUp {
-		IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won, )
-	}
+	IncreaseMatchesAs(p1.UserID, p1.PlayingAs, p1Won, state1.EndState == GameGaveUp)
 	EndGame(p1)
 }
 
@@ -288,19 +293,12 @@ func Standard(w http.ResponseWriter, r *http.Request) {
 		Redirect(w, r, "/afterbattle")
 		return
 	}
-	userfree := User{
-		Username: client.Username,
-	}
-	//Path := "/Site/interface2.html" //OLD PATH.
+
 	Path := "/Site/interface3.html"
 	pwd, _ := os.Getwd()
 	Path = strings.Replace(pwd+Path, "/", "\\", -1)
-	log.Println("[BATTLER] " + Path)
-	template2, err := ParseFiles(Path)
-	if err != nil {
-		panic(err)
-	}
-	template2.Execute(w, userfree)
+	log.Println("[INGAME] " + Path)
+	http.ServeFile(w, r, Path)
 }
 
 func BattlerHandler(w http.ResponseWriter, r *http.Request) {
@@ -337,6 +335,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 			channels.Output <- channels.LastThing
 			channels.Time <- true
 			channels.State = PlayingAs
+			SetState(client.UserID, PlayingAs)
 			if channels.Opponent != channels {
 				LS := channels.Opponent.LastThing
 				LS.Instruction = "System:Opponent reconnected."
@@ -367,7 +366,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 			botChosen := make([]int, 2)
 			botChosen[0] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
-			for botChosen[1] == botChosen[0]{
+			for botChosen[1] == botChosen[0] {
 				botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
 			p1.PlayingAs, char2 = FindValidCombination(p1.ChosenGirls, botChosen)
@@ -409,7 +408,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 							channels.Opponent.Output <- LS
 						}
 					} else {
-						log.Fatal("wow", channels.UserID, "does not hve a clock.")
+						log.Fatal("wow", channels.UserID, "does not have a clock.")
 					}
 				}
 				return

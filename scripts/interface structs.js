@@ -321,8 +321,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                         this.MaxHP + this.speedMax < this.targetMaxHP && this.speedMax > 0) { //if it's worth it yet
                         this.MaxHP = this.MaxHP + this.speedMax;
                         if (this.id === "playerHP") {
-                            setHP(this, this.HP, this.MaxHP, 1);
-                            console.log(this.MaxHP);
+                            setHP(this, this.HP, this.MaxHP);
                         } else {
                             setOppHP(this, this.HP, this.MaxHP)
                         }
@@ -492,13 +491,13 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     this.startAnimation = function (speed, target) {
         this.speed = speed;
         this.targetHP = target;
-        this.framesLeft = 60;
+        this.framesLeft = FRAMESFORANIMATIONS;
     };
 
     this.startAnimationMax = function (speed, target) {
         this.speedMax = speed;
         this.targetMaxHP = target;
-        this.framesLeftMax = 30;
+        this.framesLeftMax = FRAMESFORANIMATIONS;
     }
 }
 
@@ -650,6 +649,8 @@ function SkillButton(x, y, type, t, id, mine) {
     this.destColour = this.baseColour;
     this.previousColour = this.baseColour;
     this.isTransitioning = false;
+    this.rawColour = "";
+    this.rawText = "";
     this.colour = clickc;
     this.baseColour = clickc;
     this.hoverColour = clickc;
@@ -867,58 +868,63 @@ function SkillButton(x, y, type, t, id, mine) {
     };
 
     this.setColour = function (stringColour) {
-        this.frame = 0;
-        this.isTransitioning = false;
-        this.baseColour = color(stringColour);
-        this.baseColour.setAlpha(0.87 * 255);
-        this.colour = this.baseColour;
-        this.hoverColour = color(stringColour);
-        this.clickedColour = color(stringColour);
-        let hoverchange = 17;
-        let clickchange = 34;
-        if (isLight(this.baseColour)) {
-            this.textColour = color(dark.toString());
-            this.textColour.setAlpha(0.87 * 255);
-            this.hoverColour.setRed(red(this.colour) - hoverchange);
-            this.hoverColour.setGreen(green(this.colour) - hoverchange);
-            this.hoverColour.setBlue(blue(this.colour) - hoverchange);
-            this.clickedColour.setRed(red(this.colour) - clickchange);
-            this.clickedColour.setGreen(green(this.colour) - clickchange);
-            this.clickedColour.setBlue(blue(this.colour) - clickchange);
-            this.hoverColour.setAlpha(0.87 * 255);
-            this.clickedColour.setAlpha(0.87 * 255);
-        } else {
-            this.hoverColour.setRed(red(this.colour) + hoverchange);
-            this.hoverColour.setGreen(green(this.colour) + hoverchange);
-            this.hoverColour.setBlue(blue(this.colour) + hoverchange);
-            this.clickedColour.setRed(red(this.colour) + clickchange);
-            this.clickedColour.setGreen(green(this.colour) + clickchange);
-            this.clickedColour.setBlue(blue(this.colour) + clickchange);
-            this.hoverColour.setAlpha(0.87 * 255);
-            this.clickedColour.setAlpha(0.87 * 255);
-            /*this.hoverColour.setAlpha(0.87 * 255);
-            this.clickedColour.setAlpha(0.91 * 255);*/
-            this.textColour = color(light.toString());
-            this.textColour.setAlpha(0.87 * 255);
+        if (this.rawColour !== stringColour) {
+            this.rawColour = stringColour;
+            this.frame = 0;
+            this.isTransitioning = false;
+            this.baseColour = color(stringColour);
+            this.baseColour.setAlpha(0.87 * 255);
+            this.colour = this.baseColour;
+            this.hoverColour = color(stringColour);
+            this.clickedColour = color(stringColour);
+            let hoverchange = 17;
+            let clickchange = 34;
+            if (isLight(this.baseColour)) {
+                this.textColour = color(dark.toString());
+                this.textColour.setAlpha(0.87 * 255);
+                this.hoverColour.setRed(red(this.colour) - hoverchange);
+                this.hoverColour.setGreen(green(this.colour) - hoverchange);
+                this.hoverColour.setBlue(blue(this.colour) - hoverchange);
+                this.clickedColour.setRed(red(this.colour) - clickchange);
+                this.clickedColour.setGreen(green(this.colour) - clickchange);
+                this.clickedColour.setBlue(blue(this.colour) - clickchange);
+                this.hoverColour.setAlpha(0.87 * 255);
+                this.clickedColour.setAlpha(0.87 * 255);
+            } else {
+                this.hoverColour.setRed(red(this.colour) + hoverchange);
+                this.hoverColour.setGreen(green(this.colour) + hoverchange);
+                this.hoverColour.setBlue(blue(this.colour) + hoverchange);
+                this.clickedColour.setRed(red(this.colour) + clickchange);
+                this.clickedColour.setGreen(green(this.colour) + clickchange);
+                this.clickedColour.setBlue(blue(this.colour) + clickchange);
+                this.hoverColour.setAlpha(0.87 * 255);
+                this.clickedColour.setAlpha(0.87 * 255);
+                /*this.hoverColour.setAlpha(0.87 * 255);
+                this.clickedColour.setAlpha(0.91 * 255);*/
+                this.textColour = color(light.toString());
+                this.textColour.setAlpha(0.87 * 255);
+            }
         }
-
     };
 
     this.setText = function (t) {
-        this.hoverText = SKILLDESCRIPTIONS.get(t);
-        if (!!this.hoverText) {
-            this.hoverLines = calculateLines(this.hoverText);
-        }
-        this.text = split(t, " ");
-        let w = this.width;
-        this.textSize = 50;
-        textSize(this.textSize);
-        for (let word of this.text) {
-            let width = textWidth(word);
-            while (width >= w) {
-                this.textSize--;
-                textSize(this.textSize);
-                width = textWidth(word);
+        if (this.rawText !== t) {
+            this.rawText = t;
+            this.hoverText = SKILLDESCRIPTIONS.get(t);
+            if (!!this.hoverText) {
+                this.hoverLines = calculateLines(this.hoverText);
+            }
+            this.text = split(t, " ");
+            let w = this.width;
+            this.textSize = 50;
+            textSize(this.textSize);
+            for (let word of this.text) {
+                let width = textWidth(word);
+                while (width >= w) {
+                    this.textSize--;
+                    textSize(this.textSize);
+                    width = textWidth(word);
+                }
             }
         }
     };

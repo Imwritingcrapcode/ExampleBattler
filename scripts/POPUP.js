@@ -31,9 +31,7 @@ function showPopup(id) {
 function setText(id, t) {
     let regExpEmoji = /:([a-zA-Z0-9_]+):/;
     let regExpNextEmojiName = /(?<=:)[a-zA-Z0-9_]+(?=:)/;
-    //let name = "blue_dust_small";
-    //let imageTemplate = "<img class='notifImage' src='../images/locked/" + name + ".png'>";
-    let final_text= t;
+    let final_text = t;
     let emoji = final_text.match(regExpNextEmojiName);
     while (emoji) {
         final_text = final_text.replace(regExpEmoji, "<img class='notifImage' src='/images/locked/" + emoji + ".png'>");
@@ -56,15 +54,29 @@ function addPopup(text, where, ma) {
     for (let i = 0; i < elements.length; i++) {
         elements[i].addEventListener("click", onClickForPopups, false);
         elements[i].WhatToDoWhenAPopupIsClicked = function () {
-            console.log(this.getAttribute("shouldredirect"));
+            let where = this.getAttribute("shouldredirect");
+            if (where.length > 0) {
+                console.log("where", where);
+                //location = where;
+            }
         };
-
     }
 
     setText(id, text);
     showPopup(id);
+    window.setTimeout("dieFirstPopup()", 1000 * 6)
 }
 
+function dieFirstPopup() {
+    let wrapper = document.getElementById("popupWrapper");
+    if (wrapper.children.length > 0) {
+        let item = wrapper.children.item(0);
+        if (!item.classList.contains("remove")) {
+            item.classList.add("remove");
+        }
+        wrapper.removeChild(wrapper.children.item(0));
+    }
+}
 
 function onClickForPopups(ev) {
     this.WhatToDoWhenAPopupIsClicked();
@@ -80,4 +92,27 @@ function customFunction(ev) {
     if (elements.contains(this)) {
         elements.removeChild(this);
     }
+}
+
+function getNotifications() {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', '/notifications', true);
+    xhr.send();
+    xhr.onreadystatechange = (e) => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                console.log(response);
+                for (let notification of response) {
+                    addPopup(notification[0], notification[1]);
+                }
+            } else {
+                console.log(xhr.status, xhr.responseText);
+                console.log(xhr.status, xhr.responseText);
+                //location.reload();
+            }
+        }
+    };
+
+    //window.setTimeout("getNotifications()", 1000 * 60)
 }

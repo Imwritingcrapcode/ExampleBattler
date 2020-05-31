@@ -6,6 +6,7 @@
     <title>Friend list</title>
     <script src="/scripts/utils.js"></script>
     <script src="/scripts/friends.js"></script>
+    <script src="/scripts/POPUP.js"></script>
     <style>
         /* Style the tab */
         .tab {
@@ -149,6 +150,8 @@
     let after = function () {
     };
     UpdateFreeData(after);
+    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
+    getNotifications();
 </script>
 </body>
 </html>

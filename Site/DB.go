@@ -169,6 +169,11 @@ func FindBaseID(ID int64) *User {
 }
 
 func SetState(id int64, state int) {
+	previousState := GetState(id)
+	if previousState <= Offline && state > Offline {
+		NotifyFriends(id)
+	}
+	log.Println("[SetState] updating lastactivity", id, ActivitiesToString[state], ActivitiesToString[previousState], previousState <= Offline, state > Offline)
 	update, err := DATABASE.Prepare("UPDATE userData SET lastActivityTime = " + strconv.FormatInt(time.Now().UnixNano(), 10) + " WHERE  userID = " + strconv.FormatInt(id, 10))
 	if err != nil {
 		log.Println("[SetState] updating lastactivity", err)
@@ -192,8 +197,8 @@ func SetState(id int64, state int) {
 	}
 }
 
-func (user *User) GetState() int {
-	rows, err := DATABASE.Query("SELECT activity FROM userData WHERE userID = " + strconv.FormatInt(user.UserID, 10))
+func GetState(id int64) int {
+	rows, err := DATABASE.Query("SELECT activity FROM userData WHERE userID = " + strconv.FormatInt(id, 10))
 	if err != nil {
 		log.Println(err)
 		return -1
@@ -204,7 +209,7 @@ func (user *User) GetState() int {
 		rows.Scan(&state)
 		return state
 	}
-	log.Println("[GetState] Somehow no state has been found for user" + user.Username)
+	log.Println("[GetState] Somehow no state has been found for user", id)
 	return -1
 }
 
@@ -352,9 +357,9 @@ func HasGirl(userID int64, girl int) bool {
 	return rows.Next()
 }
 
-func GetGirls(user *User) []UserGirl {
+func GetGirls(id int64) []UserGirl {
 	var girls []UserGirl
-	rows, err := DATABASE.Query("SELECT girlNumber, girlLevel, matchesPlayed, matchesWon FROM girls WHERE userID = " + strconv.FormatInt(user.UserID, 10))
+	rows, err := DATABASE.Query("SELECT girlNumber, girlLevel, matchesPlayed, matchesWon FROM girls WHERE userID = " + strconv.FormatInt(id, 10))
 	if err != nil {
 		log.Println("[FindBase] GetGirls: " + err.Error())
 		return nil
@@ -372,7 +377,7 @@ func GetGirls(user *User) []UserGirl {
 	})
 
 	if girls == nil {
-		log.Println("[GetGirls] " + user.Username + " does not have any girls D:")
+		log.Println("[GetGirls] ", id, " does not have any girls D:")
 	}
 	return girls
 }
@@ -435,7 +440,7 @@ func LevelUp(userID int64, as int, lt20 bool) {
 	}
 }
 
-func IncreaseMatchesAs(userID int64, as int, won bool) {
+func IncreaseMatchesAs(userID int64, as int, won, gaveUp bool) {
 	var statement *sql.Stmt
 	var err error
 	//1, get the amnt of matches and the girl's lvl
@@ -445,8 +450,8 @@ func IncreaseMatchesAs(userID int64, as int, won bool) {
 	//2. lvl up if needed
 	if level < 20 && curr >= GetLevelCaps(GetGirlRarity(as))[level-1] {
 		LevelUp(userID, as, level < 20)
-	} else {
-		//2, no lvl up
+	} else if !gaveUp {
+		//2, no lvl up, give xp if we didn't give up
 		statement, err = DATABASE.Prepare("UPDATE girls SET currMatches = currMatches + 1" +
 			" WHERE userID = " + strconv.FormatInt(userID, 10) + " AND girlNumber = " + strconv.Itoa(as))
 		if err != nil {
@@ -555,7 +560,7 @@ func GetRewards(user *User) *RewardsObj {
 		Dusts:             make(map[string]int, 5),
 		Name:              ReleasedCharactersNames[number],
 		Matches:           GetLevelCaps(GetGirlRarity(number)),
-		TotalMatches:      GetTotalMatches(user.UserID, number),
+		TotalMatches:      GetTotalMatches(user.UserID, number), //TODO change to level +currMAtches
 		ToAdd:             0,
 	}
 	var rtype string
@@ -867,32 +872,31 @@ func GetFriendLists(userID int64) *FriendList {
 }
 
 //CONVERSION
-func GetConversionInfo(userID int64) (bool, int, int, string, int) {
-	rows, err := DATABASE.Query("SELECT begins, duration, type, give FROM conversions WHERE userID = " + strconv.FormatInt(userID, 10))
+func GetConversionInfo(userID int64) (bool, int, int, string, int, int) {
+	rows, err := DATABASE.Query("SELECT begins, duration, type, give, notified FROM conversions WHERE userID = " + strconv.FormatInt(userID, 10))
 	if err != nil {
 		log.Println("[GetConversionInfo]", userID, err)
 	}
 	if rows.Next() {
 		var begins int64
-		var duration int
 		var dtype string
-		var amnt int
-		rows.Scan(&begins, &duration, &dtype, &amnt)
+		var amnt, duration, notified int
+		rows.Scan(&begins, &duration, &dtype, &amnt, &notified)
 		rows.Close()
 		curTime := time.Now().UnixNano()
 		secondsPassed := int(time.Duration(curTime - begins).Seconds())
 		if secondsPassed >= duration {
-			return true, duration, 0, dtype, amnt
+			return true, duration, 0, dtype, amnt, notified
 		} else {
-			return true, secondsPassed, duration - secondsPassed, dtype, amnt
+			return true, secondsPassed, duration - secondsPassed, dtype, amnt, notified
 		}
 	} else {
-		return false, -1, -1, "", -1
+		return false, -1, -1, "", -1, 0
 	}
 }
 
 func ClaimConversion(UserID int64) {
-	isConverting, _, secondsLeft, dustType, amnt := GetConversionInfo(UserID)
+	isConverting, _, secondsLeft, dustType, amnt, _ := GetConversionInfo(UserID)
 	if !isConverting || secondsLeft > 0 {
 		log.Println("[Claim Conversion] called too early")
 		return
@@ -901,12 +905,12 @@ func ClaimConversion(UserID int64) {
 	//2. Delet the old conversion
 	del, err := DATABASE.Prepare("DELETE FROM conversions WHERE userID = " + strconv.FormatInt(UserID, 10))
 	if err != nil {
-		log.Println("[GetConversionInfo]", err)
+		log.Println("[ClaimConversion]", err)
 		return
 	}
 	_, err = del.Exec()
 	if err != nil {
-		log.Println("[GetConversionInfo]", err)
+		log.Println("[ClaimConversion]", err)
 	}
 	//3. Add the moneys
 	user := User{UserID: UserID}
@@ -916,14 +920,130 @@ func ClaimConversion(UserID int64) {
 
 func StartConversion(UserID int64, duration, amnt int, dustType string) {
 	begins := time.Now().UnixNano()
-	statement, err := DATABASE.Prepare("INSERT INTO conversions (userID, begins, duration, give, type) VALUES (?, ?, ?, ?, ?)")
+	statement, err := DATABASE.Prepare("INSERT INTO conversions (userID, begins, duration, give, type, notified) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Println("[StartConversion]", err)
 		return
 	}
-	_, err = statement.Exec(UserID, begins, duration, amnt, dustType)
+	_, err = statement.Exec(UserID, begins, duration, amnt, dustType, 0)
 	if err != nil {
 		log.Println(err)
 		log.Println("[StartConversion]", err)
+	}
+}
+
+func NotifiedConversion(UserID int64) {
+	statement, err := DATABASE.Prepare("UPDATE conversions SET notified = 1 WHERE userID = " + strconv.FormatInt(UserID, 10))
+	if err != nil {
+		return
+	}
+	statement.Exec()
+}
+
+//notifications
+
+func AddNotification(UserID int64, text, redirect string) {
+	statement, err := DATABASE.Prepare("INSERT INTO notifications (userID, text, redirect, seen) VALUES (?, ?, ?, ?)")
+	if err != nil {
+		log.Println("[AddNotification]", err)
+		return
+	}
+	_, err = statement.Exec(UserID, text, redirect, 0)
+	if err != nil {
+		log.Println(err)
+		log.Println("[AddNotification]", err)
+	} else {
+		log.Println("[AddNotification] Notification added", UserID, text)
+	}
+}
+
+func GetNotifications(UserID int64) [][]string {
+	var notifications [][]string
+	var ids []int
+	notifications = make([][]string, 0)
+	ids = make([]int, 0)
+	rows, err := DATABASE.Query("SELECT text, redirect, NotifID FROM notifications WHERE userID = " + strconv.FormatInt(UserID, 10) +
+		" AND seen = 0")
+	if err != nil {
+		log.Println("[GetNotifications]", UserID, err)
+	}
+	for rows.Next() {
+		var text, redirect string
+		var id int
+		rows.Scan(&text, &redirect, &id)
+		notifications = append(notifications, []string{text, redirect})
+		ids = append(ids, id)
+	}
+	rows.Close()
+
+	for _, v := range ids {
+		statement, _ := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE NotifID = " + strconv.Itoa(v))
+		statement.Exec()
+	}
+	return notifications
+}
+
+func DeleteNotifications(UserID int64, kind string) {
+	if kind == "all" {
+		del, err := DATABASE.Prepare("DELETE FROM notifications WHERE userID = " + strconv.FormatInt(UserID, 10))
+		if err != nil {
+			log.Println("[DeleteNotifications]", err)
+			return
+		}
+		_, err = del.Exec()
+		if err != nil {
+			log.Println("[DeleteNotifications]", err)
+		}
+	} else if kind == "seen" {
+		del, err := DATABASE.Prepare("DELETE FROM notifications WHERE userID = " + strconv.FormatInt(UserID, 10) +
+			" AND seen = 1")
+		if err != nil {
+			log.Println("[DeleteNotifications]", err)
+			return
+		}
+		_, err = del.Exec()
+		if err != nil {
+			log.Println("[DeleteNotifications]", err)
+		}
+	} else {
+		del, err := DATABASE.Prepare("DELETE FROM notifications WHERE userID = " + strconv.FormatInt(UserID, 10) +
+			" AND redirect = " + kind)
+		if err != nil {
+			log.Println("[DeleteNotifications]", err)
+			return
+		}
+		_, err = del.Exec()
+		if err != nil {
+			log.Println("[DeleteNotifications]", err)
+		}
+	}
+}
+
+func SeeNotifications(UserID int64, kind string) {
+	if kind == "all" {
+		statement, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(UserID, 10))
+		if err != nil {
+			return
+		}
+		statement.Exec()
+	} else {
+		statement, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(UserID, 10) +
+			" AND redirect = " + kind)
+		if err != nil {
+			return
+		}
+		statement.Exec()
+	}
+}
+
+func NotifyFriends(userID int64) {
+	friends := GetFriendLists(userID)
+	us := FindBaseID(userID)
+	for _, v := range friends.Friends {
+		friend := FindBase(v[0])
+		if friend.CurrentActivity > 0 { //is online
+			AddNotification(friend.UserID, "Your friend <b>"+us.Username+"</b> has just come online!", "friends")
+			log.Println("[Notifications] added friend notif for", friend.Username, us.Username)
+		}
 	}
 }

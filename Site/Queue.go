@@ -15,22 +15,21 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Print("[Queue]" + " redirected to /login")
 		Redirect(w, r, "/login")
 	} else if r.Method == http.MethodGet {
-		user := FindBaseID(session.UserID)
-		log.Println("[Queue] accessing queue for", user.Username)
-		if user.GetState() > Queuing && user.GetState() < JustFinishedTheGame {
-			log.Println("[Queue] Terminating your game, " + user.Username)
-			channels, present := ClientConnections[user.UserID]
+		log.Println("[Queue] accessing queue for", session.UserID)
+		if GetState(session.UserID) > Queuing && GetState(session.UserID) < JustFinishedTheGame {
+			log.Println("[Queue] Terminating your game, " , session.UserID)
+			channels, present := ClientConnections[session.UserID]
 			if present {
 				channels.Input <- "GiveUp"
 			} else {
-				log.Println("[Queue] user not found in queue", user.Username)
+				log.Println("[Queue] user not found in queue",session.UserID)
 			}
 
-		} else if user.GetState() == Queuing {
+		} else if GetState(session.UserID) == Queuing {
 			http.Error(w, "You are already in queue", 400)
 			return
 		}
-		SetState(user.UserID, Queuing)
+		SetState(session.UserID, Queuing)
 
 		// Upgrade initial GET request to a web socket
 		ws, err := upgrader.Upgrade(w, r, nil)
@@ -50,15 +49,15 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 				{
 					if ok {
 						//configure client channels
-						if err != nil || girls.MainGirl == girls.SecondaryGirl || !HasGirl(user.UserID, girls.MainGirl) ||
-							!HasGirl(user.UserID, girls.SecondaryGirl) {
+						if err != nil || girls.MainGirl == girls.SecondaryGirl || !HasGirl(session.UserID, girls.MainGirl) ||
+							!HasGirl(session.UserID, girls.SecondaryGirl) {
 							message := QueueResponse{
 								Prompt:   "Error sending data",
 								OK:       false,
 								Location: "",
 							}
 							outputChannel <- message
-							log.Println("[Queue] Error sending data", user.Username)
+							log.Println("[Queue] Error sending data", session.UserID)
 						} else {
 							input := make(chan string, 2)
 							output := make(chan GameState, 4)
@@ -67,7 +66,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 							TimeO := make(chan string, 1)
 							kill := make(chan struct{}, 1)
 							userChannels = ClientChannels{
-								UserID:         user.UserID,
+								UserID:         session.UserID,
 								Opponent:       nil,
 								State:          Queuing,
 								ChosenGirls:    []int{girls.MainGirl, girls.SecondaryGirl},
@@ -79,22 +78,22 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 								TimeOutput:     TimeO,
 								KillConnection: kill,
 							}
-							log.Println("[Queue] Received girls", girls.MainGirl, girls.SecondaryGirl, "from", user.Username)
+							log.Println("[Queue] Received girls", girls.MainGirl, girls.SecondaryGirl, "from", session.UserID)
 
 							//add to the client map
-							QueueClients[user.UserID] = &userChannels
+							QueueClients[session.UserID] = &userChannels
 
 							//push to the queue
 							queueID := UserQueue.Len()
 							UserQueue.Push(&Item{
-								UserID:   user.UserID,
+								UserID:   session.UserID,
 								Priority: time.Now().Unix(),
 								Index:    queueID,
 							})
 
 							//wait for the girls
 							//after you receive them, search for a partner
-							SearchForPartner(&userChannels, user.UserID, outputChannel)
+							SearchForPartner(&userChannels, session.UserID, outputChannel)
 						}
 					}
 				}
@@ -103,26 +102,26 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 					if message == (QueueResponse{}) {
 						log.Println("[Queue] Client DCed")
 						//client d/ced
-						UserQueue.Remove(user.UserID)
-						delete(QueueClients, user.UserID)
-						SetState(user.UserID, BrowsingCharacters)
+						UserQueue.Remove(session.UserID)
+						delete(QueueClients, session.UserID)
+						SetState(session.UserID, BrowsingCharacters)
 						return
 					} else {
 						//send the opp + location message to the client
 						if message.OK {
-							ClientConnections[user.UserID] = &userChannels
+							ClientConnections[session.UserID] = &userChannels
 							log.Println("[Queue] added", userChannels.UserID, "to cli con. deleted from qu ch.")
 						}
 						err := ws.WriteJSON(message)
 						if err != nil {
-							delete(QueueClients, user.UserID)
+							delete(QueueClients, session.UserID)
 							log.Println("[Queue] rror xc" + err.Error())
 						} else if !message.OK {
-							delete(QueueClients, user.UserID)
-							SetState(user.UserID, BrowsingCharacters)
+							delete(QueueClients, session.UserID)
+							SetState(session.UserID, BrowsingCharacters)
 							log.Println("[Queue] says not ok and", message)
 						}
-						delete(QueueClients, user.UserID) //???
+						delete(QueueClients, session.UserID) //???
 						return
 
 					}
@@ -245,10 +244,16 @@ func WaitForConnections(self *ClientChannels) {
 		return
 
 	case <-timer2.C: //timed out
-		log.Println("[Queue] Nobody connected of", FindBaseID(self.UserID).Username, FindBaseID(self.Opponent.UserID).Username, "killing their game.")
+		user := FindBaseID(self.UserID)
+		opp := FindBaseID(self.Opponent.UserID)
+		log.Println("[Queue] Nobody connected of", user.Username, opp.Username, "killing their game.")
 		EndGame(self)
-		SetState(self.UserID, BrowsingCharacters)
-		SetState(self.Opponent.UserID, BrowsingCharacters)
+		if user.CurrentActivity == Queuing {
+			SetState(self.UserID, BrowsingCharacters)
+		}
+		if opp.CurrentActivity == Queuing {
+			SetState(opp.UserID, BrowsingCharacters)
+		}
 	}
 	return
 }
@@ -263,15 +268,18 @@ func WaitForSoloConn(self *ClientChannels) {
 			timer2.Stop()
 			return
 		} else {
-			log.Panic("[queue] wtf.")
+			log.Panic("[Queue] wtf.")
 		}
 	case <-timer2.C: //timed out
-		log.Println("[Queue] Tsk tsk tsk, you queued and did not connect. Really?")
+		log.Println("[Queue] Tsk tsk tsk, you queued and did not connect. Really?", self.UserID)
 		channels, present := ClientConnections[self.UserID]
 		if present {
 			channels.State = GaveUp
 		}
-		SetState(self.UserID, BrowsingCharacters)
+		user := FindBaseID(self.UserID)
+		if user.CurrentActivity == Queuing {
+			SetState(user.UserID, BrowsingCharacters)
+		}
 		EndGame(self)
 	}
 }

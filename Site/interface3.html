@@ -17,8 +17,14 @@
     <script src="/scripts/utils.js"></script>
     <script src="/scripts/interface3.js"></script>
     <script src="/scripts/backcanvas.js"></script>
+    <script src="/scripts/POPUP.js"></script>
 </head>
 <body><div align="left" id="bacc"></div>
 <div align="left" id="interface"></div>
-<div align="left" id="p5_loading" class="loadingclass"></div></body>
+<div align="left" id="p5_loading" class="loadingclass"></div>
+<script>
+    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
+    getNotifications();
+</script>
+</body>
 </html>

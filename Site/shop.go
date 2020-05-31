@@ -19,6 +19,7 @@ func Shop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := FindBaseID(session.UserID)
+	SetState(client.UserID, Shopping)
 	if r.Method == http.MethodGet {
 		Path := "/Site/shop.html"
 		pwd, _ := os.Getwd()

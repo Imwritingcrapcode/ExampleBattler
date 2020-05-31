@@ -10,6 +10,7 @@
     <script src="/scripts/loading%20bar.js"></script>
     <script src="/scripts/interface%20structs.js"></script>
     <script src="/scripts/utils.js"></script>
+    <script src="/scripts/POPUP.js"></script>
     <script>
         let after = function () {
         };
@@ -96,5 +97,9 @@
         </td>
     </tr>
 </table>
+<script>
+    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
+    getNotifications();
+</script>
 </body>
 </html>
