@@ -160,6 +160,7 @@ func main() {
 	http.HandleFunc("/shopitems", ShopItems)
 	http.HandleFunc("/conversion", Conversion)
 	http.HandleFunc("/freeinfo", FreeInfo)
+	http.HandleFunc("/profileinfo", ProfileInfo)
 	http.HandleFunc("/notifications", Notifications)
 
 	go OfflinePeople()

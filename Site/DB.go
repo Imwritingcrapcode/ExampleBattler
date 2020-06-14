@@ -170,10 +170,7 @@ func FindBaseID(ID int64) *User {
 
 func SetState(id int64, state int) {
 	previousState := GetState(id)
-	if previousState <= Offline && state > Offline {
-		NotifyFriends(id)
-	}
-	log.Println("[SetState] updating lastactivity", id, ActivitiesToString[state], ActivitiesToString[previousState], previousState <= Offline, state > Offline)
+	//log.Println("[SetState] updating lastactivity", id, ActivitiesToString[state], ActivitiesToString[previousState], previousState <= Offline && state > Offline)
 	update, err := DATABASE.Prepare("UPDATE userData SET lastActivityTime = " + strconv.FormatInt(time.Now().UnixNano(), 10) + " WHERE  userID = " + strconv.FormatInt(id, 10))
 	if err != nil {
 		log.Println("[SetState] updating lastactivity", err)
@@ -182,6 +179,10 @@ func SetState(id int64, state int) {
 	_, err = update.Exec()
 	if err != nil {
 		log.Println("[SetState] updating lastactivity", err)
+		return
+	}
+
+	if previousState == state {
 		return
 	}
 
@@ -194,6 +195,9 @@ func SetState(id int64, state int) {
 	if err != nil {
 		log.Println("[SetState] updating activity", err)
 		return
+	}
+	if previousState <= Offline && state > Offline {
+		go NotifyFriends(id)
 	}
 }
 
@@ -474,7 +478,7 @@ func IncreaseMatchesAs(userID int64, as int, won, gaveUp bool) {
 	}
 
 	//4. if she won, +1 won match ez
-	if won {
+	if won && !gaveUp {
 		statement, err = DATABASE.Prepare("UPDATE girls SET matchesWon = matchesWon + 1" +
 			" WHERE userID = " + strconv.FormatInt(userID, 10) + " AND girlNumber = " + strconv.Itoa(as))
 		if err != nil {
@@ -551,7 +555,6 @@ func GetRewards(user *User) *RewardsObj {
 		log.Println("[GetRewards] GetRewards: " + err.Error())
 		return nil
 	}
-	defer rows.Close()
 	number := GetLastPlayedAs(user.UserID)
 	playedAs := strconv.Itoa(number)
 	rewards := RewardsObj{
@@ -560,7 +563,6 @@ func GetRewards(user *User) *RewardsObj {
 		Dusts:             make(map[string]int, 5),
 		Name:              ReleasedCharactersNames[number],
 		Matches:           GetLevelCaps(GetGirlRarity(number)),
-		TotalMatches:      GetTotalMatches(user.UserID, number), //TODO change to level +currMAtches
 		ToAdd:             0,
 	}
 	var rtype string
@@ -574,6 +576,10 @@ func GetRewards(user *User) *RewardsObj {
 			rewards.ToAdd = amnt
 		}
 	}
+	rows.Close()
+	stuff := GetMatchData(user.UserID, number)
+	rewards.Level = stuff[0]
+	rewards.CurrentMatches =stuff[1]
 
 	if rewards.ToAdd > 0 {
 		rewards.LastOpponentsName = GetLastOpponentsName(user.UserID)
@@ -756,6 +762,19 @@ func DeleteSession(session *Session) {
 //Misc
 
 func (user *User) GatherFreeData() *UserFree {
+	data := UserFree{}
+	moneyI := MoneyInfo{}
+	moneyI.W = user.GetDust("w")
+	moneyI.B = user.GetDust("b")
+	moneyI.Y = user.GetDust("y")
+	moneyI.P = user.GetDust("p")
+	moneyI.S = user.GetDust("s")
+	data.Monies = moneyI
+	data.Username = user.Username
+	return &data
+}
+
+func (user *User) GatherProfileData() *UserFree {
 	data := UserFree{}
 	moneyI := MoneyInfo{}
 	moneyI.W = user.GetDust("w")

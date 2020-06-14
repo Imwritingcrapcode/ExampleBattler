@@ -15,25 +15,23 @@ import (
 
 /*
 //CURRENTLY WORKING
-notifications, issue: main page doesn't set your status.
 temporarily set the game and notifications not to redirect on click
 then: fullscreen check, afterbattle, button sending
 after: queue & skill level
 //KNOWN ISSUES
-TODO - sending buttons only if interface is active - supposed to happen already !!!
- TODO- fullscreen check
-TODO- give up doesnt count as a loss - fix frontend with % so that in counts only current level and toadd
-TODO - no % if gave up on rewards screen
+TODO- give up doesnt count as a loss - check backend & fix frontend with % so that in counts only current level and toadd
+TODO - no % if gave up on rewards screen OR refreshed.
+TOOD this will cancel your queue
 //IMPORTANT
 //TODO notifications backend fix lots of issues q_q write a proper algorithm of how it's supposed to work
 //todo queue sends stuff in a channel + skill level
 //TODO. shop with drops.
 //todo weighted starting characters
 //todo fix long hold on touch
-//todo linux support, get a server
-//TODO DDOS protection (not cloudflare apparently)
 
 //FLAVOR
+//todo linux support, get a server
+//TODO DDOS protection (not cloudflare apparently)
 //TODO bot
 //TODO random damage
 //todo glittering loading bar

@@ -1,6 +1,7 @@
 package Site
 
 import (
+	. "../Abstract"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 	"strings"
 	"strconv"
 	"math"
-	. "../Abstract"
 )
 
 func Conversion(w http.ResponseWriter, r *http.Request) {
@@ -18,9 +18,7 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 		Redirect(w, r, "/login")
 		return
 	}
-	user := FindBaseID(session.UserID)
 	if r.Method == http.MethodGet {
-		SetState(user.UserID, ConversionPage)
 		Path := "/Site/conversion.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
@@ -37,10 +35,10 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("you sent a bad request"))
 			return
 		}
-		isConverting, secondsPassed, secondsLeft, dust, amnt, _ := GetConversionInfo(user.UserID)
+		isConverting, secondsPassed, secondsLeft, dust, amnt, _ := GetConversionInfo(session.UserID)
 		if convR.ReqType == "?" || convR.ReqType == "!" && isConverting && secondsLeft < 1 { // how much & state & convert
 			if convR.ReqType != "?" {
-				ClaimConversion(user.UserID)
+				ClaimConversion(session.UserID)
 			}
 			var response ConvResponse
 			if convR.ReqType != "!" && isConverting {
@@ -62,10 +60,10 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 					Left:                 -1,
 				}
 			}
-
+			SetState(session.UserID, ConversionPage)
 			res, err := json.Marshal(response)
 			if err != nil {
-				log.Println("[Conversion] for", user.Username, err)
+				log.Println("[Conversion] for", session.UserID, err)
 				return
 			}
 			w.Write(res)
@@ -78,6 +76,7 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("this is a wrong type of dust!"))
 				return
 			}
+			user := FindBaseID(session.UserID)
 			monies := user.GetDust(dust)
 			if monies < amnt {
 				w.WriteHeader(400)
@@ -121,6 +120,7 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			user.SetDust(dust, user.GetDust(dust)-int(cost))
 			//start converting
 			StartConversion(user.UserID, time, get, newDustType)
+			log.Println("[Started conversion for]", user.Username)
 			//send Info
 			response.Left = time
 			response.DustType = newDustType

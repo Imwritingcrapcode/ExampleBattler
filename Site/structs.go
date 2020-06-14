@@ -139,7 +139,8 @@ type RewardsObj struct {
 	Dusts             map[string]int
 	Matches           []int
 	Name              string
-	TotalMatches      int
+	CurrentMatches    int
+	Level             int
 	ToAdd             int
 }
 

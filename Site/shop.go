@@ -12,29 +12,18 @@ import (
 )
 
 func Shop(w http.ResponseWriter, r *http.Request) {
-	AlrdyLoggedIn, session := IsLoggedIn(r)
+	AlrdyLoggedIn, _ := IsLoggedIn(r)
 	if !AlrdyLoggedIn {
 		log.Println("[Shop] Redirected to login")
 		Redirect(w, r, "/login")
 		return
 	}
-	client := FindBaseID(session.UserID)
-	SetState(client.UserID, Shopping)
 	if r.Method == http.MethodGet {
 		Path := "/Site/shop.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
-		log.Println("[rewards] " + Path)
+		log.Println("[shop] " + Path)
 		http.ServeFile(w, r, Path)
-	} else {
-		rewards := *GetRewards(client)
-		DeleteRewards(client)
-		w.WriteHeader(200)
-		res, err := json.Marshal(rewards)
-		if err != nil {
-			log.Println("[Rewards] for", client.Username, err)
-		}
-		w.Write(res)
 	}
 
 }
@@ -48,6 +37,7 @@ func ShopItems(w http.ResponseWriter, r *http.Request) {
 	}
 	//client := FindBaseID(session.UserID)
 	if r.Method == http.MethodGet {
+		SetState(session.UserID, Shopping)
 		items := *GetPurchaseableItems()
 		w.WriteHeader(200)
 		res, err := json.Marshal(items)
@@ -60,7 +50,7 @@ func ShopItems(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&item)
 		if err != nil {
-			log.Println(err.Error())
+			log.Println("[ShopItems]", err.Error())
 			http.Error(w, "You sent an invalid purchase request.", 400)
 			return
 		}

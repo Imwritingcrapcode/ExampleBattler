@@ -14,6 +14,7 @@ import (
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request, where string) {
+	log.Println("REDIRECT", r.Method, where)
 	http.Redirect(w, r, where, 303)
 }
 
@@ -76,7 +77,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 				if !ok {
 					log.Println("[Register] did not register:", err)
 					w.WriteHeader(400)
-					w.Write([]byte(err))
+					w.Write([]byte("Sorry, your reg data is wrong"))
 				} else {
 					log.Println("[Register] registered", reg_data.Username)
 					w.Write([]byte("/login"))
@@ -96,7 +97,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func  Login(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
 	if AlrdyLoggedIn {
 		log.Print("[Log In] " + strconv.FormatInt(session.UserID, 10) + " redirected to /")
@@ -140,11 +141,11 @@ func  Login(w http.ResponseWriter, r *http.Request) {
 					AddSession(&session)
 					//Set the client's cookie
 					cookie := http.Cookie{Name: "BattlerCookie",
-						Value:   string(ID),
+						Value: string(ID),
 						Expires: expiration}
 					http.SetCookie(w, &cookie)
 					w.WriteHeader(200)
-					w.Write([]byte("/welcome"))
+					w.Write([]byte("/"))
 				} else if user == nil {
 					log.Println("[Log In] Wrong username")
 					w.WriteHeader(400)
@@ -167,50 +168,50 @@ func  Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Welcome(w http.ResponseWriter, r *http.Request) {
-	loggedIn, session := IsLoggedIn(r)
-	if loggedIn {
-		ID := session.UserID
-		user := FindBaseID(ID)
-		SetState(user.UserID, MainPage)
-		if r.Method == http.MethodGet {
-			log.Println("[Welcome] GET WELCOME")
-			//userfree := *user.GatherFreeData()
-			Path := "/Site/main.html"
-			pwd, _ := os.Getwd()
-			Path = strings.Replace(pwd+Path, "/", "\\", -1)
-			log.Println(Path)
-			/*template, err := ParseFiles(Path)
-			if err != nil {
-				panic(err)
-			}
-			template.Execute(w, userfree)*/
-			http.ServeFile(w, r, Path)
-		}
-	} else {
+	loggedIn, _ := IsLoggedIn(r)
+	if !loggedIn {
 		log.Println("[Welcome] UNWELCOMED")
 		Redirect(w, r, "/login")
+		return
+	}
+	if r.Method == http.MethodGet {
+		log.Println("[Welcome] GET WELCOME")
+		//userfree := *user.GatherFreeData()
+		Path := "/Site/main.html"
+		pwd, _ := os.Getwd()
+		Path = strings.Replace(pwd+Path, "/", "\\", -1)
+		log.Println(Path)
+		/*template, err := ParseFiles(Path)
+		if err != nil {
+			panic(err)
+		}
+		template.Execute(w, userfree)*/
+		http.ServeFile(w, r, Path)
 	}
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
-	if AlrdyLoggedIn {
-		user := FindBaseID(session.UserID)
-		_, present := ClientConnections[user.UserID]
-		if present {
-			delete(ClientConnections, user.UserID)
-		}
-		for _, other := range UserQueue {
-			if other.UserID == user.UserID {
-				UserQueue.Remove(other.UserID)
-				break
-			}
-		}
-		SetState(user.UserID, Offline)
-		DeleteNotifications(user.UserID, "all")
-		log.Println("[Logout] see you,", session.UserID)
-		DeleteSession(session)
+	if !AlrdyLoggedIn {
+		log.Println("[Logout] Redirected to login")
+		Redirect(w, r, "/login")
+		return
 	}
-	log.Print("[Logout] redirected to /login")
+	user := FindBaseID(session.UserID)
+	_, present := ClientConnections[user.UserID]
+	if present {
+		delete(ClientConnections, user.UserID)
+	}
+	for _, other := range UserQueue {
+		if other.UserID == user.UserID {
+			UserQueue.Remove(other.UserID)
+			break
+		}
+	}
+	SetState(session.UserID, Offline)
+	DeleteNotifications(user.UserID, "all")
+	log.Println("[Logout] see you,", session.UserID)
+	DeleteSession(session)
+	log.Println("[Logout] Redirected to login")
 	Redirect(w, r, "/login")
 }

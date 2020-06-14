@@ -1,12 +1,11 @@
-﻿function setup() {
-    var touch = is_touch_device4();
-    if (touch) {
-        fullscreen(true);
-    }
-    //TODO after I click on any button, move the "cursor" on touch ?? ALSO check fullscreen.
+﻿var touch;
+var FS;
+
+function setup() {
+    //TODO after I click on any button, move the "cursor" on touch ??
     //textFont('Calibri');
-    //TESTING = true;
-    TESTING = false;
+    TESTING = true;
+    //TESTING = false;
     PICS = true;
     //PICS = false;
     if (TESTING) {
@@ -22,7 +21,7 @@
         S4 = JSON.parse(STATE4);
         //S2 = JSON.parse(STATE);
     }
-    //Battler consts
+    //Battler vars
     isTicking = false;
     ws = undefined;
     connected = false;
@@ -76,6 +75,7 @@
     //left panel!
     //leftPanel.add(new CanvasImage(0, 0, "", "myChar", "", 0, 0));
     leftPanel.add(new TextInfo(5, 30, dark, "", 25, "playerName", "", false, false, false));
+    leftPanel.add(new TextInfo(200, 30, dark, "", 25, "techinfo", "", false, false, false));
     leftPanel.add(new TextInfo(5, 55, dark, "", 20, "playerHP", "", false, false, true));
     leftPanel.add(new TextInfo(5, 235, dark, "", 25, "effects", "effects", 215, undefined, true));
     leftPanel.add(new TextInfo(330, 235, dark, "", 25, "effects2", "effects", 215, undefined, true));
@@ -101,20 +101,23 @@
     //DO IT
     disableButtons(1);
     disableOppButtons(1);
+    touch = is_touch_device4();
+    let el = getElement("techinfo");
+    el.setText(touch + " " + FullScreen(touch));
     if (TESTING === false) {
         connectToServer();
     } else {
         parseState(S2);
         parseState(S3);
         parseState(S4);
-        // parseInstruction("Animation:Q", false);
-        // parseInstruction("Animation:E", true);
-        // parseInstruction("Animation:W", false);
-        // parseInstruction("Animation:Q", true);
-        // parseInstruction("Animation:W", true);
-        // parseInstruction("Animation:E", false);
-        // parseInstruction("Animation:R", true);
-        // parseInstruction("Animation:R", false);
+        parseInstruction("Animation:Q", false);
+        parseInstruction("Animation:E", true);
+        parseInstruction("Animation:W", false);
+        parseInstruction("Animation:Q", true);
+        parseInstruction("Animation:W", true);
+        parseInstruction("Animation:E", false);
+        parseInstruction("Animation:R", true);
+        parseInstruction("Animation:R", false);
         //S2.OppHP = 32;
         //parseState(S2);
     }
@@ -138,18 +141,45 @@ function is_touch_device4() {
     return mq(query);
 }
 
-console.log(is_touch_device4());
+function FullScreen(onOff) {
+    let doc = window.document;
+    let docEl = doc.documentElement;
+
+    let requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+    let cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+    if (onOff && !doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+        requestFullScreen.call(docEl);
+        return false;
+    }
+    else {
+        //cancelFullScreen.call(doc);
+        return true;
+    }
+}
 
 function mouseClicked() {
-    let x = mouseX;
-    let y = mouseY;
-    if (topPanel.in(x, y)) {
-        for (obj of topPanel.objects) {
-            if (obj.clickable && obj.in(x, y)) {
-                obj.clicked();
-            }
+    let el = getElement("techinfo");
+    if (touch) {
+        let b1 = document.getElementById("button1");
+        let b2 = document.getElementById("button2");
+        let b3 = document.getElementById("button3");
+        let el = getElement("techinfo");
+        if (!FS) {
+            FS = FullScreen(touch);
+            el.setText(touch + " " + FS);
         }
     }
+    if (document.activeElement.classList.contains("navigation")) {
+        el.setText(touch + " " + FS + " IGNORED.");
+        return
+    } else {
+        el.setText(touch + " " + FS + " - ok :)");
+    }
+
+    let x = mouseX;
+    let y = mouseY;
+
     if (leftPanel.in(x, y)) {
         for (obj of leftPanel.objects) {
             if (obj.clickable && obj.in(x, y)) {
@@ -157,6 +187,7 @@ function mouseClicked() {
             }
         }
     }
+
     if (rightPanel.in(x, y)) {
         for (obj of rightPanel.objects) {
             if (obj.clickable && obj.in(x, y)) {
@@ -171,6 +202,15 @@ function mouseClicked() {
             }
         }
     }
+
+    if (topPanel.in(x, y)) {
+        for (obj of topPanel.objects) {
+            if (obj.clickable && obj.in(x, y)) {
+                obj.clicked();
+            }
+        }
+    }
+
 }
 
 function draw() {
@@ -194,7 +234,6 @@ function displayTimer(number) {
 }
 
 function parseState(i) {
-
     if (!i.hasOwnProperty("Instruction")) { //this is a time update
         let num = parseInt((i.split(":")[1]), 10);
         if (!isTicking) {
@@ -516,7 +555,7 @@ function setEffects(effects, id) {
 }
 
 function disableButtons(reason) {
-    //Are_buttons_disabled = true;
+    Are_buttons_disabled = true;
     getElement("Q").setState(-100);
     getElement("W").setState(-100);
     getElement("E").setState(-100);
@@ -592,11 +631,11 @@ function keyPressed() {
     if (!Are_buttons_disabled) {
         if ((key === 'q' || key === 'Q' || key === 'A' || key === 'a') && getElement("Q").clickable) {
             getElement("Q").clicked()
-        } else if ((key === 'w' || key === 'W' || key ==='Z' || key === 'z') && getElement("W").clickable) {
+        } else if ((key === 'w' || key === 'W' || key === 'Z' || key === 'z') && getElement("W").clickable) {
             getElement("W").clicked()
-        } else if ((key === 'e' || key ==='E') && getElement("E").clickable) {
+        } else if ((key === 'e' || key === 'E') && getElement("E").clickable) {
             getElement("E").clicked()
-        } else if ((key === 'r' || key ==='R') && getElement("R").clickable) {
+        } else if ((key === 'r' || key === 'R') && getElement("R").clickable) {
             getElement("R").clicked()
         }
     }

@@ -6,21 +6,20 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 )
 
 func FriendsHandler(w http.ResponseWriter, r *http.Request) {
-	AlrdyLoggedIn, _ := IsLoggedIn(r)
+	AlrdyLoggedIn, session := IsLoggedIn(r)
 	if !AlrdyLoggedIn || r.Method != http.MethodGet {
-		log.Print("[friends] " + "redirected to /login")
+		log.Println("[Friends] " + "redirected to /login")
 		Redirect(w, r, "/login")
 		return
 	}
 	Path := "/Site/friends.html"
 	pwd, _ := os.Getwd()
 	Path = strings.Replace(pwd+Path, "/", "\\", -1)
-	log.Println("[friends] " + Path)
+	log.Println("[Friends] " + Path, session.UserID)
 	http.ServeFile(w, r, Path)}
 
 func FriendListHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,24 +30,24 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
+		SetState(session.UserID, BrowsingFriendList)
 		res1 := GetFriendLists(session.UserID)
-		user := FindBaseID(session.UserID)
-		SetState(user.UserID, BrowsingFriendList)
 		res, err := json.Marshal(res1)
 		if err != nil {
-			panic(err)
+			log.Panic(err)
 		}
 		w.WriteHeader(200)
-		log.Println("[FriendList] sending", len(res1.Friends), "friends to "+strconv.FormatInt(user.UserID, 10)+".")
-		log.Println("and", len(res1.Incoming), "requests as well as", len(res1.Pending), "pending ones.")
+		//user := FindBaseID(session.UserID)
+		//log.Println("[FriendList] sending", len(res1.Friends), "friends to "+strconv.FormatInt(user.UserID, 10)+".")
+		//log.Println("and", len(res1.Incoming), "requests as well as", len(res1.Pending), "pending ones.")
 		w.Write(res)
 	} else if r.Method == http.MethodPost {
 		friendReq := make([]string, 2)
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&friendReq)
 		if err != nil {
-			panic(err)
 			http.Error(w, "You sent an invalid friend request.", 400)
+			log.Println("[FriendListPost]", err.Error(), session.UserID)
 			return
 		}
 		if friendReq[0] == "Remove" {

@@ -22,7 +22,7 @@ func AfterBattle(w http.ResponseWriter, r *http.Request) {
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		log.Println("[rewards] " + Path)
 		http.ServeFile(w, r, Path)
-	} else {
+	} else if r.Method == http.MethodPost {
 		rewards := *GetRewards(client)
 		DeleteRewards(client)
 		w.WriteHeader(200)

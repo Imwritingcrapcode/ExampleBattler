@@ -32,6 +32,7 @@ function GetInfo() {
 }
 
 function ParseMatches(info) {
+    //TODO fix to currlevel + currmatches
     switch (info.BattleResult) {
         case 1:
             result = "Victory! ★";

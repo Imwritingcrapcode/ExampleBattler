@@ -2,9 +2,6 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
     <title>Login</title>
     <script>
         function loginFunc() {
@@ -41,7 +38,6 @@
                     document.getElementById("preloader").setAttribute("style", "visibility: hidden");
                     if (xhr.status === 200) {
                         window.location.href = xhr.responseText;
-                        //TODO FIX not sending a get request
                     } else if (xhr.status === 400) {
                         document.getElementById("warnings").style = "color: #FF4133;";
                         document.getElementById("warnings").innerText = xhr.responseText;

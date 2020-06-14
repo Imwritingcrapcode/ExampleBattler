@@ -196,10 +196,11 @@ function UpdateFreeData(after) {
             if (xhr.status === 200) {
                 let response = JSON.parse(xhr.responseText);
                 console.log(response);
-                if ( ("Welcome, " + response.Username).length > 19) {
+                let welcome = "Welcome, " + response.Username;
+                if ( welcome.length > 19) {
                     document.getElementById("username").innerText = "Hi, " + response.Username;
                 } else {
-                    document.getElementById("username").innerText = "Welcome, " + response.Username;
+                    document.getElementById("username").innerText = welcome;
                 }
                 document.getElementById("wDust").innerText = response.MoneyInfo["w"];
                 document.getElementById("bDust").innerText = response.MoneyInfo["b"];
@@ -215,3 +216,37 @@ function UpdateFreeData(after) {
         }
     };
 }
+
+function UpdateProfileData(after) {
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', '/profileinfo', true);
+    xhr.send();
+    xhr.onreadystatechange = (e) => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                console.log(response);
+                let welcome = "Welcome, " + response.Username;
+                if ( welcome.length > 19) {
+                    document.getElementById("username").innerText = "Hi, " + response.Username;
+                } else {
+                    document.getElementById("username").innerText = welcome;
+                }
+                document.getElementById("wDust").innerText = response.MoneyInfo["w"];
+                document.getElementById("bDust").innerText = response.MoneyInfo["b"];
+                document.getElementById("yDust").innerText = response.MoneyInfo["y"];
+                document.getElementById("pDust").innerText = response.MoneyInfo["p"];
+                document.getElementById("sDust").innerText = response.MoneyInfo["s"];
+                document.getElementById("username2").innerText = response.Username;
+                if (response.BattlesTotal > 0) {
+                    document.getElementById("battles2").innerText = "Battle stats: " + response.BattlesWon + "/" + response.BattlesTotal + " (" + roundUp(response.BattlesWon / response.BattlesTotal * 100) + "% winrate)";
+                } else {
+                    document.getElementById("battles2").innerText = "Battle stats: " + 0 + "/" + 0 + " (" + 0 + "% winrate)";
+                }
+            } else {
+                console.log(xhr.responseText);
+            }
+        }
+    };
+}
+
