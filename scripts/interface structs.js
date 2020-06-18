@@ -1,4 +1,5 @@
 const hoverLinger = 300;
+const taphoverLinger = 60;
 
 function Panel(x, y, w, h, s) {
     this.x = x;
@@ -17,23 +18,27 @@ function Panel(x, y, w, h, s) {
                     obj.unclick();
                 }
                 obj.display();
-            } else if (obj.hoverable && obj.in()) { //found an "in"
-                if (!current) { //outside to something
-                    current = obj;
-                    obj.hovered();
+            } else if (!touch) {
+                if (obj.hoverable && obj.in()) { //found an "in"
+                    if (!current) { //outside to something
+                        current = obj;
+                        obj.hovered();
+                        obj.display();
+                    } else if (current.id === obj.id) { //currently hovered
+                        obj.display();
+                    } else { //switched from another 2 this
+                        current.unhovered();
+                        current = obj;
+                        obj.hovered();
+                        obj.display();
+                    }
+                } else if (obj.hoverable && current && obj.id === current.id) { //went outside
+                    obj.unhovered();
+                    current = undefined;
                     obj.display();
-                } else if (current.id === obj.id) { //currently hovered
-                    obj.display();
-                } else { //switched from another 2 this
-                    current.unhovered();
-                    current = obj;
-                    obj.hovered();
+                } else {
                     obj.display();
                 }
-            } else if (obj.hoverable && current && obj.id === current.id) { //went outside
-                obj.unhovered();
-                current = undefined;
-                obj.display();
             } else {
                 obj.display();
             }
@@ -50,29 +55,33 @@ function Panel(x, y, w, h, s) {
                     obj.unclick();
                 }
                 obj.display();
-            } else if (obj.hoverable && obj.in()) { //found an "in"
-                if (!current) { //outside to something
-                    current = obj;
-                    obj.hovered();
+            } else if (!touch) {
+                if (obj.hoverable && obj.in()) { //found an "in"
+                    if (!current) { //outside to something
+                        current = obj;
+                        obj.hovered();
+                        obj.display();
+                    } else if (current.id === obj.id) { //currently hovered
+                        obj.display();
+                    } else { //switched from another 2 this
+                        current.unhovered();
+                        current = obj;
+                        obj.hovered();
+                        obj.display();
+                    }
+                } else if (obj.hoverable && current && obj.id === current.id) { //went outside
+                    obj.unhovered();
+                    current = undefined;
                     obj.display();
-                } else if (current.id === obj.id) { //currently hovered
-                    obj.display();
-                } else { //switched from another 2 this
-                    current.unhovered();
-                    current = obj;
-                    obj.hovered();
+                } else {
                     obj.display();
                 }
-            } else if (obj.hoverable && current && obj.id === current.id) { //went outside
-                obj.unhovered();
-                current = undefined;
-                obj.display();
             } else {
                 obj.display();
             }
         }
         //display hover
-        if (current && current.in()) {
+        if (!touch && current && current.in() || touch && current && current.isHovered && current.in()) {
             current.displayHover();
         }
     };
@@ -227,8 +236,14 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     this.clickable = false;
     this.hoverable = hoverable;
     if (this.hoverable) {
+        this.isHovered = false;
         this.hoverTimer = 0;
-        this.hoverLinger = hoverLinger;
+        if (touch) {
+            this.hoverLinger = taphoverLinger;
+
+        } else {
+            this.hoverLinger = hoverLinger;
+        }
     }
     this.hoverText = "";
 
@@ -352,6 +367,9 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
     };
 
     this.hovered = function () {
+        if (touch) {
+            this.isHovered = true;
+        }
     };
 
     this.unhovered = function () {
@@ -663,7 +681,11 @@ function SkillButton(x, y, type, t, id, mine) {
     this.clickTimer = 0;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = hoverLinger;
+        if (touch) {
+            this.hoverLinger = taphoverLinger;
+        } else {
+            this.hoverLinger = hoverLinger;
+        }
     }
 
     this.display = function () {
@@ -996,6 +1018,11 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.borderWidth = 4.5;
                 break;
         }
+        if (this.isHovered) {
+            this.colour = this.hoverColour;
+        } else {
+            this.colour = this.baseColour;
+        }
     };
 
     this.displayHover = function () {
@@ -1055,7 +1082,11 @@ function StandardButton(x, y, s, t, size, id, col) {
     this.clickTimer = 0;
     if (this.hoverable) {
         this.hoverTimer = 0;
-        this.hoverLinger = hoverLinger;
+        if (touch) {
+            this.hoverLinger = taphoverLinger;
+        } else {
+            this.hoverLinger = hoverLinger;
+        }
     }
     this.visible = true;
 

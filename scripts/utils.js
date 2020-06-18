@@ -12,6 +12,24 @@ function sortMap(map) {
     return tupleArray;
 }
 
+function is_touch_device4() {
+
+    let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
+
+    let mq = function (query) {
+        return window.matchMedia(query).matches;
+    };
+
+    if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
+        return true;
+    }
+
+    // include the 'heartz' as a way to have a non matching MQ to help terminate the join
+    // https://git.io/vznFH
+    let query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
+    return mq(query);
+}
+
 function countdown(value, where, yesno) {
     timeleft = value - 1;
     if (timeleft < 0) {
@@ -207,7 +225,7 @@ function UpdateFreeData(after) {
                 document.getElementById("yDust").innerText = response.MoneyInfo["y"];
                 document.getElementById("pDust").innerText = response.MoneyInfo["p"];
                 document.getElementById("sDust").innerText = response.MoneyInfo["s"];
-                if (after) {
+                if (!!after) {
                     after(response);
                 }
             } else {
@@ -217,7 +235,7 @@ function UpdateFreeData(after) {
     };
 }
 
-function UpdateProfileData(after) {
+function UpdateProfileData() {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', '/profileinfo', true);
     xhr.send();

@@ -104,7 +104,6 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 						//client d/ced
 						UserQueue.Remove(session.UserID)
 						delete(QueueClients, session.UserID)
-						SetState(session.UserID, BrowsingCharacters)
 						return
 					} else {
 						//send the opp + location message to the client

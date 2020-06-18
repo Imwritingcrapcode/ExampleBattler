@@ -4,11 +4,6 @@
     <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
     <meta charset="UTF-8">
     <style>
-        body {
-            background-color: #E6E6E6;
-            color: #323232;
-        }
-
         input[type=checkbox] {
             /* Double-sized Checkboxes */
             -ms-transform: scale(2); /* IE */
@@ -17,33 +12,17 @@
             -o-transform: scale(2); /* Opera */
             padding: 10px;
         }
-
-        label {
-            white-space: pre;
-            font-size: x-large;
-        }
-
-        span {
-            color: #657ab1;
-            font-size: 25px;
-            white-space: pre;
-        }
     </style>
     <title>Character List</title>
     <script src="/scripts/p5.min.js"></script>
     <script src="/scripts/constants.js"></script>
-    <script src="/scripts/generalinterface.js"></script>
+    <script src="/scripts/pinterface.js"></script>
     <script src="/scripts/bottomcanvas.js"></script>
     <script src="/scripts/rightsketch.js"></script>
     <script src="/scripts/girllistbuttonsleft.js"></script>
     <script src="/scripts/utils.js"></script>
     <script src="/scripts/girllist.js"></script>
     <script src="/scripts/POPUP.js"></script>
-    <script>
-        function after(data) {
-        }
-        UpdateFreeData(after);
-    </script>
 </head>
 <body>
 <table WIDTH="100%">
@@ -121,6 +100,7 @@
     </table>
 </div>
 <script>
+    UpdateFreeData();
     bottomReady = false;
     new p5(leftSketch, 'girls');
     new p5(bottomSketch, 'bottomcanvas');

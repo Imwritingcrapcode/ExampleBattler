@@ -16,18 +16,15 @@ import (
 /*
 //CURRENTLY WORKING
 temporarily set the game and notifications not to redirect on click
-then: fullscreen check, afterbattle, button sending
-after: queue & skill level
-//KNOWN ISSUES
-TODO- give up doesnt count as a loss - check backend & fix frontend with % so that in counts only current level and toadd
-TODO - no % if gave up on rewards screen OR refreshed.
-TOOD this will cancel your queue
+now: queue & skill level
+then: shop with drops
+after: weighted starting characters
+
 //IMPORTANT
-//TODO notifications backend fix lots of issues q_q write a proper algorithm of how it's supposed to work
+//TODO- test if giveup counts as a loss
 //todo queue sends stuff in a channel + skill level
-//TODO. shop with drops.
+//TODO shop with drops.
 //todo weighted starting characters
-//todo fix long hold on touch
 
 //FLAVOR
 //todo linux support, get a server

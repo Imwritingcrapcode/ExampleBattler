@@ -1,6 +1,7 @@
 function setup() {
     shopobjects = [];
     current = undefined;
+    touch = is_touch_device4();
     let can = createCanvas(1024, 400);
     can.parent('shop');
     bg_color = color(BG);

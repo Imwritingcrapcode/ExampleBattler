@@ -245,6 +245,10 @@ function InterfaceText(p, x, y, colour, t, size, id, type, width) {
         }
     };
 
+    this.hover = function() {
+
+    };
+
     this.displayHover = function () {
         if (this.hoverable) {
             displayStandardHoverBubble(this.hoverText, this.hoverLines)
@@ -342,7 +346,17 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
         if (this.image) {
             p.image(this.image, this.x, this.y, this.width, this.height);
         }
-    }
+    };
+
+    this.hover = function() {
+
+    };
+
+    this.displayHover = function () {
+        if (this.hoverable) {
+            displayStandardHoverBubble(this.hoverText, this.hoverLines)
+        }
+    };
 }
 
 function InterfaceImageBox() {
@@ -388,6 +402,7 @@ function LoadingScreen(p, x, y, w, h) {
     this.squares = [];
     this.paused = false;
     this.stopped = 0;
+    this.hoverable = false;
     let width;
     let height;
     if (w > h) {

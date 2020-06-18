@@ -558,13 +558,9 @@ func GetRewards(user *User) *RewardsObj {
 	number := GetLastPlayedAs(user.UserID)
 	playedAs := strconv.Itoa(number)
 	rewards := RewardsObj{
-		BattleResult:      0,
-		LastOpponentsName: "",
-		Dusts:             make(map[string]int, 5),
-		Name:              ReleasedCharactersNames[number],
-		Matches:           GetLevelCaps(GetGirlRarity(number)),
-		ToAdd:             0,
+		Dusts: make(map[string]int, 5),
 	}
+
 	var rtype string
 	var amnt int
 	for rows.Next() {
@@ -577,9 +573,12 @@ func GetRewards(user *User) *RewardsObj {
 		}
 	}
 	rows.Close()
+
+	rewards.Name = ReleasedCharactersNames[number]
+	rewards.Rarity = GetGirlRarity(number)
 	stuff := GetMatchData(user.UserID, number)
 	rewards.Level = stuff[0]
-	rewards.CurrentMatches =stuff[1]
+	rewards.CurrentMatches = stuff[1]
 
 	if rewards.ToAdd > 0 {
 		rewards.LastOpponentsName = GetLastOpponentsName(user.UserID)
@@ -774,8 +773,8 @@ func (user *User) GatherFreeData() *UserFree {
 	return &data
 }
 
-func (user *User) GatherProfileData() *UserFree {
-	data := UserFree{}
+func (user *User) GatherProfileData() *UserFreeProfile {
+	data := UserFreeProfile{}
 	moneyI := MoneyInfo{}
 	moneyI.W = user.GetDust("w")
 	moneyI.B = user.GetDust("b")

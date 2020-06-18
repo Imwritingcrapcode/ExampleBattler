@@ -137,8 +137,8 @@ type RewardsObj struct {
 	BattleResult      int
 	LastOpponentsName string
 	Dusts             map[string]int
-	Matches           []int
 	Name              string
+	Rarity            string
 	CurrentMatches    int
 	Level             int
 	ToAdd             int
@@ -220,6 +220,11 @@ type RegData struct {
 }
 
 type UserFree struct {
+	Username string    `json:"Username"`
+	Monies   MoneyInfo `json:"MoneyInfo"`
+}
+
+type UserFreeProfile struct {
 	Username     string    `json:"Username"`
 	BattlesTotal int       `json:"BattlesTotal"`
 	BattlesWon   int       `json:"BattlesWon"`

@@ -15,7 +15,7 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 	if !AlrdyLoggedIn {
 		log.Print("[GIRLLIST] " + "redirected to /login")
 		Redirect(w, r, "/login")
-
+		return
 	}
 	log.Println("[GIRLLIST] "+"accessing GirlList for", session.UserID)
 	if r.Method == http.MethodGet {
@@ -27,11 +27,6 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, Path)
 
 	} else {
-		state := GetState(session.UserID)
-		if state <= Queuing || state >= JustFinishedTheGame { //TODO you know.
-			//basically if they were queuing what disrupts the queue? and prompt to reconnect. ty
-			SetState(session.UserID, BrowsingCharacters)
-		}
 		//1. Get a list (slice) of all the girls unlocked from the db
 		userGirls := GetGirls(session.UserID)
 		// 2. getinfo for each of those girls
@@ -59,12 +54,16 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 		//3. Send it to the frontend
 		var resline string
 		standard := "Press \"Battle!\" when you are ready"
-		/*if _, ok := ClientMap[session.Username]; ok {
+		resline = standard
+		state := GetState(session.UserID)
+		if state < Queuing || state >= JustFinishedTheGame {
+			//basically if they were queuing what disrupts the queue? and prompt to reconnect. ty
+			SetState(session.UserID, BrowsingCharacters)
+		} else if state > Queuing && state < JustFinishedTheGame {
 			resline = "You are already in game. Queuing will terminate the current match (give up)"
 		} else {
-			resline = standard
-		}*/
-		resline = standard
+
+		}
 		res1 := GirlListResponse{
 			Girls:    userGirls,
 			Response: resline,

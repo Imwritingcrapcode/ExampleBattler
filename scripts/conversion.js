@@ -1,6 +1,7 @@
 function setup() {
     convobjects = [];
     current = undefined;
+    touch = is_touch_device4();
     let can = createCanvas(1024, 70);
     can.parent('items');
     bg_color = color(BG);

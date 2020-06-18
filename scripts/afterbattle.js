@@ -32,7 +32,6 @@ function GetInfo() {
 }
 
 function ParseMatches(info) {
-    //TODO fix to currlevel + currmatches
     switch (info.BattleResult) {
         case 1:
             result = "Victory! ★";
@@ -56,6 +55,7 @@ function ParseMatches(info) {
             break;
         default:
             result = "No new rewards...";
+            break;
     }
     if (info.LastOpponentsName) {
         oppName = info.LastOpponentsName;
@@ -72,18 +72,13 @@ function ParseMatches(info) {
         };
     }
     globalinfo = info;
-    matches = info.Matches;
+    matches = MATCHES.get(info.Rarity);
     to_add = info.ToAdd;
-    let to_set_matches = info.TotalMatches - info.ToAdd;
-    level = 1;
-    passed = 0;
-    while ((to_set_matches >= matches[level - 1]) && level < 20) {
-        to_set_matches = to_set_matches - matches[level - 1];
-        passed += matches[level - 1];
-        level += 1;
-    }
-    curr_matches = to_set_matches;
+    level = info.Level;
+    curr_matches = info.CurrentMatches;
     percentage = 100 * curr_matches / matches[level - 1];
+    getElement("bar").setPercentage(percentage);
+    getElement("bar").setNewPercentage(percentage);
     if ("w" in info.Dusts) {
         console.log("hasDust!");
         dust = info.Dusts["w"];
@@ -96,6 +91,7 @@ function ParseMatches(info) {
 function setup() {
     can = createCanvas(600, 350);
     can.parent('rewards_sketch');
+    touch = is_touch_device4();
     bg_color = color(BG);
     dark = color(DARKC);
     light = color(LIGHTC);
@@ -109,7 +105,7 @@ function setup() {
     dust = 0;
     added = 0;
     levelled_up = false;
-    addingSpeed = to_add / 4;
+    addingSpeed = 0.5;
     gname = "";
     oppName = "";
     result = "";

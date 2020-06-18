@@ -1,32 +1,10 @@
 'use strict';
-let struc;
 let response;
 let currentGirls = [];
 //let num;
 let tags = [];
 let colours = [];
 let rarities = [];
-let colourMap = new Map([
-    ["Red", 0],
-    ["Orange", 1],
-    ["Yellow", 2],
-    ["Green", 3],
-    ["Cyan", 4],
-    ["Blue", 5],
-    ["Violet", 6],
-    ["Pink", 7],
-    ["Gray", 8],
-    ["Brown", 9],
-    ["Black", 10],
-    ["White", 11],
-]);
-let raritiesMap = new Map([
-    ["ST", 0],
-    ["AD", 1],
-    ["SP", 2],
-    ["RP", 3],
-    ["LF", 4],
-]);
 let curNum = -1;
 let mainNum = -1;
 let secNum = -1;
@@ -484,7 +462,6 @@ function clearsetgirls() {
 
 
 function battle() {
-    //TODO prompt do you wanna reconnect or nah
     if (mainNum !== -1 && secNum !== -1) {
         if (ws) {
             return

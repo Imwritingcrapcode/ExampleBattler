@@ -14,7 +14,6 @@ import (
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request, where string) {
-	log.Println("REDIRECT", r.Method, where)
 	http.Redirect(w, r, where, 303)
 }
 

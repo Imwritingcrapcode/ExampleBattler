@@ -2,10 +2,11 @@
 var FS;
 
 function setup() {
-    //TODO after I click on any button, move the "cursor" on touch ??
     //textFont('Calibri');
-    TESTING = true;
-    //TESTING = false;
+    //TESTING = true;
+    touch = is_touch_device4();
+    //touch = true;
+    TESTING = false;
     PICS = true;
     //PICS = false;
     if (TESTING) {
@@ -63,6 +64,10 @@ function setup() {
 
     let can = createCanvas(1280, 550);
     can.parent('interface');
+    can.touchEnded(touchEnded);
+    can.touchMoved(touchMoved);
+    can.touchStarted(touchStarted);
+    can.mouseClicked(mouseClicked);
     leftPanel = new Panel(0, 0, 550, 550, 5);
     rightPanel = new Panel(730, 0, 550, 550, 5);
     topPanel = new Panel(550, 0, 180, 230, 5);
@@ -73,9 +78,8 @@ function setup() {
     topPanel.add(new TextInfo(555, 30, dark, "", 25, "turnNumber", "", false, false, true));
     topPanel.add(new TurnLog(550, 230, dark, 20, "turnLog", 180, 175, true));
     //left panel!
-    //leftPanel.add(new CanvasImage(0, 0, "", "myChar", "", 0, 0));
     leftPanel.add(new TextInfo(5, 30, dark, "", 25, "playerName", "", false, false, false));
-    leftPanel.add(new TextInfo(200, 30, dark, "", 25, "techinfo", "", false, false, false));
+    //leftPanel.add(new TextInfo(200, 30, dark, "", 25, "techinfo", "", false, false, false));
     leftPanel.add(new TextInfo(5, 55, dark, "", 20, "playerHP", "", false, false, true));
     leftPanel.add(new TextInfo(5, 235, dark, "", 25, "effects", "effects", 215, undefined, true));
     leftPanel.add(new TextInfo(330, 235, dark, "", 25, "effects2", "effects", 215, undefined, true));
@@ -84,7 +88,6 @@ function setup() {
     leftPanel.add(new SkillButton(286, 315, 3, "", "E", true));
     leftPanel.add(new SkillButton(440, 265, 4, "", "R", true));
     //right panel!
-    //rightPanel.add(new CanvasImage(730, 0, "", "oppChar", "", 0, 0));
     rightPanel.add(new TextInfo(735, 30, dark, "", 25, "oppName", "", false, false, false));
     rightPanel.add(new TextInfo(735, 55, dark, "", 20, "oppHP", "", false, false, true));
     rightPanel.add(new TextInfo(735, 235, dark, "", 25, "oppEffects", "effects", 215, undefined, true));
@@ -101,9 +104,8 @@ function setup() {
     //DO IT
     disableButtons(1);
     disableOppButtons(1);
-    touch = is_touch_device4();
-    let el = getElement("techinfo");
-    el.setText(touch + " " + FullScreen(touch));
+    //let el = getElement("techinfo");
+    //el.setText(touch + " " + FullScreen(touch));
     if (TESTING === false) {
         connectToServer();
     } else {
@@ -121,24 +123,6 @@ function setup() {
         //S2.OppHP = 32;
         //parseState(S2);
     }
-}
-
-function is_touch_device4() {
-
-    let prefixes = ' -webkit- -moz- -o- -ms- '.split(' ');
-
-    let mq = function (query) {
-        return window.matchMedia(query).matches;
-    };
-
-    if (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch) {
-        return true;
-    }
-
-    // include the 'heartz' as a way to have a non matching MQ to help terminate the join
-    // https://git.io/vznFH
-    let query = ['(', prefixes.join('touch-enabled),('), 'heartz', ')'].join('');
-    return mq(query);
 }
 
 function FullScreen(onOff) {
@@ -159,22 +143,9 @@ function FullScreen(onOff) {
 }
 
 function mouseClicked() {
-    let el = getElement("techinfo");
-    if (touch) {
-        let b1 = document.getElementById("button1");
-        let b2 = document.getElementById("button2");
-        let b3 = document.getElementById("button3");
-        let el = getElement("techinfo");
-        if (!FS) {
-            FS = FullScreen(touch);
-            el.setText(touch + " " + FS);
-        }
-    }
+    if (touch) return;
     if (document.activeElement.classList.contains("navigation")) {
-        el.setText(touch + " " + FS + " IGNORED.");
         return
-    } else {
-        el.setText(touch + " " + FS + " - ok :)");
     }
 
     let x = mouseX;
@@ -187,7 +158,6 @@ function mouseClicked() {
             }
         }
     }
-
     if (rightPanel.in(x, y)) {
         for (obj of rightPanel.objects) {
             if (obj.clickable && obj.in(x, y)) {
@@ -202,7 +172,6 @@ function mouseClicked() {
             }
         }
     }
-
     if (topPanel.in(x, y)) {
         for (obj of topPanel.objects) {
             if (obj.clickable && obj.in(x, y)) {
@@ -211,6 +180,82 @@ function mouseClicked() {
         }
     }
 
+}
+
+function touchStarted() {
+    if (!touch) return;
+    if (!FS) {
+        FS = FullScreen(touch);
+    }
+
+    let x = mouseX;
+    let y = mouseY;
+
+    for (let Panel of [leftPanel, rightPanel, bottomPanel, topPanel]) {
+        if (Panel.in(x,y)) {
+            for (obj of Panel.objects) {
+                if (obj.in(x,y)) {
+                    current = obj;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+function touchMoved() {
+    if (!touch) return;
+    if (document.activeElement.classList.contains("navigation")) {
+        return
+    }
+
+    let x = mouseX;
+    let y = mouseY;
+
+    for (let Panel of [leftPanel, rightPanel, bottomPanel, topPanel]) {
+        if (Panel.in(x, y)) {
+            for (obj of Panel.objects) {
+                if (obj.hoverable && obj.in()) { //found an "in"
+                    if (!current) { //outside to something
+                        console.log("outside to", obj.id);
+                        current = obj;
+                        obj.hovered();
+                    } else if (current.id !== obj.id) { //switched from another 2 this
+                        console.log("switched from", current.id, "to", obj.id);
+                        current.unhovered();
+                        current = obj;
+                        obj.hovered();
+                    } else if (current.id === obj.id && !current.isHovered) {
+                        current.hovered();
+                    }
+                    return;
+                } else if (obj.hoverable && current && obj.id === current.id) { //went outside
+                    console.log("went outside", current.id, "to", obj.id);
+                    obj.unhovered();
+                    current = undefined;
+                    return;
+                }
+            }
+        }
+    }
+
+}
+
+function touchEnded() {
+    if (!touch) return;
+    if (document.activeElement.classList.contains("navigation")) {
+        return
+    }
+    let x = mouseX;
+    let y = mouseY;
+    if (current) {
+        if (current.clickable && current.hoverTimer < current.hoverLinger && current.in(x, y)) {
+            console.log(current.id, current.hoverTimer, current.hoverLinger);
+            current.clicked();
+        }
+        current.unhovered();
+        current = undefined;
+    }
 }
 
 function draw() {
@@ -472,7 +517,6 @@ function parseInstruction(t, isMine) {
         displayTimer(-1);
     }
 }
-
 
 function setHP(plHP, HP, MaxHP) {
     let c;

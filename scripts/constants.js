@@ -34,6 +34,8 @@ SPCOLOUR = 'rgba(208, 200, 0, 1)';
 RPCOLOUR = VIOLET;
 LFCOLOUR = WINC;
 
+FRAMESFORANIMATIONS = 60;
+
 EFFECTDESCRIPTIONS = [
     [0, "Doubles the damage you deal."],
     [2, "Prevents you from healing."],
@@ -53,7 +55,7 @@ EFFECTDESCRIPTIONS = [
     [18, "Euphoric Source gives your Pink Sphere additional damage as well as well as healing while in Euphoria."],
 ];
 
-let COLOURIDS = [
+COLOURIDS = [
     ["Red", RED],
     ["Orange", ORANGE],
     ["Yellow", YELLOW],
@@ -68,7 +70,7 @@ let COLOURIDS = [
     ["White", WHITE],
 ];
 
-let DUSTS = new Map([
+DUSTS = new Map([
     ["w", "White"],
     ["b", "Blue"],
     ["y", "Yellow"],
@@ -76,7 +78,7 @@ let DUSTS = new Map([
     ["s", "Star"],
 ]);
 
-let SKILLDESCRIPTIONS = new Map([
+SKILLDESCRIPTIONS = new Map([
     ["Your Number", "Deal 10 + the remainder of your opponent's number divided by 7 Orange damage."],
     ["Your Colour", "Next turn, your opponent can't use the skills of the same colour they used last. Deal 15 damage of that colour.\nUnlocks when your opponent uses a skill.\nCooldown: 1."],
     ["Your Dream", "Heal for (your max HP - your opponent's number) / your turn number.\nIf your opponent's number is more than 83, subtract a flat number as if it was 83."],
@@ -107,7 +109,38 @@ let SKILLDESCRIPTIONS = new Map([
     ["Last Chance", "If you survive your opponent's next turn, fully heal.\nUnlocks on turn 7.\nCan only be used once per match."],
 ]);
 
-FRAMESFORANIMATIONS = 60;
+
+MATCHES = new Map([
+    ["ST", [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5]],
+    ["AD", [1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6]],
+    ["SP", [1, 2, 4, 5, 5, 5, 6, 8, 9, 11, 11, 11, 11, 11, 13, 14, 16, 16, 16]],
+    ["RP", [2, 6, 10, 13, 13, 14, 14, 16, 20, 23, 24, 24, 25, 27, 29, 31, 35, 37, 37]],
+    ["LF", [4, 7, 12, 16, 17, 18, 20, 23, 27, 30, 31, 31, 31, 33, 34, 38, 41, 43, 44]],
+]);
+
+colourMap = new Map([
+    ["Red", 0],
+    ["Orange", 1],
+    ["Yellow", 2],
+    ["Green", 3],
+    ["Cyan", 4],
+    ["Blue", 5],
+    ["Violet", 6],
+    ["Pink", 7],
+    ["Gray", 8],
+    ["Brown", 9],
+    ["Black", 10],
+    ["White", 11],
+]);
+
+raritiesMap = new Map([
+    ["ST", 0],
+    ["AD", 1],
+    ["SP", 2],
+    ["RP", 3],
+    ["LF", 4],
+]);
+
 
 function getResolution(num) {
     switch (num) {
