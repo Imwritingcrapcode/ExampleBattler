@@ -164,6 +164,7 @@ func main() {
 	http.HandleFunc("/notifications", Notifications)
 
 	go OfflinePeople()
+	go EventOrganizer()
 	err = http.ListenAndServe(":1119", nil)
 	if err != nil {
 		panic(err)

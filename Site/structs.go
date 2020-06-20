@@ -181,13 +181,13 @@ type FriendList struct {
 
 //GameServer
 
-const WAITTIME = 15 * time.Nanosecond
+const QUEUEWAITTIME = 20 * time.Second
 
-var QueueClients = map[int64]*ClientChannels{}
+var QUEUECHANNEL = make(chan *ClientChannels, 10)
+var QUEUE = make([]*ClientChannels, 0)
 
 var upgrader = websocket.Upgrader{}
 
-var UserQueue = make(PriorityQueue, 0)
 
 type QueueResponse struct {
 	OK       bool   `json:"OK"`
@@ -313,20 +313,6 @@ type ConvResponse struct {
 	Amount               int
 	DustType             string
 }
-
-/*var ConversionRate = map[string]float64{
-	"w": 0.5,
-	"b": 0.5,
-	"y": 0.5,
-	"p": 0.5,
-}
-
-var SecondsPerConversion = map[string]int{
-	"w": 1,
-	"b": 1,
-	"y": 1,
-	"p": 1,
-}*/
 
 var ConversionRate = map[string]float64{
 	"w": 0.5,

@@ -15,16 +15,23 @@ import (
 
 /*
 //CURRENTLY WORKING
-temporarily set the game and notifications not to redirect on click
-now: queue & skill level
-then: shop with drops
-after: weighted starting characters
+temporarily set the game not to redirect on click
+now: redo notifications as ws ?
+//TODO cannot give up during the opp's turn
+shop with drops
+then: weighted starting characters
+after: other important todos
 
 //IMPORTANT
-//TODO- test if giveup counts as a loss
-//todo queue sends stuff in a channel + skill level
 //TODO shop with drops.
 //todo weighted starting characters
+
+//TODO slow and gentle conversion animation
+//TODO killing notifications over time xc
+//TODO unlocking a girl stores a date when unlocked
+//Todo online friends are above others
+//TODO conversion doesn't always send rates
+//TODO notification height
 
 //FLAVOR
 //todo linux support, get a server
@@ -34,7 +41,7 @@ after: weighted starting characters
 //todo glittering loading bar
 //TODO global chat
 //TODO dms chat
-//TODO prompt reconnect >_<
+//TODO test prompt reconnect >_<
 //TODO speech bubbles
 //TODO skins
 //TODO character wiki
@@ -46,12 +53,13 @@ after: weighted starting characters
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {
-	log.Println("[INGAME] gg distribute rewards")
-	//1. Determine how much that girl should give
-	//2. Add that much
-	neededAmount := HowMuchDoesSheGive(p1.PlayingAs, won)
-	//2.
+	log.Println("[INGAME] gg distribute rewards", p1.UserID)
 	if !(p1.State == GaveUp) {
+		log.Println("[ingame] state of ", p1.UserID, ActivitiesToString[p1.State])
+		//1. Determine how much that girl should give
+		//2. Add that much
+		neededAmount := HowMuchDoesSheGive(p1.PlayingAs, won)
+		//2.
 		user := FindBaseID(p1.UserID)
 		AddRewards(user, "w", neededAmount)
 		AddRewards(user, strconv.Itoa(p1.PlayingAs), 1)
@@ -59,20 +67,6 @@ func DistributeRewards(p1 *ClientChannels, won bool) {
 	}
 }
 
-func FindValidCombination(ch1 []int, ch2 []int) (int, int) {
-	if ch1[0] != ch2[0] {
-		return ch1[0], ch2[0]
-	} else if ch1[1] != ch2[1] {
-		return ch1[1], ch2[1]
-	} else {
-		coin := rand.Intn(2)
-		if coin == 1 {
-			return ch1[1], ch2[0]
-		} else {
-			return ch1[0], ch2[1]
-		}
-	}
-}
 
 func Game(p1, p2 *ClientChannels) {
 	var g1, g2 CharInt
@@ -187,11 +181,10 @@ func Game(p1, p2 *ClientChannels) {
 }
 
 func BotGame(p1 *ClientChannels, botChar int, DEPTH int) {
-	if p1.PlayingAs == 33 && DEPTH > 5 {
+	if (p1.PlayingAs == 33 || botChar == 33) && DEPTH > 5 {
 		DEPTH = 5
-	} else if botChar == 33 && DEPTH >= 5 {
-		DEPTH = 4
 	}
+
 	var g1, g2 CharInt
 	p1.Clock = &Clock{
 		Client: p1,
@@ -364,9 +357,26 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 			for botChosen[1] == botChosen[0] {
 				botChosen[1] = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
 			}
-			p1.PlayingAs, char2 = FindValidCombination(p1.ChosenGirls, botChosen)
-			DEPTH := rand.Intn(3) + 4 //3 to 6.
-			log.Println("[BOTGAME] bot is", DEPTH, "yrs old.")
+			ch1 := p1.ChosenGirls
+			ch2 := botChosen
+			if ch1[0] != ch2[0] {
+				p1.PlayingAs = ch1[0]
+				char2 = ch2[0]
+			} else if ch1[1] != ch2[1] {
+				p1.PlayingAs = ch1[1]
+				char2 = ch2[1]
+			} else {
+				coin := rand.Intn(2)
+				if coin == 1 {
+					p1.PlayingAs = ch1[1]
+					char2 = ch2[0]
+				} else {
+					p1.PlayingAs = ch1[0]
+					char2 = ch2[1]
+				}
+			}
+			DEPTH := GetSkillLevel(p1.UserID, p1.PlayingAs) //3 to 6.
+			log.Println("[BOTGAME] bot has difficulty: ", DEPTH)
 			SetLastPlayedAs(p1.UserID, p1.PlayingAs)
 			SetLastOpponentsName(p1.UserID, p1.UserID)
 			SetState(p1.UserID, PlayingAs)
@@ -434,10 +444,10 @@ func WriteGameStates(ws *websocket.Conn, channels *ClientChannels) {
 		case Message, stillOpen := <-channels.Output:
 			if channels.State >= ReadyingForTheGame && channels.State <= OpponentGaveUp && stillOpen {
 				err := ws.WriteJSON(Message)
-				log.Println("[INGAME] Sending a game state: turn", strconv.Itoa(Message.TurnNum)+",",
-					Message.EndState,
-					"to ws", ws.RemoteAddr().String()+",",
-					"to", FindBaseID(channels.UserID).Username)
+				//log.Println("[INGAME] Sending a game state: turn", strconv.Itoa(Message.TurnNum)+",",
+				//	Message.EndState,
+				//	"to ws", ws.RemoteAddr().String()+",",
+				//	"to", FindBaseID(channels.UserID).Username)
 				if err != nil {
 					return
 				}
@@ -488,7 +498,6 @@ func WaitForTheOther(channels *ClientChannels) {
 	select {
 	case message := <-channels.Opponent.Time: //connected
 		if message {
-			p1.PlayingAs, p2.PlayingAs = FindValidCombination(p1.ChosenGirls, p2.ChosenGirls)
 			SetLastPlayedAs(p1.UserID, p1.PlayingAs)
 			SetLastOpponentsName(p1.UserID, p2.UserID)
 			SetLastOpponentsName(p2.UserID, p1.UserID)
@@ -496,6 +505,7 @@ func WaitForTheOther(channels *ClientChannels) {
 			SetState(p1.UserID, PlayingAs)
 			SetState(p2.UserID, PlayingAs)
 			Game(channels, channels.Opponent)
+			return
 		}
 	case <-timer.C: //timed out
 		log.Println("[INGAME]", channels.UserID, channels.Opponent.UserID, "failed to connect.")
@@ -506,5 +516,6 @@ func WaitForTheOther(channels *ClientChannels) {
 		SetState(channels.Opponent.UserID, BrowsingCharacters)
 		SetState(channels.UserID, BrowsingCharacters)
 		EndGame(p1)
+		return
 	}
 }

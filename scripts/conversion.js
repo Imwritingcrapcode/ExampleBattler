@@ -34,7 +34,7 @@ function setup() {
         let inner = document.getElementById("number").innerText;
         let get = int(Math.floor(CONVINFO.ConversionRate[currentType] * int(inner)));
         let cost = get / CONVINFO.ConversionRate[currentType];
-        if (cost < 1 || get < 1) {
+        if (cost < 1 || get < 1 || get === 1 && cost !== Math.trunc(cost)) {
             while (cost !== Math.trunc(cost) || get < 1) {
                 get++;
                 cost = get / CONVINFO.ConversionRate[currentType];
@@ -161,6 +161,7 @@ function convert(requestType, amount, dustType) {
                 };
                 UpdateFreeData(after);
             } else if (xhr.status === 400) {
+                console.log(xhr.responseText);
                 convert("?");
             }
         }

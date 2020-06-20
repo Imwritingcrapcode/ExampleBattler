@@ -24,7 +24,7 @@ func IsLoggedIn(r *http.Request) (bool, *Session) {
 		session = IsActiveSession(cookie.Value)
 		if cookie.Name == "BattlerCookie" &&
 			session != nil &&
-			time.Now().UnixNano() <= session.Expires {
+			time.Now().UTC().UnixNano() <= session.Expires {
 			AlrdyLoggedIn = true
 			break
 		}
@@ -107,13 +107,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			decoder := json.NewDecoder(r.Body)
 			err := decoder.Decode(&reg_data)
 			if err != nil {
-				panic(err)
+				log.Println("[Log In]", err)
+				return
 			}
 			log.Println("[Log In] Requesting log in as", reg_data.Username)
 			if IsLegit(&reg_data) {
 				user := FindBase(reg_data.Username)
 				if user != nil && PassCorrect(reg_data.Password, user) {
-					curTime := time.Now()
+					curTime := time.Now().UTC()
 					ID, err := bcrypt.GenerateFromPassword([]byte(user.Username+strconv.FormatInt(curTime.UnixNano(), 10)), 5)
 					if err != nil {
 						log.Println("[Log In] Can't encrypt session/cookie id")
@@ -132,10 +133,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 						Expires: expiration.UnixNano(),
 						UserID:  user.UserID,
 					}
-					if time.Now().Sub(LastSessionsCleared) > SessionsClearPeriod {
+					if time.Now().UTC().Sub(LastSessionsCleared) > SessionsClearPeriod {
 						log.Println("[Log In] Clearing Sessions!")
 						ClearSessions()
-						LastSessionsCleared = time.Now()
+						LastSessionsCleared = time.Now().UTC()
 					}
 					AddSession(&session)
 					//Set the client's cookie
@@ -200,12 +201,6 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	_, present := ClientConnections[user.UserID]
 	if present {
 		delete(ClientConnections, user.UserID)
-	}
-	for _, other := range UserQueue {
-		if other.UserID == user.UserID {
-			UserQueue.Remove(other.UserID)
-			break
-		}
 	}
 	SetState(session.UserID, Offline)
 	DeleteNotifications(user.UserID, "all")

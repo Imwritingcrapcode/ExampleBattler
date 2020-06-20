@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"time"
+	"math"
 )
 
 // Users
@@ -171,7 +172,7 @@ func FindBaseID(ID int64) *User {
 func SetState(id int64, state int) {
 	previousState := GetState(id)
 	//log.Println("[SetState] updating lastactivity", id, ActivitiesToString[state], ActivitiesToString[previousState], previousState <= Offline && state > Offline)
-	update, err := DATABASE.Prepare("UPDATE userData SET lastActivityTime = " + strconv.FormatInt(time.Now().UnixNano(), 10) + " WHERE  userID = " + strconv.FormatInt(id, 10))
+	update, err := DATABASE.Prepare("UPDATE userData SET lastActivityTime = " + strconv.FormatInt(time.Now().UTC().UnixNano(), 10) + " WHERE  userID = " + strconv.FormatInt(id, 10))
 	if err != nil {
 		log.Println("[SetState] updating lastactivity", err)
 		return
@@ -361,6 +362,40 @@ func HasGirl(userID int64, girl int) bool {
 	return rows.Next()
 }
 
+func GetSkillLevel(userID int64, girl int) int {
+	rows, err := DATABASE.Query("SELECT matchesPlayed, matchesWon FROM girls WHERE userID = " + strconv.FormatInt(userID, 10) +
+		" AND girlNumber = " + strconv.Itoa(girl))
+	if err != nil {
+		log.Println(err)
+	}
+	if rows.Next() {
+		var played, won int
+		rows.Scan(&played, &won)
+		rows.Close()
+		var winrate float64
+		if won == 0 {
+			winrate = 0
+		} else {
+			winrate = math.Floor(float64(won)/float64(played)*100)
+		}
+		switch {
+		case winrate > 50:
+			return 6
+		case winrate >= 40:
+			return 5
+		case winrate >= 30:
+			return 4
+		default:
+			return 3
+		}
+
+	} else {
+		log.Println("[GetSkillLevel] This girl wasn't found.", userID, girl)
+		rows.Close()
+		return -1
+	}
+}
+
 func GetGirls(id int64) []UserGirl {
 	var girls []UserGirl
 	rows, err := DATABASE.Query("SELECT girlNumber, girlLevel, matchesPlayed, matchesWon FROM girls WHERE userID = " + strconv.FormatInt(id, 10))
@@ -384,25 +419,6 @@ func GetGirls(id int64) []UserGirl {
 		log.Println("[GetGirls] ", id, " does not have any girls D:")
 	}
 	return girls
-}
-
-func GetTotalMatches(userID int64, girl int) int {
-	rows, err := DATABASE.Query("SELECT matchesPlayed FROM girls WHERE userID = " + strconv.FormatInt(userID, 10) +
-		" AND girlNumber = " + strconv.Itoa(girl))
-	if err != nil {
-		log.Println("[GetTotalMatches] " + err.Error())
-		return -1
-	}
-	defer rows.Close()
-	var num int
-	if rows.Next() {
-		rows.Scan(&num)
-		//log.Println(girl, "\t\t|\t", num, "\t\t|\t\t", level)
-		return num
-	} else {
-		log.Println("[GetTotalMatches] girl not found for", userID, girl)
-		return -1
-	}
 }
 
 func GetMatchData(userID int64, girl int) []int {
@@ -447,23 +463,27 @@ func LevelUp(userID int64, as int, lt20 bool) {
 func IncreaseMatchesAs(userID int64, as int, won, gaveUp bool) {
 	var statement *sql.Stmt
 	var err error
-	//1, get the amnt of matches and the girl's lvl
-	stuff := GetMatchData(userID, as) //0 - girllevel, 1 - curr matches
-	level := stuff[0]
-	curr := stuff[1] + 1
-	//2. lvl up if needed
-	if level < 20 && curr >= GetLevelCaps(GetGirlRarity(as))[level-1] {
-		LevelUp(userID, as, level < 20)
-	} else if !gaveUp {
-		//2, no lvl up, give xp if we didn't give up
-		statement, err = DATABASE.Prepare("UPDATE girls SET currMatches = currMatches + 1" +
-			" WHERE userID = " + strconv.FormatInt(userID, 10) + " AND girlNumber = " + strconv.Itoa(as))
-		if err != nil {
-			log.Println(err)
-		}
-		_, err = statement.Exec()
-		if err != nil {
-			log.Println(err)
+
+	//0.5 only increase if they didn't give up
+	if !gaveUp {
+		//1, get the amnt of matches and the girl's lvl
+		stuff := GetMatchData(userID, as) //0 - girllevel, 1 - curr matches
+		level := stuff[0]
+		curr := stuff[1] + 1
+		//2. lvl up if needed
+		if level < 20 && curr >= GetLevelCaps(GetGirlRarity(as))[level-1] {
+			LevelUp(userID, as, level < 20)
+		} else {
+			//2, no lvl up, give xp if we didn't give up
+			statement, err = DATABASE.Prepare("UPDATE girls SET currMatches = currMatches + 1" +
+				" WHERE userID = " + strconv.FormatInt(userID, 10) + " AND girlNumber = " + strconv.Itoa(as))
+			if err != nil {
+				log.Println(err)
+			}
+			_, err = statement.Exec()
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 	//3. increase total play
@@ -478,7 +498,7 @@ func IncreaseMatchesAs(userID int64, as int, won, gaveUp bool) {
 	}
 
 	//4. if she won, +1 won match ez
-	if won && !gaveUp {
+	if won && !gaveUp { //silly bc giving up = losing
 		statement, err = DATABASE.Prepare("UPDATE girls SET matchesWon = matchesWon + 1" +
 			" WHERE userID = " + strconv.FormatInt(userID, 10) + " AND girlNumber = " + strconv.Itoa(as))
 		if err != nil {
@@ -700,6 +720,12 @@ func AddSession(session *Session) {
 	if err != nil {
 		log.Println(err)
 	}
+	//Update their last login time
+	_, err = DATABASE.Prepare("UPDATE userData SET lastLoginTime = " + strconv.FormatInt(time.Now().UTC().UnixNano(), 10) + " WHERE  userID = " + strconv.FormatInt(session.UserID, 10))
+	if err != nil {
+		log.Println("[AddSession] updating llt", err)
+		return
+	}
 
 }
 
@@ -721,7 +747,7 @@ func IsActiveSession(ID string) *Session {
 }
 
 func ClearSessions() time.Time {
-	currTime := time.Now()
+	currTime := time.Now().UTC()
 	statement, err := DATABASE.Prepare("UPDATE userData SET activity = 0 WHERE userData.userID IN" +
 		"(SELECT sessions.userID FROM sessions WHERE sessions.expires < " + strconv.FormatInt(currTime.UnixNano(), 10) + ")")
 
@@ -890,6 +916,7 @@ func GetFriendLists(userID int64) *FriendList {
 }
 
 //CONVERSION
+
 func GetConversionInfo(userID int64) (bool, int, int, string, int, int) {
 	rows, err := DATABASE.Query("SELECT begins, duration, type, give, notified FROM conversions WHERE userID = " + strconv.FormatInt(userID, 10))
 	if err != nil {
@@ -901,7 +928,7 @@ func GetConversionInfo(userID int64) (bool, int, int, string, int, int) {
 		var amnt, duration, notified int
 		rows.Scan(&begins, &duration, &dtype, &amnt, &notified)
 		rows.Close()
-		curTime := time.Now().UnixNano()
+		curTime := time.Now().UTC().UnixNano()
 		secondsPassed := int(time.Duration(curTime - begins).Seconds())
 		if secondsPassed >= duration {
 			return true, duration, 0, dtype, amnt, notified
@@ -937,7 +964,7 @@ func ClaimConversion(UserID int64) {
 }
 
 func StartConversion(UserID int64, duration, amnt int, dustType string) {
-	begins := time.Now().UnixNano()
+	begins := time.Now().UTC().UnixNano()
 	statement, err := DATABASE.Prepare("INSERT INTO conversions (userID, begins, duration, give, type, notified) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Println("[StartConversion]", err)
@@ -1061,7 +1088,6 @@ func NotifyFriends(userID int64) {
 		friend := FindBase(v[0])
 		if friend.CurrentActivity > 0 { //is online
 			AddNotification(friend.UserID, "Your friend <b>"+us.Username+"</b> has just come online!", "friends")
-			log.Println("[Notifications] added friend notif for", friend.Username, us.Username)
 		}
 	}
 }

@@ -34,7 +34,7 @@ function setText(id, t) {
     let final_text = t;
     let emoji = final_text.match(regExpNextEmojiName);
     while (emoji) {
-        final_text = final_text.replace(regExpEmoji, "<img class='notifImage' src='/images/locked/" + emoji + ".png'>");
+        final_text = final_text.replace(regExpEmoji, "<img class='notifImage' src='/images/locked/emojis/" + emoji + ".png'>");
         emoji = final_text.match(regExpNextEmojiName);
     }
     document.getElementById(id).innerHTML = final_text;
@@ -57,7 +57,7 @@ function addPopup(text, where, ma) {
             let where = this.getAttribute("shouldredirect");
             if (where.length > 0) {
                 console.log("where", where);
-                //location = where;
+                location = where;
             }
         };
     }
@@ -108,8 +108,6 @@ function getNotifications() {
                 }
             } else {
                 console.log(xhr.status, xhr.responseText);
-                console.log(xhr.status, xhr.responseText);
-                //location.reload();
             }
         }
     };

@@ -22,7 +22,7 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 			over, _, left, dtype, amnt, notified := GetConversionInfo(user.UserID)
 			if over && left < 1 && notified < 1 {
 				AddNotification(user.UserID,
-					"Your conversion for "+strconv.Itoa(amnt)+" :"+DustTypesToFilesMap[dtype]+"_dust_small: has finished!",
+					"Your conversion for "+strconv.Itoa(amnt)+" :"+DustTypesToFilesMap[dtype]+"_dust_small: is over!",
 					"conversion")
 				NotifiedConversion(user.UserID)
 			}

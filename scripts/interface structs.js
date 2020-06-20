@@ -99,6 +99,18 @@ function Panel(x, y, w, h, s) {
     this.addTopLayer = function (obj) {
         this.toplayerobjs.push(obj)
     };
+
+    this.discard = function (obj) {
+        const index = this.objects.indexOf(obj);
+        if (index > -1) {
+            this.objects.splice(index, 1);
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+
 }
 
 function CanvasImage(x, y, path, id, name, width, height) {

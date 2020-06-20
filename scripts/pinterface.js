@@ -244,16 +244,6 @@ function InterfaceText(p, x, y, colour, t, size, id, type, width) {
             this.width = p.textWidth(t);
         }
     };
-
-    this.hover = function() {
-
-    };
-
-    this.displayHover = function () {
-        if (this.hoverable) {
-            displayStandardHoverBubble(this.hoverText, this.hoverLines)
-        }
-    };
 }
 
 function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
@@ -345,16 +335,6 @@ function InterfaceImage(p, x, y, path, id, name, width, height, colour) {
     this.display = function () {
         if (this.image) {
             p.image(this.image, this.x, this.y, this.width, this.height);
-        }
-    };
-
-    this.hover = function() {
-
-    };
-
-    this.displayHover = function () {
-        if (this.hoverable) {
-            displayStandardHoverBubble(this.hoverText, this.hoverLines)
         }
     };
 }

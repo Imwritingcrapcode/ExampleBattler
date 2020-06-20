@@ -23,7 +23,7 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 		Path := "/Site/girllist2.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
-		log.Println("[GIRLLIST] " + Path)
+		//log.Println("[GIRLLIST] " + Path)
 		http.ServeFile(w, r, Path)
 
 	} else {

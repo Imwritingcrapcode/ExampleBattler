@@ -220,11 +220,13 @@ function UpdateFreeData(after) {
                 } else {
                     document.getElementById("username").innerText = welcome;
                 }
-                document.getElementById("wDust").innerText = response.MoneyInfo["w"];
-                document.getElementById("bDust").innerText = response.MoneyInfo["b"];
-                document.getElementById("yDust").innerText = response.MoneyInfo["y"];
-                document.getElementById("pDust").innerText = response.MoneyInfo["p"];
-                document.getElementById("sDust").innerText = response.MoneyInfo["s"];
+                if (!!document.getElementById("moneytable")) {
+                    document.getElementById("wDust").innerText = response.MoneyInfo["w"];
+                    document.getElementById("bDust").innerText = response.MoneyInfo["b"];
+                    document.getElementById("yDust").innerText = response.MoneyInfo["y"];
+                    document.getElementById("pDust").innerText = response.MoneyInfo["p"];
+                    document.getElementById("sDust").innerText = response.MoneyInfo["s"];
+                }
                 if (!!after) {
                     after(response);
                 }

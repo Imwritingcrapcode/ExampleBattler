@@ -170,6 +170,7 @@ type ClientChannels struct {
 	Opponent       *ClientChannels
 	State          int
 	ChosenGirls    []int
+	SkillLevels		[]int
 	PlayingAs      int
 	LastThing      GameState
 	Clock          *Clock
@@ -179,6 +180,65 @@ type ClientChannels struct {
 	Time           chan bool
 	TimeOutput     chan string
 	KillConnection chan struct{}
+	Taken               chan *ClientChannels
+	Disconnected        chan string
+	IsTaken             bool
+	IsDesperate         bool
+	ShouldRemove        bool
+}
+
+func (user *ClientChannels) GetCompatibility(other *ClientChannels) (int, int, int) {
+	//Let's say I am always more important than the other.
+	myMain := user.ChosenGirls[0]
+	myMainSkill := user.SkillLevels[0]
+	mySec := user.ChosenGirls[1]
+	mySecSkill := user.SkillLevels[1]
+	theirMain := other.ChosenGirls[0]
+	theirMainSkill := other.SkillLevels[0]
+	theirSec := other.ChosenGirls[1]
+	theirSecSkill := other.SkillLevels[1]
+
+	switch {
+	case myMain != theirMain && myMainSkill == theirMainSkill:
+		return 1, myMain, theirMain
+	case myMain != theirSec && myMainSkill == theirSecSkill:
+		return 2, myMain, theirSec
+	case mySec != theirMain && mySecSkill == theirMainSkill:
+		return 3, mySec, theirMain
+	case mySec != theirSec && mySecSkill == theirSecSkill:
+		return 4, mySec, theirSec
+	case myMain != theirMain && (-1 == myMainSkill-theirMainSkill || myMainSkill-theirMainSkill == 1):
+		return 5, myMain, theirMain
+	case myMain != theirSec && (-1 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 1):
+		return 6, myMain, theirSec
+	case mySec != theirMain && (-1 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 1):
+		return 7, mySec, theirMain
+	case mySec != theirSec && (-1 == mySecSkill-theirSecSkill || mySecSkill-theirSecSkill == 1):
+		return 8, mySec, theirSec
+	case myMain != theirMain && (-2 == myMainSkill-theirMainSkill || myMainSkill-theirMainSkill == 2):
+		return 9, myMain, theirMain
+	case myMain != theirSec && (-2 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 2):
+		return 10, myMain, theirSec
+	case mySec != theirMain && (-2 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 2):
+		return 11, mySec, theirMain
+	case mySec != theirSec && (-2 == mySecSkill-theirSecSkill || mySecSkill-theirSecSkill == 2):
+		return 12, mySec, theirSec
+	case myMain != theirMain:
+		return 13, myMain, theirMain
+	case myMain != theirSec:
+		return 14, myMain, theirSec
+	case mySec != theirMain:
+		return 15, mySec, theirMain
+	case mySec != theirSec:
+		return 16, mySec, theirSec
+	default:
+		panic("oh lol")
+		return 1000, myMain, theirMain
+	}
+}
+
+func (user ClientChannels) Take(other *ClientChannels) {
+	user.Taken <- other
 }
 
 func (i *ClientChannels) GiveUp() {

@@ -377,6 +377,7 @@ function parseState(i) {
         case 1:
             disableButtons(0);
             disableOppButtons(0);
+            rightPanel.discard(getElement("GiveUp"));
             setwhere("/afterbattle");
             redirect(true);
             info.setColour(gc);
@@ -393,6 +394,7 @@ function parseState(i) {
         case 2:
             disableButtons(0);
             disableOppButtons(0);
+            rightPanel.discard(getElement("GiveUp"));
             setwhere("/afterbattle");
             redirect(true);
             info.setColour(dark);
@@ -409,6 +411,7 @@ function parseState(i) {
         case 3:
             disableButtons(0);
             disableOppButtons(0);
+            rightPanel.discard(getElement("GiveUp"));
             setwhere("/afterbattle");
             redirect(true);
             info.setColour(gc);
@@ -425,6 +428,7 @@ function parseState(i) {
         case 4:
             disableButtons(0);
             disableOppButtons(0);
+            rightPanel.discard(getElement("GiveUp"));
             setwhere("/afterbattle");
             redirect(true);
             info.setColour(light);
@@ -441,6 +445,7 @@ function parseState(i) {
         case 5:
             disableButtons(0);
             disableOppButtons(0);
+            rightPanel.discard(getElement("GiveUp"));
             setwhere("/afterbattle");
             redirect(true);
             info.setColour(dark);

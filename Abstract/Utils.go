@@ -2,7 +2,6 @@ package Abstract
 
 import (
 	"bufio"
-	"container/heap"
 	"fmt"
 	"os"
 	"reflect"
@@ -377,66 +376,8 @@ func ToStringEffects(player *Girl, res *strings.Builder) {
 	res.WriteString("\n")
 }
 
-// An Item is something we manage in a Priority queue.
-type Item struct {
-	UserID   int64 // The value of the item; arbitrary.
-	Priority int64 // The Priority of the item in the queue.
-	// The Index is needed by update and is maintained by the heap.Interface methods.
-	Index int // The Index of the item in the heap.
-}
-
-// A PriorityQueue implements heap.Interface and holds Items.
-type PriorityQueue []*Item
-
-func (pq PriorityQueue) Len() int { return len(pq) }
-
-func (pq PriorityQueue) Remove(i int64) bool {
-	for k, item := range pq {
-		if item.UserID == i {
-			pq = append(pq[:k], pq[k+1:]...)
-			return true
-		}
-	}
-	return false
-}
-
-func (pq PriorityQueue) Less(i, j int) bool {
-	// We want Pop to give us the highest, not lowest, Priority so we use greater than here.
-	return pq[i].Priority < pq[j].Priority
-}
-
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].Index = i
-	pq[j].Index = j
-}
-
-func (pq *PriorityQueue) Push(x interface{}) {
-	n := len(*pq)
-	item := x.(*Item)
-	item.Index = n
-	*pq = append(*pq, item)
-}
-
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
-	n := len(old)
-	item := old[n-1]
-	item.Index = -1 // for safety
-	*pq = old[0 : n-1]
-	return item
-}
-
-// update modifies the Priority and value of an Item in the queue.
-func (pq *PriorityQueue) update(item *Item, value int64, priority int64) {
-	item.UserID = value
-	item.Priority = priority
-	heap.Fix(pq, item.Index)
-}
-
 func Contains(a interface{}, e interface{}) int {
 	v := reflect.ValueOf(a)
-
 	for i := 0; i < v.Len(); i++ {
 		if v.Index(i).Interface() == e {
 			return i
