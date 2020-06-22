@@ -14,36 +14,31 @@ import (
 )
 
 /*
-//CURRENTLY WORKING
-temporarily set the game not to redirect on click
-now: redo notifications as ws ?
-//TODO cannot give up during the opp's turn
+now:
 shop with drops
-then: weighted starting characters
-after: other important todos
+then:
+weighted starting characters
+after:
+flavor: other important todos
 
 //IMPORTANT
 //TODO shop with drops.
 //todo weighted starting characters
 
-//TODO slow and gentle conversion animation
-//TODO killing notifications over time xc
-//TODO unlocking a girl stores a date when unlocked
-//Todo online friends are above others
-//TODO conversion doesn't always send rates
-//TODO notification height
-
 //FLAVOR
+//TODO cuter design of everything
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
 //TODO bot
 //TODO random damage
 //todo glittering loading bar
+//todo loading animation while queuing
 //TODO global chat
 //TODO dms chat
 //TODO test prompt reconnect >_<
 //TODO speech bubbles
 //TODO skins
+//TODO site themes
 //TODO character wiki
 //TODO news page
 //TODO choose your pfp
@@ -66,7 +61,6 @@ func DistributeRewards(p1 *ClientChannels, won bool) {
 		user.SetDust("w", user.GetDust("w")+neededAmount)
 	}
 }
-
 
 func Game(p1, p2 *ClientChannels) {
 	var g1, g2 CharInt
@@ -183,6 +177,8 @@ func Game(p1, p2 *ClientChannels) {
 func BotGame(p1 *ClientChannels, botChar int, DEPTH int) {
 	if (p1.PlayingAs == 33 || botChar == 33) && DEPTH > 5 {
 		DEPTH = 5
+	} else if (p1.PlayingAs == 33 || botChar == 33) && DEPTH < 4 {
+		DEPTH = 4
 	}
 
 	var g1, g2 CharInt
@@ -211,7 +207,6 @@ func BotGame(p1 *ClientChannels, botChar int, DEPTH int) {
 			} else {
 				log.Println("[INGAME] turn of", gi1.Name, p1.UserID)
 			}
-			log.Println("[INGAME] turn of", gi1.Name, p1.UserID)
 			IGaveUp = TurnChannels(gi1, gi2, i, p1, botInput, &botClock, false)
 
 			if IGaveUp || p1.State == GaveUp || !gi1.IsAlive() || !gi2.IsAlive() || i == 20 {
@@ -282,7 +277,7 @@ func Standard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Path := "/Site/interface3.html"
+	Path := "/html/interface3.html"
 	pwd, _ := os.Getwd()
 	Path = strings.Replace(pwd+Path, "/", "\\", -1)
 	log.Println("[INGAME] " + Path)
@@ -412,8 +407,6 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 							LS.Instruction = "System:Opponent disconnected."
 							channels.Opponent.Output <- LS
 						}
-					} else {
-						log.Fatal("wow", channels.UserID, "does not have a clock.")
 					}
 				}
 				return
@@ -509,13 +502,11 @@ func WaitForTheOther(channels *ClientChannels) {
 		}
 	case <-timer.C: //timed out
 		log.Println("[INGAME]", channels.UserID, channels.Opponent.UserID, "failed to connect.")
+		SetState(channels.UserID, BrowsingCharacters)
 		channels.Send(&GameState{
 			Instruction: "Error:Opponent failed to connect",
 			EndState:    GameCancelled,
 		})
-		SetState(channels.Opponent.UserID, BrowsingCharacters)
-		SetState(channels.UserID, BrowsingCharacters)
-		EndGame(p1)
 		return
 	}
 }

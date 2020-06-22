@@ -3,12 +3,12 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
     <meta charset="UTF-8">
-    <title>Shop</title>
+    <title>Battle rewards</title>
     <script src="/scripts/p5.min.js"></script>
-    <script src="/scripts/interface%20structs.js"></script>
-    <script src="/scripts/shop.js"></script>
     <script src="/scripts/constants.js"></script>
+    <script src="/scripts/afterbattle.js"></script>
     <script src="/scripts/loading%20bar.js"></script>
+    <script src="/scripts/interface%20structs.js"></script>
     <script src="/scripts/utils.js"></script>
     <script src="/scripts/POPUP.js"></script>
 </head>
@@ -26,6 +26,9 @@
         </td>
         <td class="centerc">
             <div align="center"><a href="/conversion">Conversion</a></div>
+        </td>
+        <td class="centerc">
+            <div align="center"><a href="/shop">Shop</a></div>
         </td>
         <td class="centerc">
             <div align="center"><a href="/friends">Friend list</a></div>
@@ -76,20 +79,19 @@
             </table>
         </td>
         <td>
-            <div align="center"><h2><b>Shop</b></h2></div>
+            <div align="center">
+                <table WIDTH="100%">
+                    <tr>
+                        <td>
+                            <div align="center" id="rewards_sketch">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </td>
     </tr>
 </table>
-<table WIDTH="100%">
-    <tr>
-        <td>
-            <div align="center" id="shop"></div>
-        </td>
-    </tr>
-</table>
-<script>
-    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
-    getNotifications();
-</script>
+<div align="right" id="popupWrapper" class="popupWrapper"></div>
 </body>
 </html>

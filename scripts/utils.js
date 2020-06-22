@@ -2,6 +2,7 @@ function isLight(colour) {
     return lightness(colour) > 50;
 }
 
+
 function sortMap(map) {
     let tupleArray = [];
     for (let key in map)
@@ -215,7 +216,7 @@ function UpdateFreeData(after) {
                 let response = JSON.parse(xhr.responseText);
                 console.log(response);
                 let welcome = "Welcome, " + response.Username;
-                if ( welcome.length > 19) {
+                if (welcome.length > 19) {
                     document.getElementById("username").innerText = "Hi, " + response.Username;
                 } else {
                     document.getElementById("username").innerText = welcome;
@@ -237,7 +238,7 @@ function UpdateFreeData(after) {
     };
 }
 
-function UpdateProfileData() {
+function UpdateProfileData(r) {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', '/profileinfo', true);
     xhr.send();
@@ -245,19 +246,7 @@ function UpdateProfileData() {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 let response = JSON.parse(xhr.responseText);
-                console.log(response);
-                let welcome = "Welcome, " + response.Username;
-                if ( welcome.length > 19) {
-                    document.getElementById("username").innerText = "Hi, " + response.Username;
-                } else {
-                    document.getElementById("username").innerText = welcome;
-                }
-                document.getElementById("wDust").innerText = response.MoneyInfo["w"];
-                document.getElementById("bDust").innerText = response.MoneyInfo["b"];
-                document.getElementById("yDust").innerText = response.MoneyInfo["y"];
-                document.getElementById("pDust").innerText = response.MoneyInfo["p"];
-                document.getElementById("sDust").innerText = response.MoneyInfo["s"];
-                document.getElementById("username2").innerText = response.Username;
+                document.getElementById("username2").innerText = r.Username;
                 if (response.BattlesTotal > 0) {
                     document.getElementById("battles2").innerText = "Battle stats: " + response.BattlesWon + "/" + response.BattlesTotal + " (" + roundUp(response.BattlesWon / response.BattlesTotal * 100) + "% winrate)";
                 } else {
@@ -270,3 +259,21 @@ function UpdateProfileData() {
     };
 }
 
+function addFriend(name, fromFriendList) {
+    console.log("add: " + name);
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/friendlist', true);
+    xhr.send(JSON.stringify(["Add", name]));
+    xhr.onreadystatechange = (e) => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                addPopup(xhr.responseText, "");
+                if (fromFriendList) {
+                    init();
+                }
+            } else {
+                addPopup(xhr.responseText, "");
+            }
+        }
+    };
+}

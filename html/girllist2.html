@@ -1,18 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/scripts/style.css"/>
     <meta charset="UTF-8">
-    <style>
-        input[type=checkbox] {
-            /* Double-sized Checkboxes */
-            -ms-transform: scale(2); /* IE */
-            -moz-transform: scale(2); /* FF */
-            -webkit-transform: scale(2); /* Safari and Chrome */
-            -o-transform: scale(2); /* Opera */
-            padding: 10px;
-        }
-    </style>
     <title>Character List</title>
     <script src="/scripts/p5.min.js"></script>
     <script src="/scripts/constants.js"></script>
@@ -99,14 +89,6 @@
         </tr>
     </table>
 </div>
-<script>
-    UpdateFreeData();
-    bottomReady = false;
-    new p5(leftSketch, 'girls');
-    new p5(bottomSketch, 'bottomcanvas');
-    new p5(rightSketch, 'rightcanvas');
-    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
-    getNotifications();
-</script>
+<div align="right" id="popupWrapper" class="popupWrapper"></div>
 </body>
 </html>

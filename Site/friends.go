@@ -16,7 +16,7 @@ func FriendsHandler(w http.ResponseWriter, r *http.Request) {
 		Redirect(w, r, "/login")
 		return
 	}
-	Path := "/Site/friends.html"
+	Path := "/html/friends.html"
 	pwd, _ := os.Getwd()
 	Path = strings.Replace(pwd+Path, "/", "\\", -1)
 	log.Println("[Friends] " + Path, session.UserID)

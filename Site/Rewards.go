@@ -17,7 +17,7 @@ func AfterBattle(w http.ResponseWriter, r *http.Request) {
 	}
 	client := FindBaseID(session.UserID)
 	if r.Method == http.MethodGet {
-		Path := "/Site/rewards.html"
+		Path := "/html/rewards.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		log.Println("[rewards] " + Path)

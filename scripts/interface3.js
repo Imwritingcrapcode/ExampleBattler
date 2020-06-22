@@ -27,7 +27,6 @@ function setup() {
     ws = undefined;
     connected = false;
     Are_buttons_disabled = true;
-    Are_opp_buttons_disabled = true;
     timeleft = 0;
     doredirect = false;
     redirectwhere = "/girllist";
@@ -98,12 +97,39 @@ function setup() {
     rightPanel.add(new SkillButton(1170, 265, 4, "", "OppR", false));
     rightPanel.add(new StandardButton(1196, 5, 5, "Give up", 20, "GiveUp"));
     //bottom panel!!
-    bottomPanel.add(new TextInfo(555, 245, red2, "", 20, "info", "info", 170, 180, false));
+    let infoEl = new TextInfo(555, 245, red2, "", 20, "info", "info", 170, 180, false);
+    bottomPanel.add(infoEl);
 
 
     //DO IT
     disableButtons(1);
     disableOppButtons(1);
+    document.addEventListener("keydown", e => {
+        if ((e.code === 'Space' || e.code === 'Enter') && getElement("back") && getElement("back").clickable) {
+            getElement("back").clicked();
+            e.preventDefault();
+        } else if (e.code === 'Escape' && getElement('GiveUp') && getElement('GiveUp').clickable) {
+            getElement('GiveUp').clicked();
+            e.preventDefault();
+        } else if (!Are_buttons_disabled) {
+            if ((e.code === 'KeyQ' || e.code === 'KeyA') && getElement("Q").clickable) {
+                getElement("Q").clicked();
+                e.preventDefault();
+            } else if ((e.code === 'KeyW' || e.code === 'KeyZ') && getElement("W").clickable) {
+                getElement("W").clicked();
+                e.preventDefault();
+            } else if (e.code === 'KeyE' && getElement("E").clickable) {
+                getElement("E").clicked();
+                e.preventDefault();
+            } else if (e.code === 'KeyR' && getElement("R").clickable) {
+                getElement("R").clicked();
+                e.preventDefault();
+            }
+        }
+    });
+    loading = true;
+    infoEl.setColour(rightc);
+    infoEl.setText("Loading...");
     //let el = getElement("techinfo");
     //el.setText(touch + " " + FullScreen(touch));
     if (TESTING === false) {
@@ -192,9 +218,9 @@ function touchStarted() {
     let y = mouseY;
 
     for (let Panel of [leftPanel, rightPanel, bottomPanel, topPanel]) {
-        if (Panel.in(x,y)) {
+        if (Panel.in(x, y)) {
             for (obj of Panel.objects) {
-                if (obj.in(x,y)) {
+                if (obj.in(x, y)) {
                     current = obj;
                     return;
                 }
@@ -612,7 +638,6 @@ function disableButtons(reason) {
 }
 
 function disableOppButtons(reason) {
-    Are_opp_buttons_disabled = true;
     getElement("OppQ").setState(-100);
     getElement("OppW").setState(-100);
     getElement("OppE").setState(-100);
@@ -629,7 +654,6 @@ function enableButtons(State) {
 }
 
 function enableOppButtons(State) {
-    Are_opp_buttons_disabled = false;
     for (let property in State) {
         if (State.hasOwnProperty(property)) {
             getElement(property).setState(State[property]);
@@ -660,7 +684,10 @@ function connectToServer() {
     };
     ws.onmessage = function (evt) {
         console.log("RESPONSE:");
-        //JSONED = evt.data;
+        if (loading) {
+            getElement("info").setText('');
+            loading = false;
+        }
         let battleresponse = JSON.parse(evt.data);
         console.log(battleresponse);
         parseState(battleresponse);
@@ -673,27 +700,9 @@ function connectToServer() {
     };
 }
 
-function keyPressed() {
-    if (key === ' ' && getElement("back") && getElement("back").clickable) {
-        getElement("back").clicked()
-    }
-    if (!Are_buttons_disabled) {
-        if ((key === 'q' || key === 'Q' || key === 'A' || key === 'a') && getElement("Q").clickable) {
-            getElement("Q").clicked()
-        } else if ((key === 'w' || key === 'W' || key === 'Z' || key === 'z') && getElement("W").clickable) {
-            getElement("W").clicked()
-        } else if ((key === 'e' || key === 'E') && getElement("E").clickable) {
-            getElement("E").clicked()
-        } else if ((key === 'r' || key === 'R') && getElement("R").clickable) {
-            getElement("R").clicked()
-        }
-    }
-
-}
-
 function sendSkill(Skill) {
     if (connected) {
-        if (Are_buttons_disabled) {
+        if (Are_buttons_disabled && Skill !== "GiveUp") {
             return
         }
         disableButtons(0);

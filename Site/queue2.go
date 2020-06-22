@@ -1,9 +1,9 @@
 package Site
 
 import (
+	. "../Abstract"
 	"log"
 	"time"
-	. "../Abstract"
 	"github.com/gorilla/websocket"
 	"strconv"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 
 func AddUserQueue(user *ClientChannels) {
 	QUEUE = append(QUEUE, user)
-	log.Println("Added user:", user.UserID, "\tMain:", user.ChosenGirls[0], "\tSecondary:", user.ChosenGirls[1],
+	log.Println("[Queue] Added user:", user.UserID, "\tMain:", user.ChosenGirls[0], "\tSecondary:", user.ChosenGirls[1],
 		"\tMainSkill:", user.SkillLevels[0], "\tSecSkill:", user.SkillLevels[1])
 }
 
@@ -28,13 +28,13 @@ func RemoveUser(user *ClientChannels) bool {
 func EventOrganizer() {
 	for {
 		user := <-QUEUECHANNEL
-		if user.IsTaken {
-			log.Println("[Queue]", user.UserID, "is taken already and yet...", user.IsDesperate)
-		} else if user.ShouldRemove {
+		if user.ShouldRemove {
 			res := RemoveUser(user)
 			if !res {
 				log.Panic("[Queue] Not in queue " + strconv.FormatInt(user.UserID, 10))
 			}
+		} else if user.IsTaken {
+			log.Println("[Queue]", user.UserID, "is taken already and yet...", user.IsDesperate)
 		} else if !user.IsDesperate {
 			AddUserQueue(user)
 			for j := 0; j < len(QUEUE); j++ {
@@ -85,7 +85,7 @@ func EventOrganizer() {
 				ClientConnections[BestOpponent.UserID] = BestOpponent
 				go user.Take(BestOpponent)
 				go BestOpponent.Take(user)
-				info += " AND COMPATIBILITY " + strconv.Itoa(comp)
+				info += " AND COMPATIBILITY " + strconv.Itoa(comp) + " AND PLAYING " + strconv.Itoa(user.PlayingAs) + " OTHER PLAYING AS " + strconv.Itoa(BestOpponent.PlayingAs)
 			}
 			log.Println(info)
 		}
@@ -99,72 +99,35 @@ func KillIfTheyDisconnect(ws *websocket.Conn, user *ClientChannels) {
 		err := ws.ReadJSON(&msg)
 		if err != nil {
 			ws.Close()
-			user.Disconnected <- "in WaitForClientMessages"
+			user.Disconnected <- "went away"
 			return
 		}
 	}
 }
 
-func WaitForConnections(self *ClientChannels) {
-	timer2 := time.NewTimer(CONNECTWAITTIME * time.Second)
-	// check if connected and propagate forward
-	select {
-	case message := <-self.Time: //I've connected first.
-	 timer2.Stop()
-		if message {
-			log.Println("[Queue]", FindBaseID(self.UserID).Username, "connected.")
-		}
-		self.Time <- message
-		return
-	case message := <-self.Opponent.Time: //Opponent's connected first.
-		timer2.Stop()
-		if message {
-			log.Println("[Queue]", FindBaseID(self.Opponent.UserID).Username, "connected.")
-		}
-		self.Opponent.Time <- message
-		return
-
-	case <-timer2.C: //timed out
-		timer2.Stop()
-		user := FindBaseID(self.UserID)
-		opp := FindBaseID(self.Opponent.UserID)
-		log.Println("[Queue] Nobody connected of", user.Username, opp.Username, "killing their game.")
-		EndGame(self)
-		if user.CurrentActivity == Queuing {
-			SetState(self.UserID, BrowsingCharacters)
-		}
-		if opp.CurrentActivity == Queuing {
-			SetState(opp.UserID, BrowsingCharacters)
-		}
-		return
-	}
-}
-
-/*func WaitForSoloConn(self *ClientChannels) {
+func WaitForConnection(self *ClientChannels) {
 	timer2 := time.NewTimer(CONNECTWAITTIME * time.Second)
 	// check if connected
 	select {
 	case message := <-self.Time: //connected
 		if message {
-			log.Println("[Queue] I c u connected to a bot game,", self.UserID)
+			log.Println("[Queue] I c u've  connected to a game,", self.UserID)
 			timer2.Stop()
+			self.Time <- message
 			return
-		} else {
-			log.Panic("[Queue] wtf.")
 		}
 	case <-timer2.C: //timed out
-		log.Println("[Queue] Tsk tsk tsk, you queued and did not connect. Really?", self.UserID)
+		log.Println("[Queue]", self.UserID, "failed to connect")
 		channels, present := ClientConnections[self.UserID]
 		if present {
 			channels.State = GaveUp
 		}
-		user := FindBaseID(self.UserID)
-		if user.CurrentActivity == Queuing {
-			SetState(user.UserID, BrowsingCharacters)
+		if GetState(self.UserID) == Queuing {
+			SetState(self.UserID, BrowsingCharacters)
 		}
 		EndGame(self)
 	}
-}*/
+}
 
 func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
@@ -230,14 +193,31 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 			TimeOutput:     make(chan string, 1),
 			KillConnection: make(chan struct{}, 1),
 			Taken:          make(chan *ClientChannels, 1),
+			Disconnected:   make(chan string, 2),
 		}
-		userChannels.Opponent = &userChannels
 		log.Println("[Queue] Received girls", girls.MainGirl, girls.SecondaryGirl, "from", session.UserID)
 		go KillIfTheyDisconnect(ws, &userChannels)
 		SetState(session.UserID, Queuing)
 		go ListenForOpp(ws, &userChannels)
 		QUEUECHANNEL <- &userChannels
 	}
+}
+
+func Disconnect(user *ClientChannels) {
+	if user.Opponent == nil {
+		SetState(user.UserID, BrowsingCharacters)
+		user.ShouldRemove = true
+		QUEUECHANNEL <- user
+		close(user.Input)
+		close(user.Output)
+		close(user.HasGivenUp)
+		close(user.Time)
+		close(user.TimeOutput)
+		close(user.KillConnection)
+	}
+	close(user.Disconnected)
+	close(user.Taken)
+
 }
 
 func ListenForOpp(ws *websocket.Conn, user *ClientChannels) {
@@ -248,42 +228,26 @@ func ListenForOpp(ws *websocket.Conn, user *ClientChannels) {
 		case why := <-user.Disconnected:
 			timer.Stop()
 			log.Println("[Queue]", user.UserID, "disconnected from queue with reason:", why)
-			if !user.IsTaken {
-				user.ShouldRemove = true
-				QUEUECHANNEL <- user
-			}
-			close(user.Input)
-			close(user.Output)
-			close(user.HasGivenUp)
-			close(user.Time)
-			close(user.TimeOutput)
-			close(user.KillConnection)
-			close(user.Disconnected)
-			close(user.Taken)
-			SetState(user.UserID, BrowsingCharacters)
+			Disconnect(user)
 			return
 
 		case Opp := <-user.Taken:
 			timer.Stop()
 			user.Opponent = Opp
-			log.Println("Queue", user.UserID, "redirected to /game, opponnent - ", Opp.UserID)
+			log.Println("[Queue]", user.UserID, "redirected to /game, opponnent:", Opp.UserID, " playing as:", user.PlayingAs)
 			message := QueueResponse{
 				Prompt:   "Your opponent is " + FindBaseID(user.Opponent.UserID).Username,
 				Location: "/game",
 				OK:       true,
 			}
 			user.State = ReadyingForTheGame
-
-			go WaitForConnections(user)
 			err := ws.WriteJSON(message)
 			if err != nil {
-				SetState(user.UserID, BrowsingCharacters)
 				log.Println("[Queue] rror xc" + err.Error())
-			} else if !message.OK {
-				SetState(user.UserID, BrowsingCharacters)
-				log.Println("[Queue] says not ok and", message)
+				Disconnect(user)
+			} else {
+				go WaitForConnection(user)
 			}
-			return
 		case <-timer.C:
 			timer.Stop()
 			if !user.IsTaken && !user.ShouldRemove {
@@ -293,4 +257,3 @@ func ListenForOpp(ws *websocket.Conn, user *ClientChannels) {
 		}
 	}
 }
-

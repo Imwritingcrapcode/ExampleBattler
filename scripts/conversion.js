@@ -1,4 +1,13 @@
 function setup() {
+    updatespersecond = 60;
+    timeleft = -1;
+    function handleVisibilityChangeConv() {
+        if (!document.hidden && CONVINFO.IsConvertingRN) {
+            convert("?");
+        }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChangeConv, false);
+    frameRate(updatespersecond);
     convobjects = [];
     current = undefined;
     touch = is_touch_device4();
@@ -50,7 +59,6 @@ function setup() {
             document.getElementById("y").disabled = true;
             document.getElementById("p").disabled = true;
             document.getElementById("s").disabled = true;
-            console.log(inner);
             convert("!", int(inner), currentType);
         }
     };
@@ -121,6 +129,9 @@ function draw() {
             obj.display();
         }
     }
+    if (timeleft > 0) {
+        countdownGentle(timeleft)
+    }
 }
 
 function getElement(id) {
@@ -151,12 +162,13 @@ function convert(requestType, amount, dustType) {
     xhr.onreadystatechange = (e) => {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                /*STUFF = "{\"ConversionRate\":{\"b\":0.4,\"g\":0.2,\"w\":0.5,\"y\":0.25},\"SecondsPerConversion\":{\"b\":30,\"g\":60,\"w\":24,\"y\":45},\"IsConvertingRN\":false,\"CurrentProgress\":-1,\"Left\":-1,\"Amount\":0,\"DustType\":\"\"}";
-                MONIESTEXT = "{\"w\" : 100, \"b\" : 200, \"y\" : 250, \"g\" : 10, \"s\" : 322}";*/
                 console.log(xhr.responseText);
                 CONVINFO = JSON.parse(xhr.responseText);
                 let after = function (data) {
                     MONIES = new Map(Object.entries(data.MoneyInfo));
+                    if (!CONVINFO.ConversionRate) {
+                        CONVINFO.ConversionRate = CONVERSIONRATE
+                    }
                     parse(CONVINFO, MONIES);
                 };
                 UpdateFreeData(after);
@@ -222,7 +234,7 @@ function setDustType(type, amnt) {
 
 }
 
-function setMoney(conv, m) {
+function setMoney(conv, m, isConverting) {
     let needToCheck = true;
     let firstDust = "w";
     let firstAmnt = m.get("w");
@@ -239,8 +251,9 @@ function setMoney(conv, m) {
             } else {
                 get = 0;
             }
+            let cost = get / conv[dustType];
             let d;
-            if (get < 1) {
+            if (isConverting || cost < 1 || get < 1 || get === 1 && cost !== Math.trunc(cost)) {
                 d = "disabled";
             } else {
                 d = "";
@@ -261,13 +274,14 @@ function setMoney(conv, m) {
 function parse(r, m) {
     //possible states: not converting yet, converting, rdy to claim
     if (!r.IsConvertingRN) { //NOT CONVERTING YET
+        timeleft = -1;
         document.getElementById("number").innerText = "";
         let c = getElement("c");
         if (!c.visible) {
             c.setText("Convert!");
             getElement("c").show();
         }
-        setMoney(r.ConversionRate, m);
+        setMoney(r.ConversionRate, m, r.IsConvertingRN);
         bar.makeDraggable();
     } else if (r.IsConvertingRN && r.Left > 0) { //CONVERTING
         console.log("currently converting...");
@@ -275,7 +289,7 @@ function parse(r, m) {
         if (c.visible) {
             c.hide();
         }
-        setMoney(r.ConversionRate, m);
+        setMoney(r.ConversionRate, m, r.IsConvertingRN);
         bar.makeNotDraggable();
         let left = int(r.Left);
         bar.total = int(r.CurrentProgress) + left;
@@ -293,10 +307,9 @@ function parse(r, m) {
         }
         let im = new CanvasImage(emntEl.x - 65, emntEl.y - 50, "/images/locked/" + DUSTS.get(dustType) + "_dust.png", "dustpic", DUSTS.get(dustType) + "_dust.png", 50, 50);
         convobjects.push(im);
-        redirect(false);
-        setwhere(undefined);
-        countdown(left);
+        timeleft = left;
     } else if (r.IsConvertingRN && r.Left === 0) {//RDY TO CLAIM
+        timeleft = -1;
         console.log("available for claiming!");
         bar.makeNotDraggable();
         let get = r.Amount;
@@ -317,7 +330,7 @@ function parse(r, m) {
         if (!c.visible) {
             c.show();
         }
-        setMoney(r.ConversionRate, m);
+        setMoney(r.ConversionRate, m, r.IsConvertingRN);
         setDustType(dustType, m.get(dustType));
         bar.setPercentage(100);
     } else { //ERROR
@@ -331,8 +344,18 @@ function displayTimer(number) {
         timer.innerText = "";
         convert("?");
     } else {
-        timer.innerText = "" + parseSeconds(number) + " left.";
+        timer.innerText = "" + parseSeconds(Math.ceil(number)) + " left.";
         bar.left = number;
         bar.setPercentage((bar.total - bar.left) / bar.total * 100);
+    }
+}
+
+function countdownGentle(value) {
+    timeleft = value - 1/updatespersecond;
+    if (timeleft < 0) {
+        console.log("countdown times out");
+        displayTimer(-1);
+    } else {
+        displayTimer(timeleft);
     }
 }

@@ -15,7 +15,7 @@ function LoadingBar(x, y, w, h, radius, id, c, c2) {
     this.radius = radius;
 
     this.display = function () {
-        this.w = round(this.width * this.percentage / 100);
+        this.w = (this.width * this.percentage / 100);
         this.stopColour = lerpColor(this.rectColour, this.rightColour, this.percentage / 100);
         this.setGradient(this.rectColour, this.stopColour);
         stroke(this.rectColour);

@@ -339,12 +339,13 @@ func UnlockGirl(user *User, girl int) {
 		log.Println("[UnlockGirl]", user.Username, "already has", girl)
 		return
 	}
-	statement, err := DATABASE.Prepare("INSERT INTO girls (userID, girlNumber) VALUES (?, ?)")
+	time := time.Now().UTC().UnixNano()
+	statement, err := DATABASE.Prepare("INSERT INTO girls (userID, girlNumber, timeUnlocked) VALUES (?, ?, ?)")
 	if err != nil {
 		log.Println("[UnlockGirl]", err)
 		return
 	}
-	_, err = statement.Exec(user.UserID, girl)
+	_, err = statement.Exec(user.UserID, girl, time)
 	if err != nil {
 		log.Println(err)
 		log.Println("[UnlockGirl]", err)
@@ -379,7 +380,7 @@ func GetSkillLevel(userID int64, girl int) int {
 			winrate = math.Floor(float64(won)/float64(played)*100)
 		}
 		switch {
-		case winrate > 50:
+		case winrate >= 50:
 			return 6
 		case winrate >= 40:
 			return 5
@@ -801,14 +802,6 @@ func (user *User) GatherFreeData() *UserFree {
 
 func (user *User) GatherProfileData() *UserFreeProfile {
 	data := UserFreeProfile{}
-	moneyI := MoneyInfo{}
-	moneyI.W = user.GetDust("w")
-	moneyI.B = user.GetDust("b")
-	moneyI.Y = user.GetDust("y")
-	moneyI.P = user.GetDust("p")
-	moneyI.S = user.GetDust("s")
-	data.Monies = moneyI
-	data.Username = user.Username
 	data.BattlesTotal = user.GetBattles()
 	data.BattlesWon = user.GetWonBattles()
 	return &data
@@ -1068,13 +1061,15 @@ func SeeNotifications(UserID int64, kind string) {
 	if kind == "all" {
 		statement, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(UserID, 10))
 		if err != nil {
+			log.Println("[See notifications]", err.Error())
 			return
 		}
 		statement.Exec()
 	} else {
-		statement, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(UserID, 10) +
-			" AND redirect = " + kind)
+		statement, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(4, 10) +
+			" AND redirect = '" + kind + "'")
 		if err != nil {
+			log.Println("[See notifications]", err.Error())
 			return
 		}
 		statement.Exec()

@@ -8,17 +8,44 @@ function init() {
     xhr.send();
     xhr.onreadystatechange = (e) => {
         if (xhr.readyState === 4) {
-            let response = JSON.parse(xhr.responseText);
-            console.log(response);
-            setFriends(response.friends);
-            setIncoming(response.incoming);
-            setPending(response.pending);
+            if (xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                console.log(response);
+                setFriends(response.friends);
+                setIncoming(response.incoming);
+                setPending(response.pending);
+                //displaying current tab
+                document.getElementById('Friends').style.display = "block";
+                //clicking on the top button
+                document.getElementById('defaultTab').className += " active";
+            } else {
+                console.log(xhr.responseText);
+            }
+        }
+    };
+}
+
+function removeFriend(name, fromFriendList) {
+    console.log("remove: " + name);
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/friendlist', true);
+    xhr.send(JSON.stringify(["Remove", name]));
+    xhr.onreadystatechange = (e) => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                addPopup(xhr.responseText, "");
+                if (fromFriendList) {
+                    init();
+                }
+            } else {
+                addPopup(xhr.responseText, "");
+            }
         }
     };
 }
 
 function openTab(evt, tabName) {
-    let i, tabcontent, tablinks;
+    let i, tabcontent, standardbutton;
     //hiding all the tab contents
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -26,19 +53,29 @@ function openTab(evt, tabName) {
     }
 
     //deactivating all buttons
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    standardbutton = document.getElementsByClassName("standardbutton");
+    for (i = 0; i < standardbutton.length; i++) {
+        standardbutton[i].className = standardbutton[i].className.replace(" active", "");
     }
     //displaying current tab
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
 
+function sortFriends(a, b) {
+    if (a[1] === "Offline" && b[1] === "Offline" || a[1] !== "Offline" && b[1] !== "Offline") {
+        return (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0)
+    } else if (a[1] === "Offline") {
+        return 1
+    } else {
+        return -1
+    }
+}
+
 function setFriends(friends) {
     let innerHTML = "";
     if (!!friends) {
-        friends = friends.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+        friends = friends.sort(sortFriends);
         innerHTML += "<table width='100%'>";
         for (let friend of friends) {
             innerHTML += "<tr><td width=\"33%\">";
@@ -59,7 +96,7 @@ function setFriends(friends) {
             }
             middle += "</td>";
             innerHTML += middle;
-            let postfix = "<div align='right'><button class=\"tablinks\" onclick='removeFriend(\"" + friend[0] + "\")'>✖</button></div>";
+            let postfix = "<div align='right'><button class=\"standardbutton\" onclick='removeFriend(\"" + friend[0] + "\", true)'>✖</button></div>";
             innerHTML += "<td width='30px'>" + postfix + "</td>";
             innerHTML += "</tr>";
         }
@@ -75,11 +112,11 @@ function setIncoming(incoming) {
     let innerHTML = "";
     if (!!incoming) {
         console.log("you have incoming");
-        incoming = incoming.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+        incoming = incoming.sort(sortFriends);
         innerHTML += "<table width='100%'>";
         for (let friend of incoming) {
             innerHTML += "<tr><td width=\"33%\">" + friend + "</td><td>";
-            innerHTML += "<div align='right'><button class=\"tablinks\" onclick='addFriend(\"" + friend + "\")'>✔</button>\t<button class=\"tablinks\" onclick='removeFriend(\"" + friend + "\")'>✖</button></div></td>";
+            innerHTML += "<div align='right'><button class=\"standardbutton\" onclick='addFriend(\"" + friend + "\", true)'>✔</button>\t<button class=\"standardbutton\" onclick='removeFriend(\"" + friend + "\", true)'>✖</button></div></td>";
             innerHTML += "</tr>"
         }
         innerHTML += "</table>";
@@ -95,11 +132,11 @@ function setPending(pending) {
     let innerHTML = "";
     if (!!pending) {
         console.log("you have pending");
-        pending = pending.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+        pending = pending.sort(sortFriends);
         innerHTML += "<table width='100%'>";
         for (let friend of pending) {
             innerHTML += "<tr><td width=\"33%\">" + friend + "</td><td>";
-            innerHTML += "<div align='right'><button class=\"tablinks\" onclick='removeFriend(\"" + friend + "\")'>✖</button></div></td></tr>";
+            innerHTML += "<div align='right'><button class=\"standardbutton\" onclick='removeFriend(\"" + friend + "\", true)'>✖</button></div></td></tr>";
         }
         innerHTML += "</table>";
     } else {
@@ -109,38 +146,5 @@ function setPending(pending) {
     document.getElementById("pending").innerHTML = innerHTML;
 }
 
-function removeFriend(name) {
-    console.log("remove: " + name);
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/friendlist', true);
-    xhr.send(JSON.stringify(["Remove", name]));
-    xhr.onreadystatechange = (e) => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                alert(xhr.responseText);
-                init();
-            } else {
-                alert(xhr.responseText);
-                alert(response);
-
-            }
-        }
-    };
-}
-
-function addFriend(name) {
-    console.log("add: " + name);
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/friendlist', true);
-    xhr.send(JSON.stringify(["Add", name]));
-    xhr.onreadystatechange = (e) => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                alert(xhr.responseText);
-                init();
-            } else {
-                alert(xhr.responseText);
-            }
-        }
-    };
-}
+init();
+UpdateFreeData();

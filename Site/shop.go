@@ -19,7 +19,7 @@ func Shop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
-		Path := "/Site/shop.html"
+		Path := "/html/shop.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		log.Println("[shop] " + Path)

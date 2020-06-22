@@ -31,11 +31,7 @@
                 "rememberme": document.getElementById("remember").checked
             }));
             xhr.onreadystatechange = (e) => {
-                if (xhr.readyState <= 4) {
-                    document.getElementById("preloader").setAttribute("style", "");
-                }
                 if (xhr.readyState === 4) {
-                    document.getElementById("preloader").setAttribute("style", "visibility: hidden");
                     if (xhr.status === 200) {
                         window.location.href = xhr.responseText;
                     } else if (xhr.status === 400) {
@@ -65,13 +61,9 @@
         <button id="login" type="button" onclick="loginFunc()" class="standardbutton">Login
         </button>
         <br>
-        <img id="preloader" class="preloader" style="visibility: hidden;"
-             src="/images/loading.gif" width="28px" height="28px">
         <br>
         <a href="/register">Or register instead</a>
     </form>
 </div>
-<script>
-    //document.activeElement.blur();</script>
 </body>
 </html>

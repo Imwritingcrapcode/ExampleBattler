@@ -225,10 +225,8 @@ type UserFree struct {
 }
 
 type UserFreeProfile struct {
-	Username     string    `json:"Username"`
 	BattlesTotal int       `json:"BattlesTotal"`
 	BattlesWon   int       `json:"BattlesWon"`
-	Monies       MoneyInfo `json:"MoneyInfo"`
 }
 
 type MoneyInfo struct {
@@ -305,8 +303,6 @@ type ConvRequest struct {
 }
 
 type ConvResponse struct {
-	ConversionRate       map[string]float64
-	SecondsPerConversion map[string]int
 	IsConvertingRN       bool
 	CurrentProgress      int
 	Left                 int

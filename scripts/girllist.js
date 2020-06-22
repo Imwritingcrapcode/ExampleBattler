@@ -10,6 +10,11 @@ let mainNum = -1;
 let secNum = -1;
 let clearClickable = false;
 let ws;
+UpdateFreeData();
+let bottomReady = false;
+new p5(leftSketch, 'girls');
+new p5(bottomSketch, 'bottomcanvas');
+new p5(rightSketch, 'rightcanvas');
 
 function setCookie(name, value, hrs) {
     let expires = "";
@@ -26,42 +31,30 @@ function getCookie(name) {
     let ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
-        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
 }
 
-document.onkeypress = (key) => {
-
-    if ((getChar(key) === 13) || (getChar(key).toLowerCase() === " ")) {
-        console.log(getChar(key));
-        battle()
-    } else if (getChar(key).toLowerCase() === "1") {
-        setasmain()
-    } else if (getChar(key).toLowerCase() === "2") {
-        setassec()
-    } else if (getChar(key).toLowerCase() === "3") {
-        clearsetgirls()
-    } else if (getChar(key).toLowerCase() === "r") {
-        random()
-    }
-};
-
-function getChar(event) {
-
-    if (event.which == null) { // IE
-        if (event.keyCode < 32) return event.keyCode; // спец. символ
-        return String.fromCharCode(event.keyCode)
-    }
-    if (event.which !== 0 && event.charCode !== 0) { // все кроме IE
-
-        if (event.which < 32) return event.keyCode; // спец. символ
-        return String.fromCharCode(event.which); // остальные
-    }
-    return null; // спец. символ
-
-}
+document.addEventListener("keydown", e => {
+   if (e.code === 'Enter' || e.code === "Space") {
+       e.preventDefault();
+       battle();
+   } else if (e.code === 'Digit1') {
+       e.preventDefault();
+       setasmain();
+   } else if (e.code === 'Digit2') {
+       e.preventDefault();
+       setassec();
+   } else if (e.code === 'Digit3' || e.code === 'KeyC') {
+       e.preventDefault();
+       clearsetgirls();
+   } else if (e.code === 'KeyR') {
+       e.preventDefault();
+       random();
+   }
+});
 
 function getGirlByNumber(number) {
     for (let girl of response) {
@@ -464,11 +457,14 @@ function clearsetgirls() {
 function battle() {
     if (mainNum !== -1 && secNum !== -1) {
         if (ws) {
+            if (bottomReady) {
+            getElementBottom("prompts").setText("Stopped the search.");
+            getElementBottom('battle').setText("Battle");
+        }
+            ws.close();
             return
         }
-        if (bottomReady) {
-            getElementBottom("prompts").setText("Searching for an opponent...");
-        }
+
         let loc = window.location, new_uri;
         if (loc.protocol === "https:") {
             new_uri = "wss:";
@@ -479,6 +475,10 @@ function battle() {
         ws = new WebSocket(new_uri);
 
         ws.onopen = function (evt) {
+            if (bottomReady) {
+                getElementBottom("prompts").setText("Searching for an opponent...");
+                getElementBottom('battle').setText("Cancel");
+            }
             console.log("OPEN");
             console.log("SEND: ", JSON.stringify({MainGirl: mainNum, SecondaryGirl: secNum,}));
             ws.send(JSON.stringify({MainGirl: mainNum, SecondaryGirl: secNum,}));
@@ -503,7 +503,7 @@ function battle() {
             }
         };
         ws.onerror = function (evt) {
-            console.log("ERROR: " + evt);
+            console.log("ERROR: " + evt.toString());
         };
 
 
@@ -513,3 +513,4 @@ function battle() {
         }
     }
 }
+

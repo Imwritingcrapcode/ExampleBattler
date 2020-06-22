@@ -35,6 +35,7 @@ RPCOLOUR = VIOLET;
 LFCOLOUR = WINC;
 
 FRAMESFORANIMATIONS = 60;
+POPUPLIFETIME = 20;
 
 EFFECTDESCRIPTIONS = [
     [0, "Doubles the damage you deal."],
@@ -117,6 +118,21 @@ MATCHES = new Map([
     ["RP", [2, 6, 10, 13, 13, 14, 14, 16, 20, 23, 24, 24, 25, 27, 29, 31, 35, 37, 37]],
     ["LF", [4, 7, 12, 16, 17, 18, 20, 23, 27, 30, 31, 31, 31, 33, 34, 38, 41, 43, 44]],
 ]);
+
+CONVERSIONRATE = {
+    b:0.4,
+    g:0.2,
+    w:0.5,
+    y:0.25
+};
+
+SECONDSPERCONVERSION = {
+    w: 24,
+    b: 30,
+    y: 45,
+    p: 60,
+};
+
 
 colourMap = new Map([
     ["Red", 0],

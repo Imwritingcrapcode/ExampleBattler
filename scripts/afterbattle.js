@@ -1,19 +1,3 @@
-function addFriend(name) {
-    console.log("add: " + name);
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/friendlist', true);
-    xhr.send(JSON.stringify(["Add", name]));
-    xhr.onreadystatechange = (e) => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                alert(xhr.responseText);
-            } else {
-                alert(xhr.responseText);
-            }
-        }
-    };
-}
-
 function GetInfo() {
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/afterbattle', true);
@@ -25,10 +9,25 @@ function GetInfo() {
                 console.log(stuff);
                 ParseMatches(stuff);
             } else {
-                console.log("???");
+                console.log(xhr.responseText);
             }
         }
     };
+}
+
+function minusExtra(matches, to_add, level, curr_matches) {
+    let a = to_add;
+    let l = level;
+    let c = curr_matches;
+    while (a > 0) {
+        a--;
+        c--;
+        if (c < 0) {
+            l--;
+            c = matches[l-1] - 1;
+        }
+    }
+    return [l, c]
 }
 
 function ParseMatches(info) {
@@ -76,6 +75,11 @@ function ParseMatches(info) {
     to_add = info.ToAdd;
     level = info.Level;
     curr_matches = info.CurrentMatches;
+    if (to_add > 0) {
+        let edited = minusExtra(matches, to_add, level, curr_matches);
+        level = edited[0];
+        curr_matches = edited[1];
+    }
     percentage = 100 * curr_matches / matches[level - 1];
     getElement("bar").setPercentage(percentage);
     getElement("bar").setNewPercentage(percentage);
@@ -92,6 +96,12 @@ function setup() {
     can = createCanvas(600, 350);
     can.parent('rewards_sketch');
     touch = is_touch_device4();
+    document.addEventListener("keydown", e => {
+        if (e.code === 'Enter' || e.code === "Space") {
+            e.preventDefault();
+            getElement("girlList").clicked();
+        }
+    });
     bg_color = color(BG);
     dark = color(DARKC);
     light = color(LIGHTC);
@@ -259,8 +269,4 @@ function getElement(id) {
     }
 }
 
-function keyPressed() {
-    if (key === ' ') {
-        getElement("girlList").clicked()
-    }
-}
+UpdateFreeData();

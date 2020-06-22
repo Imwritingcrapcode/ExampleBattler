@@ -39,11 +39,7 @@
             xhr.open('POST', '/register', true);
             xhr.send(JSON.stringify({"username": username, "password": password}));
             xhr.onreadystatechange = (e) => {
-                if (xhr.readyState <= 4) {
-                    document.getElementById("preloader").setAttribute("style", "");
-                }
                 if (xhr.readyState === 4) {
-                    document.getElementById("preloader").setAttribute("style", "visibility: hidden");
                     if (xhr.status === 200) {
                         console.log(xhr.responseText);
                         location = xhr.responseText;
@@ -79,8 +75,6 @@
         <button id="register" type="button" onclick="registerFunc()" class="standardbutton">Request registration
         </button>
         <br>
-        <img id="preloader" class="preloader" style="visibility: hidden;"
-             src="/images/loading.gif" width="28px" height="28px">
         <br>
         <a href="/login">Already have an account?</a>
     </form>

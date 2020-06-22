@@ -3,19 +3,14 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
     <meta charset="UTF-8">
-    <title>Battle rewards</title>
+    <title>Shop</title>
     <script src="/scripts/p5.min.js"></script>
-    <script src="/scripts/constants.js"></script>
-    <script src="/scripts/afterbattle.js"></script>
-    <script src="/scripts/loading%20bar.js"></script>
     <script src="/scripts/interface%20structs.js"></script>
+    <script src="/scripts/shop.js"></script>
+    <script src="/scripts/constants.js"></script>
+    <script src="/scripts/loading%20bar.js"></script>
     <script src="/scripts/utils.js"></script>
     <script src="/scripts/POPUP.js"></script>
-    <script>
-        let after = function () {
-        };
-        UpdateFreeData(after);
-    </script>
 </head>
 <body>
 <table WIDTH="100%">
@@ -31,9 +26,6 @@
         </td>
         <td class="centerc">
             <div align="center"><a href="/conversion">Conversion</a></div>
-        </td>
-        <td class="centerc">
-            <div align="center"><a href="/shop">Shop</a></div>
         </td>
         <td class="centerc">
             <div align="center"><a href="/friends">Friend list</a></div>
@@ -84,22 +76,17 @@
             </table>
         </td>
         <td>
-            <div align="center">
-                <table WIDTH="100%">
-                    <tr>
-                        <td>
-                            <div align="center" id="rewards_sketch">
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <div align="center"><h2><b>Shop</b></h2></div>
         </td>
     </tr>
 </table>
-<script>
-    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
-    getNotifications();
-</script>
+<table WIDTH="100%">
+    <tr>
+        <td>
+            <div align="center" id="shop"></div>
+        </td>
+    </tr>
+</table>
+<div align="right" id="popupWrapper" class="popupWrapper"></div>
 </body>
 </html>

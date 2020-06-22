@@ -3,50 +3,11 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
     <meta charset="UTF-8">
-    <title>Friend list</title>
+    <title>My profile</title>
     <script src="/scripts/utils.js"></script>
-    <script src="/scripts/friends.js"></script>
+    <script src="/scripts/profile.js"></script>
     <script src="/scripts/POPUP.js"></script>
-    <style>
-        /* Style the tab */
-        .tab {
-            width: 800px;
-            overflow: hidden;
-            border: 0;
-            background-color: #E6E6E6;
-            border-bottom: none;
-        }
-
-        /* Style the buttons inside the tab */
-        .tablinks {
-            background-color: #aaaaaa;
-            float: top;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            font-size: large;
-        }
-
-        /* Change background color of buttons on hover */
-        .tablinks:hover {
-            background-color: #878787;
-        }
-
-        /* Create an active/current tablink class */
-        .tablinks.active {
-            background-color: #878787;
-        }
-
-        /* Style the tab content */
-        .tabcontent {
-            width: 800px;
-            display: none;
-            border: 0;
-        }
-    </style>
+    <script src="/scripts/constants.js"></script>
 </head>
 <body>
 <table WIDTH="100%">
@@ -65,6 +26,9 @@
         </td>
         <td class="centerc">
             <div align="center"><a href="/shop">Shop</a></div>
+        </td>
+        <td class="centerc">
+            <div align="center"><a href="/friends">Friend list</a></div>
         </td>
         <td class="rightc">
             <div align="right"><a href="/logout">Logout</a></div>
@@ -112,46 +76,15 @@
             </table>
         </td>
         <td>
-            <div align="center">
-                <h2>Friend list</h2>
-                <div class="tab">
-                    <button id="defaultTab" class="tablinks" onclick="openTab(event, 'Friends')">Friends</button>
-                    <button class="tablinks" onclick="openTab(event, 'Incoming requests')">Incoming requests</button>
-                    <button class="tablinks" onclick="openTab(event, 'Pending requests')">Pending requests</button>
-                </div>
-
-                <div id="Friends" class="tabcontent">
-                    <h3>Friends</h3>
-                    <p>
-                    <div id="friends" align="left"></div>
-                </div>
-
-                <div id="Incoming requests" class="tabcontent">
-                    <h3>Incoming requests</h3>
-                    <p>
-                    <div id="incoming">INCOMING</div>
-                </div>
-
-                <div id="Pending requests" class="tabcontent">
-                    <h3>Pending requests</h3>
-                    <p>
-                    <div id="pending">PENDING</div>
-                </div>
-            </div>
         </td>
     </tr>
 </table>
-<script>
-    init();
-    //displaying current tab
-    document.getElementById('Friends').style.display = "block";
-    //clicking on the top button
-    document.getElementById('defaultTab').className += " active";
-    let after = function () {
-    };
-    UpdateFreeData(after);
-    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
-    getNotifications();
-</script>
+<div align="center">
+    <div><b>My profile:</b></div>
+    <div id="username2" class="username" align="center"></div>
+    <br>
+    <div id="battles2" class="battleswon" align="center"></div>
+</div>
+<div align="right" id="popupWrapper" class="popupWrapper"></div>
 </body>
 </html>

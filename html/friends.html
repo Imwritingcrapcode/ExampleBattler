@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="/scripts/style.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/scripts/style.css"/>
     <meta charset="UTF-8">
-    <title>My profile</title>
+    <title>Friend list</title>
     <script src="/scripts/utils.js"></script>
+    <script src="/scripts/constants.js"></script>
+    <script src="/scripts/friends.js"></script>
     <script src="/scripts/POPUP.js"></script>
 </head>
 <body>
@@ -24,9 +26,6 @@
         </td>
         <td class="centerc">
             <div align="center"><a href="/shop">Shop</a></div>
-        </td>
-        <td class="centerc">
-            <div align="center"><a href="/friends">Friend list</a></div>
         </td>
         <td class="rightc">
             <div align="right"><a href="/logout">Logout</a></div>
@@ -74,19 +73,35 @@
             </table>
         </td>
         <td>
+            <div align="center">
+                <h2>Friend list</h2>
+                <div class="tab">
+                    <button id="defaultTab" class="standardbutton" onclick="openTab(event, 'Friends')">Friends</button>
+                    <button class="standardbutton" onclick="openTab(event, 'Incoming requests')">Incoming requests</button>
+                    <button class="standardbutton" onclick="openTab(event, 'Pending requests')">Pending requests</button>
+                </div>
+
+                <div id="Friends" class="tabcontent">
+                    <h3>Friends</h3>
+                    <p>
+                    <div id="friends" align="left"></div>
+                </div>
+
+                <div id="Incoming requests" class="tabcontent">
+                    <h3>Incoming requests</h3>
+                    <p>
+                    <div id="incoming">INCOMING</div>
+                </div>
+
+                <div id="Pending requests" class="tabcontent">
+                    <h3>Pending requests</h3>
+                    <p>
+                    <div id="pending">PENDING</div>
+                </div>
+            </div>
         </td>
     </tr>
 </table>
-<div align="center">
-    <div><b>My profile:</b></div>
-    <div id="username2" class="username" align="center"></div>
-    <br>
-    <div id="battles2" class="battleswon" align="center"></div>
-</div>
-<script>
-    UpdateProfileData();
-    document.body.innerHTML += "<div align=\"right\" id=\"popupWrapper\" class=\"popupWrapper\"></div>";
-    getNotifications();
-</script>
+<div align="right" id="popupWrapper" class="popupWrapper"></div>
 </body>
 </html>

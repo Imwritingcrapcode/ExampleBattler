@@ -45,7 +45,7 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write(res)
-		log.Println("[Notifications] Got notifications for", user.Username, notifications)
+		log.Println("[Notifications] Got notifications for", user.Username, notifications, ActivitiesToString[activity])
 		DeleteNotifications(user.UserID, "seen")
 	}
 }

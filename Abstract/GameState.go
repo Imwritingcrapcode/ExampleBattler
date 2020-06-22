@@ -201,39 +201,36 @@ func (user *ClientChannels) GetCompatibility(other *ClientChannels) (int, int, i
 	switch {
 	case myMain != theirMain && myMainSkill == theirMainSkill:
 		return 1, myMain, theirMain
-	case myMain != theirSec && myMainSkill == theirSecSkill:
-		return 2, myMain, theirSec
-	case mySec != theirMain && mySecSkill == theirMainSkill:
-		return 3, mySec, theirMain
 	case mySec != theirSec && mySecSkill == theirSecSkill:
-		return 4, mySec, theirSec
+		return 2, mySec, theirSec
+	case myMain != theirSec && myMainSkill == theirSecSkill:
+		return 3, myMain, theirSec
+	case mySec != theirMain && mySecSkill == theirMainSkill:
+		return 4, mySec, theirMain
 	case myMain != theirMain && (-1 == myMainSkill-theirMainSkill || myMainSkill-theirMainSkill == 1):
 		return 5, myMain, theirMain
-	case myMain != theirSec && (-1 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 1):
-		return 6, myMain, theirSec
-	case mySec != theirMain && (-1 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 1):
-		return 7, mySec, theirMain
 	case mySec != theirSec && (-1 == mySecSkill-theirSecSkill || mySecSkill-theirSecSkill == 1):
-		return 8, mySec, theirSec
+		return 6, mySec, theirSec
+	case myMain != theirSec && (-1 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 1):
+		return 7, myMain, theirSec
+	case mySec != theirMain && (-1 == mySecSkill-theirMainSkill|| mySecSkill-theirMainSkill== 1):
+		return 8, mySec, theirMain
 	case myMain != theirMain && (-2 == myMainSkill-theirMainSkill || myMainSkill-theirMainSkill == 2):
 		return 9, myMain, theirMain
-	case myMain != theirSec && (-2 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 2):
-		return 10, myMain, theirSec
-	case mySec != theirMain && (-2 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 2):
-		return 11, mySec, theirMain
 	case mySec != theirSec && (-2 == mySecSkill-theirSecSkill || mySecSkill-theirSecSkill == 2):
-		return 12, mySec, theirSec
+		return 10, mySec, theirSec
+	case myMain != theirSec && (-2 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 2):
+		return 11, myMain, theirSec
+	case mySec != theirMain && (-2 == mySecSkill-theirMainSkill|| mySecSkill-theirMainSkill== 2):
+		return 12, mySec, theirMain
 	case myMain != theirMain:
 		return 13, myMain, theirMain
-	case myMain != theirSec:
-		return 14, myMain, theirSec
-	case mySec != theirMain:
-		return 15, mySec, theirMain
 	case mySec != theirSec:
-		return 16, mySec, theirSec
+		return 14, mySec, theirSec
+	case myMain != theirSec:
+		return 15, myMain, theirSec
 	default:
-		panic("oh lol")
-		return 1000, myMain, theirMain
+		return 16, mySec, theirMain
 	}
 }
 

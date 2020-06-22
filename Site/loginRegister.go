@@ -87,7 +87,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 				log.Println("[Register] Sorry, your reg data is wrong")
 			}
 		} else {
-			Path := "/Site/register.html"
+			Path := "/html/register.html"
 			pwd, _ := os.Getwd()
 			Path = strings.Replace(pwd+Path, "/", "\\", -1)
 			log.Println("[Register] " + Path)
@@ -158,7 +158,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 			}
 		} else {
-			Path := "/Site/login.html"
+			Path := "/html/login.html"
 			pwd, _ := os.Getwd()
 			Path = strings.Replace(pwd+Path, "/", "\\", -1)
 			log.Println("[Log In]", Path)
@@ -177,15 +177,10 @@ func Welcome(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		log.Println("[Welcome] GET WELCOME")
 		//userfree := *user.GatherFreeData()
-		Path := "/Site/main.html"
+		Path := "/html/main.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
-		log.Println(Path)
-		/*template, err := ParseFiles(Path)
-		if err != nil {
-			panic(err)
-		}
-		template.Execute(w, userfree)*/
+		log.Println("[Welcome]", Path)
 		http.ServeFile(w, r, Path)
 	}
 }
@@ -203,7 +198,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		delete(ClientConnections, user.UserID)
 	}
 	SetState(session.UserID, Offline)
-	DeleteNotifications(user.UserID, "all")
+	//DeleteNotifications(user.UserID, "all")
 	log.Println("[Logout] see you,", session.UserID)
 	DeleteSession(session)
 	log.Println("[Logout] Redirected to login")

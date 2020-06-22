@@ -993,7 +993,11 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.baseColour.setAlpha(0.5 * 255);
                 this.hoverColour.setAlpha(0.5 * 255);
                 this.clickedColour.setAlpha(0.5 * 255);
-                this.textColour = color(light.toString());
+                if (isLight(this.baseColour)) {
+                    this.textColour = color(dark.toString())
+                } else {
+                    this.textColour = color(light.toString())
+                }
                 this.textColour.setAlpha(0.5 * 255);
                 this.borderColour = light;
                 this.clickable = false;
@@ -1003,7 +1007,11 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.baseColour.setAlpha(0.5 * 255);
                 this.hoverColour.setAlpha(0.5 * 255);
                 this.clickedColour.setAlpha(0.5 * 255);
-                this.textColour = color(light.toString());
+                if (isLight(this.baseColour)) {
+                    this.textColour = color(dark.toString())
+                } else {
+                    this.textColour = color(light.toString())
+                }
                 this.textColour.setAlpha(0.5 * 255);
                 this.borderColour = light;
                 this.clickable = false;
@@ -1013,7 +1021,11 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.baseColour.setAlpha(0.3 * 255);
                 this.hoverColour.setAlpha(0.3 * 255);
                 this.clickedColour.setAlpha(0.3 * 255);
-                this.textColour = color(light.toString());
+                if (isLight(this.baseColour)) {
+                    this.textColour = color(dark.toString())
+                } else {
+                    this.textColour = color(light.toString())
+                }
                 this.textColour.setAlpha(0.3 * 255);
                 this.borderColour = light;
                 this.clickable = false;
@@ -1023,7 +1035,11 @@ function SkillButton(x, y, type, t, id, mine) {
                 this.baseColour.setAlpha(0.5 * 255);
                 this.hoverColour.setAlpha(0.5 * 255);
                 this.clickedColour.setAlpha(0.5 * 255);
-                this.textColour = color(light.toString());
+                if (isLight(this.baseColour)) {
+                    this.textColour = color(dark.toString())
+                } else {
+                    this.textColour = color(light.toString())
+                }
                 this.textColour.setAlpha(0.5 * 255);
                 this.borderColour = light;
                 this.clickable = false;

@@ -19,7 +19,7 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet {
-		Path := "/Site/conversion.html"
+		Path := "/html/conversion.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		log.Println("[Conversion] " + Path)
@@ -43,8 +43,6 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 			var response ConvResponse
 			if convR.ReqType != "!" && isConverting {
 				response = ConvResponse{
-					ConversionRate:       nil,
-					SecondsPerConversion: nil,
 					IsConvertingRN:       true,
 					CurrentProgress:      secondsPassed,
 					Left:                 secondsLeft,
@@ -53,8 +51,6 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 				}
 			} else {
 				response = ConvResponse{
-					ConversionRate:       ConversionRate,
-					SecondsPerConversion: SecondsPerConversion,
 					IsConvertingRN:       false,
 					CurrentProgress:      -1,
 					Left:                 -1,
@@ -97,8 +93,6 @@ func Conversion(w http.ResponseWriter, r *http.Request) {
 				log.Println("[Conversion] what is this type of dust D:")
 			}
 			response := ConvResponse{
-				ConversionRate:       nil,
-				SecondsPerConversion: nil,
 				IsConvertingRN:       true,
 				CurrentProgress:      0,
 			}

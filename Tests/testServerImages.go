@@ -13,7 +13,7 @@ func main() {
 	http.HandleFunc("/favicon.ico", FavIcoFix)
 	http.HandleFunc("/images/", ImageHandler2)
 	http.HandleFunc("/scripts/", ScriptsHandler2)
-	http.HandleFunc("/site/", ScriptsHandler3)
+	http.HandleFunc("/html/", ScriptsHandler3)
 	err := http.ListenAndServe(":1118", nil)
 	if err != nil {
 		panic(err)
@@ -41,10 +41,10 @@ func ScriptsHandler2(w http.ResponseWriter, r *http.Request) {
 	realhandler(w, r)
 }
 func ScriptsHandler3(w http.ResponseWriter, r *http.Request) {
-	log.Println("[site] access by C!")
+	log.Println("[html] access by C!")
 	pwd, _ := os.Getwd()
-	fs := http.FileServer(http.Dir(pwd + "\\site"))
-	realhandler := http.StripPrefix("/site/", fs).ServeHTTP
+	fs := http.FileServer(http.Dir(pwd + "\\html"))
+	realhandler := http.StripPrefix("/html/", fs).ServeHTTP
 	realhandler(w, r)
 }
 

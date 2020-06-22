@@ -48,7 +48,7 @@ func (self *Z89) Init() {
 		Green,
 		"Green Sphere",
 		Z89E,
-		"rgb(16, 143, 38)",
+		"rgb(199, 255, 202)",
 	}
 	self.Skills[3] = &Skill{
 		true,

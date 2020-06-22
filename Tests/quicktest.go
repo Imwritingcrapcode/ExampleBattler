@@ -1,32 +1,25 @@
 package main
 
 import (
-	"math"
-	"fmt"
+	"database/sql"
+	"log"
+	"strconv"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	played := 16
-	won := 3
-	var winrate float64
-	if won == 0 {
-		winrate = 0
+	DATABASE, err := sql.Open("sqlite3", "Server\\Battler.db")
+	if err != nil {
+		panic(err)
+	}
+	st, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(4, 10) +
+		" AND redirect = '" + "friends" + "'")
+	if err != nil {
+		log.Println("[See notifications]", err.Error())
 	} else {
-		winrate = math.Floor(float64(won)/float64(played)*100)
+		res, _ := st.Exec()
+		b, _ := res.LastInsertId()
+		s, _ := res.RowsAffected()
+		log.Println(s, b)
 	}
-	fmt.Println(winrate)
-	switch {
-	case winrate > 50:
-		fmt.Println(6)
-	case winrate >= 40:
-		fmt.Println(5)
-	case winrate >= 30:
-		fmt.Println(4)
-	default:
-		fmt.Println(3)
-	}
-
-
-
-
 }

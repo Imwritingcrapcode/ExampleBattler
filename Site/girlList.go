@@ -19,8 +19,8 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("[GIRLLIST] "+"accessing GirlList for", session.UserID)
 	if r.Method == http.MethodGet {
-		//Path := "/Site/girllist.html" //old path lolololol
-		Path := "/Site/girllist2.html"
+		//Path := "/html/girllist_old.html" //old path lolololol
+		Path := "/html/girllist2.html"
 		pwd, _ := os.Getwd()
 		Path = strings.Replace(pwd+Path, "/", "\\", -1)
 		//log.Println("[GIRLLIST] " + Path)
