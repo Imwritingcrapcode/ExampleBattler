@@ -103,6 +103,12 @@ function Panel(x, y, w, h, s) {
     this.discard = function (obj) {
         const index = this.objects.indexOf(obj);
         if (index > -1) {
+            if (obj.clickable) {
+                obj.unclick();
+            }
+            if (obj.hoverable) {
+                obj.unhovered();
+            }
             this.objects.splice(index, 1);
             return true;
         } else {
@@ -113,7 +119,7 @@ function Panel(x, y, w, h, s) {
 
 }
 
-function CanvasImage(x, y, path, id, name, width, height) {
+function CanvasImage(x, y, path, id, name, width, height, colour) {
     this.id = id;
     this.x = x;
     this.y = y;
@@ -121,12 +127,26 @@ function CanvasImage(x, y, path, id, name, width, height) {
     if (!path) {
         this.width = width;
         this.height = height;
-        this.image = undefined;
+        if (colour) {
+            this.loadedObj = {};
+            this.colour = colour;
+        } else {
+            this.image = undefined;
+        }
         this.name = "";
     } else {
         this.width = width;
         this.height = height;
-        this.image = loadImage(path);
+        if (colour) {
+            this.colour = colour;
+            this.loadedObj = {};
+            this.image = loadImage(path, img => {
+                this.loadedObj.loaded = true;
+                console.log(this.loadedObj);
+            }, this.failed);
+        } else {
+            this.image = loadImage(path);
+        }
         this.name = name;
     }
     this.hoverable = false;
@@ -152,8 +172,44 @@ function CanvasImage(x, y, path, id, name, width, height) {
         this.x = this.x + (550 - width) / 2;
         this.width = width;
         this.height = height;
-        this.image = loadImage(path);
+        if (!!this.loadedObj) {
+            this.image = loadImage(path, img => {
+                this.loadedObj.loaded = true;
+            }, this.failed);
+        } else {
+            this.image = loadImage(path);
+        }
         this.name = name;
+    };
+
+    this.set = function (other) {
+        this.id = other.id;
+        this.x = other.x;
+        this.y = other.y;
+        this.path = other.path;
+        this.colour = other.colour;
+        if (!other.path) {
+            this.loadedObj = {};
+            this.width = other.width;
+            this.height = other.height;
+            this.image = undefined;
+            this.name = other.name;
+        } else {
+            this.width = other.width;
+            this.height = other.height;
+            this.image = other.image;
+            this.name = other.name;
+            this.loadedObj = other.loadedObj;
+        }
+        this.hoverable = other.hoverable;
+        this.clickable = other.clickable;
+    };
+
+    this.loaded = function () {
+        if (!this.loadedObj) {
+            return undefined;
+        }
+        return this.loadedObj.hasOwnProperty("loaded")
     };
 
     this.display = function () {
@@ -172,6 +228,10 @@ function ImageBox() {
         this.isDisplayed.push(true);
     };
 
+    this.addSimple = function (image) {
+        this.images.push(image);
+    };
+
     this.isTaken = function (name) {
         for (let i = 0; i < this.images.length; i++) {
             if (this.images[i].name === name) {
@@ -185,6 +245,15 @@ function ImageBox() {
         for (let i = 0; i < this.images.length; i++) {
             if (this.images[i].name === name) {
                 this.isDisplayed[i] = true;
+                return this.images[i];
+            }
+        }
+        return undefined;
+    };
+
+    this.get = function (name) {
+        for (let i = 0; i < this.images.length; i++) {
+            if (this.images[i].name === name) {
                 return this.images[i];
             }
         }
@@ -240,8 +309,15 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
             this.framesLeftMax = 0;
         }
         this.text = t;
-        this.width = size * t.length;
         this.height = size;
+        if (type === "B" || type === "C") {
+            this.width = width;
+        } else if (type === "A" || type === "D") {
+            textSize(size);
+            this.width = textWidth(t);
+        } else {
+            this.width = size * t.length;
+        }
     }
 
     this.textColour = colour;
@@ -320,6 +396,29 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                 textSize(this.textSize);
                 textAlign(CENTER);
                 text(this.text, this.x, this.y, this.width);
+            } else if (this.type === "B" || this.type === "C") {
+                stroke(this.textColour);
+                strokeWeight(1);
+                fill(this.textColour);
+                textSize(this.textSize);
+                if (this.type === "B") {
+                    textAlign(CENTER);
+                } else {
+                    textAlign(LEFT);
+                    textLeading(33);
+                }
+                text(this.text, this.x, this.y, this.width);
+            } else if (this.type === "A" || this.type === "D") {
+                stroke(this.textColour);
+                strokeWeight(1);
+                fill(this.textColour);
+                textSize(this.textSize);
+                if (this.type === "A") {
+                    textAlign(LEFT);
+                } else if (this.type === "D") {
+                    textAlign(RIGHT);
+                }
+                text(this.text, this.x, this.y);
             }
             else {
                 if ((this.id === "playerHP" || this.id === "oppHP") && this.framesLeft > 0) {
@@ -513,7 +612,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                 }
             }
         }
-        else if (this.hoverable) {
+        else if (this.hoverable && this.hoverText) {
             displayStandardHoverBubble(this.hoverText, this.hoverLines)
         }
     };
@@ -649,7 +748,7 @@ function TurnLog(x, y, colour, size, id, width, height, hoverable) {
     };
 
     this.displayHover = function () {
-        if (this.isHovered && this.hoverText !== "") {
+        if (this.hoverText) {
             displayStandardHoverBubble(this.hoverText, calculateLines(this.hoverText));
         }
     }
@@ -1058,7 +1157,9 @@ function SkillButton(x, y, type, t, id, mine) {
             this.hoverTimer += 1;
             return;
         }
-        displayStandardHoverBubble(this.hoverText, this.hoverLines);
+        if (this.hoverText) {
+            displayStandardHoverBubble(this.hoverText, this.hoverLines);
+        }
     };
 }
 
@@ -1226,4 +1327,311 @@ function StandardButton(x, y, s, t, size, id, col) {
             displayStandardHoverBubble(this.hoverText, this.hoverLines);
         }
     }
+}
+
+function LoadingScreenNoP(x, y, w, h, id) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.fade = false;
+    this.frame = 0;
+    this.maxframes = 20;
+    this.pauseTime = 10;
+    this.pause = 0;
+    this.phi = 0.0;
+    this.squares = [];
+    this.paused = false;
+    this.stopped = 0;
+    this.hoverable = false;
+    let width;
+    let height;
+    if (w > h) {
+        width = h / 2;
+        height = h / 2;
+    } else {
+        width = w / 2;
+        height = w / 2;
+    }
+    if (!id) {
+        this.id = 'loading_screen';
+    }
+    let distance = 0.05;
+    this.squares.push([0 + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), 0 + x, height * (1 + distance) + y, undefined]); //1 bot left pi to 3pi/2
+    this.squares.push([0 + x, 0 + y, width * (1 - distance), height * (1 - distance), 0 + x, 0 + y, undefined]); //4 top left 3pi/2 to 2pi
+    this.squares.push([width * (1 + distance) + x, 0 + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, 0 + y, undefined]); //3 top right pi to 3pi/2
+    this.squares.push([width * (1 + distance) + x, height * (1 + distance) + y, width * (1 - distance), height * (1 - distance), width * (1 + distance) + x, height * (1 + distance) + y, undefined]); //2 bot right pi/2 to pi
+
+    this.stop = function () {
+        if (this.stopped < 2) {
+            this.stopped = 1;
+        }
+    };
+
+    this.enableFade = function () {
+        this.fade = true;
+    };
+
+    this.restart = function () {
+        let width;
+        let height;
+        let distance = 0.05;
+        if (this.w > this.h) {
+            width = this.h / 2;
+            height = this.h / 2;
+        } else {
+            width = this.w / 2;
+            height = this.w / 2;
+        }
+        this.squares[0][0] = this.x;
+        this.squares[0][1] = height * (1 + distance) + this.y;
+        this.squares[3][0] = width * (1 + distance) + this.x;
+        this.squares[3][1] = height * (1 + distance) + this.y;
+        this.squares[2][0] = width * (1 + distance) + this.x;
+        this.squares[2][1] = this.y;
+        this.squares[1][0] = this.x;
+        this.squares[1][1] = this.y;
+        this.frame = 0;
+        this.phi = 0.0;
+        this.pause = 0;
+        this.stopped = 0;
+        for (let i = 0; i < this.squares.length; i++) {
+            let square = this.squares[i];
+            square[6].setAlpha(255)
+        }
+    };
+
+    this.display = function () {
+        let addition = 0.0;
+        for (let i = 0; i < this.squares.length; i++) {
+            let s = this.squares[i];
+            let curr_phi = this.phi + addition;
+
+            //rotate
+            let center_x = s[0] + s[2] / 2;
+            let center_y = s[1] + s[3] / 2;
+            translate(center_x, center_y);
+            rotate(-curr_phi * 2);
+            //draw
+            let prev = i !== 0 ? i - 1 : 3;
+            let inter = map(this.phi, 0, -PI / 2, 0, 1);
+            let c = lerpColor(s[6], this.squares[prev][6], inter);
+            fill(c);
+            noStroke();
+            rect(-s[2] / 2, -s[3] / 2, s[2], s[3], s[2] / 9);
+            //rotate back
+            rotate(curr_phi * 2);
+            translate(-center_x, -center_y);
+
+
+            //move
+            let x = s[0];
+            let y = s[1];
+            let r = sin(2 * curr_phi) * this.w;
+            let new_x = r * cos(curr_phi) + s[4];
+            let new_y = r * sin(curr_phi) + s[5];
+            s[0] = new_x;
+            s[1] = new_y;
+            addition -= PI / 2;
+
+        }
+        if (this.stopped !== 2) {
+            if (this.paused) {
+                this.pause += 1;
+                if (this.stopped > 0 && this.fade) {
+                    for (let i = 0; i < this.squares.length; i++) {
+                        let square = this.squares[i];
+                        square[6].setAlpha(255 - 255 * (0.45 + this.pause / 10))
+                    }
+                }
+                if (this.pause >= this.pauseTime) {
+                    this.pause = 0;
+                    this.paused = false;
+                    if (this.stopped > 0) {
+                        this.stopped = 2;
+                    }
+                }
+            } else if (this.frame >= this.maxframes) {
+                this.frame = 0;
+                this.phi = 0.0;
+                let lastCol = this.squares[3][6];
+                for (let i = 3; i > 0; i--) {
+                    let s = this.squares[i];
+                    s[6] = this.squares[i - 1][6];
+                }
+                this.squares[0][6] = lastCol;
+                this.paused = true;
+            } else {
+                this.frame += 1;
+                this.phi -= PI / (2 * (this.maxframes));
+            }
+        }
+
+    };
+
+    this.setColours = function (c1, c2, c3, c4) {
+        this.squares[0][6] = color(c1.toString());
+        this.squares[1][6] = color(c2.toString());
+        this.squares[2][6] = color(c3.toString());
+        this.squares[3][6] = color(c4.toString());
+
+    }
+}
+
+function SkillButtonMini(x, y, t, id) {
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.text = t;
+    this.textSize = 50;
+    this.textColour = color(dark.toString());
+    this.borderColour = color(dark.toString());
+    this.borderWidth = 0.5;
+    this.width = 100;
+    this.height = 100;
+    this.maxframes = 7;
+    this.frame = 0;
+    this.destColour = this.baseColour;
+    this.previousColour = this.baseColour;
+    this.isTransitioning = false;
+    this.rawColour = "";
+    this.rawText = "";
+    this.colour = clickc;
+    this.baseColour = clickc;
+    this.hoverColour = clickc;
+    this.clickedColour = clickc;
+    this.isHovered = false;
+    this.hoverText = "";
+    this.clickable = false;
+    this.hoverable = true;
+
+    this.display = function () {
+        if (this.isTransitioning) {
+            if (this.frame <= this.maxframes) {
+                this.frame++;
+                this.colour = lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
+            } else {
+                this.frame = 0;
+                this.isTransitioning = false;
+            }
+        }
+        let border = this.borderColour;
+        let c = this.colour;
+        let x = this.x;
+        let y = this.y;
+        let w = this.width;
+        let h = this.height;
+        let t = this.text;
+        let height = this.textSize;
+        let len = this.text.length;
+        stroke(border);
+        fill(c);
+        strokeWeight(this.borderWidth);
+        rect(this.x, this.y, this.width, this.height, 4, 4, 4, 4);
+        noStroke();
+        fill(this.textColour);
+        textAlign(CENTER);
+        textSize(this.textSize);
+        /*stroke(color(255, 0, 0));
+        line(x, y + h/2, x+w, y + h/2);*/
+        for (let i = 0; i < len; i++) {
+            text(t[i], x + w / 2, y + h / 2 + height * (i + 1 - len / 2) - 5);
+        }
+    };
+
+    this.in = function () {
+        let x = mouseX;
+        let y = mouseY;
+        return (this.x <= x && x <= (this.width + this.x) && this.y <= y && y <= (this.height + this.y));
+    };
+
+    this.hovered = function () {
+        this.isHovered = true;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.hoverColour;
+    };
+
+    this.unhovered = function () {
+        this.isHovered = false;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.baseColour;
+    };
+
+    this.setColour = function (stringColour) {
+        if (this.rawColour !== stringColour) {
+            this.rawColour = stringColour;
+            this.frame = 0;
+            this.isTransitioning = false;
+            this.baseColour = color(stringColour);
+            this.colour = this.baseColour;
+            this.hoverColour = color(stringColour);
+            this.clickedColour = color(stringColour);
+            let hoverchange = 17;
+            let clickchange = 34;
+            if (isLight(this.baseColour)) {
+                this.textColour = color(dark.toString());
+                this.hoverColour.setRed(red(this.colour) - hoverchange);
+                this.hoverColour.setGreen(green(this.colour) - hoverchange);
+                this.hoverColour.setBlue(blue(this.colour) - hoverchange);
+                this.clickedColour.setRed(red(this.colour) - clickchange);
+                this.clickedColour.setGreen(green(this.colour) - clickchange);
+                this.clickedColour.setBlue(blue(this.colour) - clickchange);
+            } else {
+                this.hoverColour.setRed(red(this.colour) + hoverchange);
+                this.hoverColour.setGreen(green(this.colour) + hoverchange);
+                this.hoverColour.setBlue(blue(this.colour) + hoverchange);
+                this.clickedColour.setRed(red(this.colour) + clickchange);
+                this.clickedColour.setGreen(green(this.colour) + clickchange);
+                this.clickedColour.setBlue(blue(this.colour) + clickchange);
+                this.textColour = color(light.toString());
+            }
+        }
+    };
+
+    this.setText = function (t) {
+        if (this.rawText !== t) {
+            this.rawText = t;
+            this.hoverText = SKILLDESCRIPTIONS.get(t);
+            if (!!this.hoverText) {
+                this.hoverLines = calculateLines(this.hoverText);
+            }
+            this.text = split(t, " ");
+            let w = this.width;
+            this.textSize = 50;
+            textSize(this.textSize);
+            for (let word of this.text) {
+                let width = textWidth(word);
+                while (width >= w) {
+                    this.textSize--;
+                    textSize(this.textSize);
+                    width = textWidth(word);
+                }
+            }
+        }
+    };
+
+    this.getText = function () {
+        if (this.text !== "") {
+            return this.text.join(" ");
+        } else {
+            return "";
+        }
+    };
+
+    this.displayHover = function () {
+        if (this.hoverText) {
+            displayStandardHoverBubble(this.hoverText, this.hoverLines);
+        }
+    };
 }

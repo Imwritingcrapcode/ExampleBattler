@@ -147,6 +147,7 @@ function removeElement(id) {
         let obj = convobjects[i];
         if (obj.id === id) {
             convobjects.splice(i, 1);
+            return;
         }
     }
 }

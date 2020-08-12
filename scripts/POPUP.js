@@ -41,7 +41,7 @@ function setText(id, t) {
 }
 
 function addPopup(text, where, ma) {
-    let id = "";
+    id = "";
     if (!!ma) {
         id = ma;
     } else {
@@ -72,17 +72,16 @@ function addPopup(text, where, ma) {
 
     setText(id, text);
     showPopup(id);
+    console.log("ID:", id);
+    window.setTimeout("diePopup(\"" + id + "\")", 1000 * POPUPLIFETIME);
 }
 
-function dieFirstPopup() {
-    let wrapper = document.getElementById("popupWrapper");
-    if (wrapper.children.length > 0) {
-        let item = wrapper.children.item(0);
-        if (!item.classList.contains("remove")) {
-            item.classList.add("remove");
-            item.addEventListener(transitionEvent, customFunction);
-        }
-        window.setTimeout("dieFirstPopup()", 1000 * POPUPLIFETIME);
+function diePopup(id) {
+    let item = document.getElementById(id);
+    console.log("DIE HAHA", id);
+    if (!item.classList.contains("remove")) {
+        item.classList.add("remove");
+        item.addEventListener(transitionEvent, customFunction);
     }
 }
 
@@ -112,9 +111,6 @@ function getNotifications() {
                 let response = JSON.parse(xhr.responseText);
                 for (let notification of response) {
                     addPopup(notification[0], notification[1]);
-                }
-                if (response.length > 0) {
-                    window.setTimeout("dieFirstPopup()", 1000 * POPUPLIFETIME);
                 }
             } else {
                 console.log(xhr.status, xhr.responseText);

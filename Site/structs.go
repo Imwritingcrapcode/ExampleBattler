@@ -265,14 +265,14 @@ func GetItemByID(ID string) (bool, ShopItem) {
 	case Rarities[1]:
 		exists = len(ReleasedCharactersPacks[Rarities[1]]) != 0
 		item.Name = Rarities[1] + " pack"
-		item.Cost = 185
+		item.Cost = 183
 		item.Dust = "b"
 		item.Type = "pack"
 		item.ID = ID
 	case Rarities[2]:
 		exists = len(ReleasedCharactersPacks[Rarities[2]]) != 0
 		item.Name = Rarities[2] + " pack"
-		item.Cost = 124
+		item.Cost = 153
 		item.Dust = "y"
 		item.Type = "pack"
 		item.ID = ID
@@ -286,7 +286,7 @@ func GetItemByID(ID string) (bool, ShopItem) {
 	case Rarities[4]:
 		exists = len(ReleasedCharactersPacks[Rarities[4]]) != 0
 		item.Name = Rarities[4] + " pack"
-		item.Cost = 15
+		item.Cost = 17
 		item.Dust = "s"
 		item.Type = "pack"
 		item.ID = ID

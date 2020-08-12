@@ -14,11 +14,11 @@ function setup() {
             ",\"R\":\"Pride\",\"W\":\"Composure\"},\"OppSkillNames\":{\"OppE\":\"Speed\",\"OppQ\":\"Run\",\"OppR\":\"Stab\",\"OppW\":\"Weaken\"},\"Defenses\":{\"1\":0,\"10\":0,\"11\":-2,\"12\":2,\"2\":-1,\"3\":1,\"4\":1,\"5\":1,\"6\":0,\"7\":-1,\"8\":0,\"9\":0},\"OppDefenses\":{\"1\":0,\"10\":0,\"11\":2,\"12\":-2,\"2\":0,\"3\":0,\"4\":4,\"5\":0,\"6\":0,\"7\":-2,\"8\":0,\"9\":0},\"SkillColours\":{\"E\":\"rgb(232,255,243)\",\"Q\":\"rgb(49,255,185)\"," +
             "\"R\":\"rgb(115,255,240)\",\"W\":\"rgb(232,255,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(14,51,20)\",\"OppQ\":\"rgb(14,51,20)\",\"OppR\":\"rgb(0,10,0)\",\"OppW\":\"rgb(0,10,0)\"},\"EndState\":0}";
         S = JSON.parse(STATE);
-        STATE2 = "{\"Instruction\":\"\",\"TurnNum\":17,\"TurnPlayer\":2,\"PlayerNum\":1,\"OppNum\":9,\"PlayerName\":\"Storyteller\",\"OppName\":\"Euphoria\",\"HP\":209,\"MaxHP\":209,\"OppHP\":207,\"OppMaxHP\":207,\"Effects\":{},\"OppEffects\":{\"12\":\"\",\"18\":\"6\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":1,\"OppR\":-100,\"OppW\":1},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
+        STATE2 = "{\"Instruction\":\"\",\"TurnNum\":17,\"TurnPlayer\":2,\"PlayerNum\":9,\"OppNum\":1,\"PlayerName\":\"Euphoria\",\"OppName\":\"Storyteller\",\"HP\":209,\"MaxHP\":209,\"OppHP\":207,\"OppMaxHP\":207,\"Effects\":{},\"OppEffects\":{\"12\":\"\",\"18\":\"6\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":1,\"OppR\":-100,\"OppW\":1},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
         S2 = JSON.parse(STATE2);
-        STATE3 = "{\"Instruction\":\"\",\"TurnNum\":19,\"TurnPlayer\":2,\"PlayerNum\":1,\"OppNum\":9,\"PlayerName\":\"Storyteller\",\"OppName\":\"Euphoria\",\"HP\":221,\"MaxHP\":221,\"OppHP\":213,\"OppMaxHP\":219,\"Effects\":{},\"OppEffects\":{\"12\":\"\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-100,\"OppW\":0},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
+        STATE3 = "{\"Instruction\":\"\",\"TurnNum\":19,\"TurnPlayer\":2,\"PlayerNum\":9,\"OppNum\":1,\"PlayerName\":\"Euphoria\",\"OppName\":\"Storyteller\",\"HP\":221,\"MaxHP\":221,\"OppHP\":213,\"OppMaxHP\":219,\"Effects\":{},\"OppEffects\":{\"12\":\"\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-100,\"OppW\":0},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
         S3 = JSON.parse(STATE3);
-        STATE4 = "{\"Instruction\":\"\",\"TurnNum\":20,\"TurnPlayer\":1,\"PlayerNum\":1,\"OppNum\":9,\"PlayerName\":\"Storyteller\",\"OppName\":\"Euphoria\",\"HP\":241,\"MaxHP\":241,\"OppHP\":239,\"OppMaxHP\":239,\"Effects\":{},\"OppEffects\":{\"12\":\"\",\"18\":\"2\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-100,\"OppW\":-100},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
+        STATE4 = "{\"Instruction\":\"\",\"TurnNum\":20,\"TurnPlayer\":1,\"PlayerNum\":8,\"OppNum\":1,\"PlayerName\":\"Z89\",\"OppName\":\"Storyteller\",\"HP\":241,\"MaxHP\":241,\"OppHP\":239,\"OppMaxHP\":239,\"Effects\":{},\"OppEffects\":{\"12\":\"\",\"18\":\"2\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-100,\"OppW\":-100},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
         S4 = JSON.parse(STATE4);
         //S2 = JSON.parse(STATE);
     }
@@ -135,9 +135,10 @@ function setup() {
     if (TESTING === false) {
         connectToServer();
     } else {
-        parseState(S2);
-        parseState(S3);
+        //parseState(S2);
+        //parseState(S3);
         parseState(S4);
+        disableButtons();
         parseInstruction("Animation:Q", false);
         parseInstruction("Animation:E", true);
         parseInstruction("Animation:W", false);
@@ -595,6 +596,7 @@ function setSkillNames(State) {
 }
 
 function setSkillColours(State) {
+    console.log("Set skill colours");
     for (let property in State) {
         if (State.hasOwnProperty(property)) {
             getElement(property).setColour(State[property]);
@@ -630,6 +632,7 @@ function setEffects(effects, id) {
 }
 
 function disableButtons(reason) {
+    console.log("Disabled buttons");
     Are_buttons_disabled = true;
     getElement("Q").setState(-100);
     getElement("W").setState(-100);
@@ -638,6 +641,7 @@ function disableButtons(reason) {
 }
 
 function disableOppButtons(reason) {
+    console.log("Disabled opp buttons");
     getElement("OppQ").setState(-100);
     getElement("OppW").setState(-100);
     getElement("OppE").setState(-100);
@@ -646,6 +650,7 @@ function disableOppButtons(reason) {
 
 function enableButtons(State) {
     Are_buttons_disabled = false;
+    console.log("Enabled buttons");
     for (let property in State) {
         if (State.hasOwnProperty(property)) {
             getElement(property).setState(State[property]);
@@ -654,6 +659,7 @@ function enableButtons(State) {
 }
 
 function enableOppButtons(State) {
+    console.log("Enabled opp buttons");
     for (let property in State) {
         if (State.hasOwnProperty(property)) {
             getElement(property).setState(State[property]);
@@ -705,13 +711,15 @@ function sendSkill(Skill) {
         if (Are_buttons_disabled && Skill !== "GiveUp") {
             return
         }
-        disableButtons(0);
+        //disableButtons(0);
+        Are_buttons_disabled = true;
         ws.send(JSON.stringify(Skill));
     } else {
         let info = getElement("info");
         info.setColour(red2);
         info.setText("You are not connected to the server.");
-        console.log("Not connected yet!\n");
+        loading = true;
+        console.log("Not connected!\n");
         connectToServer();
     }
 }

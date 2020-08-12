@@ -2,6 +2,7 @@ package Site
 
 import (
 	. "../Abstract"
+	. "../Characters"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -74,14 +75,17 @@ func Purchase(userID int64, ID string, w http.ResponseWriter) {
 			gotGirl := value[index]
 			if !HasGirl(userID, gotGirl) {
 				UnlockGirl(user, gotGirl)
-				w.WriteHeader(200)
-				w.Write([]byte("Enjoy your purchase - " + ReleasedCharactersNames[gotGirl]))
 			} else {
 				dust = user.GetDust(item.Dust)
 				user.SetDust(item.Dust, dust+int(math.Floor(float64(item.Cost/2.0))))
-				w.WriteHeader(200)
-				w.Write([]byte("You've got a duplicate - " + ReleasedCharactersNames[gotGirl]))
 			}
+			res, err := json.Marshal(GetGirlInfo(gotGirl))
+			if err != nil {
+				panic(err)
+			}
+			w.WriteHeader(200)
+			w.Write(res)
+
 		}
 	} else {
 		http.Error(w, "You don't have enough dust!~.", 400)

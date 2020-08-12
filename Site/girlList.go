@@ -40,6 +40,7 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 			Tags          []string
 			Skills        []string
 			SkillColours  []string
+			SkillColourCodes []string
 			Description   string */
 			userGirls[i].Name = info[i].Name
 			userGirls[i].Rarity = info[i].Rarity

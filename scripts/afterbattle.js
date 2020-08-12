@@ -137,6 +137,7 @@ function setup() {
         this.clickTimer = this.clickLinger;
         window.location = "/girllist";
     };
+    UpdateFreeData();
     GetInfo();
 }
 
@@ -268,5 +269,3 @@ function getElement(id) {
         }
     }
 }
-
-UpdateFreeData();

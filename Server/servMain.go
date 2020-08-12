@@ -50,7 +50,6 @@ func redirectStderr(f *os.File) {
 func main() {
 	outputToLogTxt := false
 	if outputToLogTxt {
-
 		f, err1 := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err1 != nil {
 			fmt.Println("error opening file: %v", err1)
@@ -72,13 +71,6 @@ func main() {
 		panic(err)
 	}
 	statement.Exec()
-
-	statement, err = DATABASE.Prepare("ALTER TABLE userData RENAME COLUMN gdust TO pdust")
-	if err != nil {
-		log.Println("[Starting]", err)
-	} else {
-		statement.Exec()
-	}
 
 	statement, err = DATABASE.Prepare("UPDATE userData SET activity = 0")
 	if err != nil {

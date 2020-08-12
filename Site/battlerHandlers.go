@@ -22,6 +22,8 @@ after:
 flavor: other important todos
 
 //IMPORTANT
+//TODO soft animation for loading bar when convert(?) on visibilityhandle
+//todo glittering loading bar
 //TODO shop with drops.
 //todo weighted starting characters
 
@@ -31,10 +33,10 @@ flavor: other important todos
 //TODO DDOS protection (not cloudflare apparently)
 //TODO bot
 //TODO random damage
-//todo glittering loading bar
 //todo loading animation while queuing
 //TODO global chat
 //TODO dms chat
+//TODO emojis (almost done but pasting in chat)
 //TODO test prompt reconnect >_<
 //TODO speech bubbles
 //TODO skins
@@ -43,7 +45,7 @@ flavor: other important todos
 //TODO news page
 //TODO choose your pfp
 //TODO battle your friends
-//TODO emojis (almost done but pasting in chat)
+
 //TODO ability draft, 2v2, ...
 */
 
@@ -408,6 +410,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 							channels.Opponent.Output <- LS
 						}
 					}
+					SetState(channels.UserID, BrowsingCharacters)
 				}
 				return
 			} else {

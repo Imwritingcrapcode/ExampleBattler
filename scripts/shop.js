@@ -1,14 +1,16 @@
 function setup() {
     shopobjects = [];
+    STATE = "NO_WINDOW";
     current = undefined;
     touch = is_touch_device4();
-    let can = createCanvas(1024, 400);
+    let can = createCanvas(1024, 490);
     can.parent('shop');
     bg_color = color(BG);
     dark = color(DARKC);
     right = color(RIGHTC);
     light = color(LIGHTC);
     clickc = color(CLICKABLEC);
+    hoverc = color(HOVERC);
     ST = color(light);
     AD = color(ADCOLOUR);
     SP = color(SPCOLOUR);
@@ -59,7 +61,133 @@ function setup() {
     shopobjects.push(b5);
     shopobjects.push(text5);
     shopobjects.push(pic5);
+    imageBox = new ImageBox();
     init();
+}
+
+function open() {
+    left_pos = 136.5;
+    right_pos = 686.5;
+    white_window = {
+        hoverable: false,
+        clickable: false,
+        id: 'white_window',
+        x: 121.5,
+        y: 0,
+        width: 781,
+        height: 490,
+        display: function () {
+            noStroke();
+            let c = color(hoverc.toString());
+            c.setAlpha(255 * 0.75);
+            fill(c);
+            rect(this.x, this.y, this.width, this.height, 5);
+        },
+        in: function () {
+            let x = mouseX;
+            let y = mouseY;
+            return (this.x <= x && x <= (this.width + this.x) && this.y <= y && y <= (this.y + this.height));
+        }
+    };
+    let t1 = new TextInfo(left_pos, 45, dark, "Loading...", 35, "name", "A");
+    let t2 = new TextInfo(left_pos, 71, dark, "Rarity", 21, "rarity", "A");
+    let r1 = {
+        hoverable: false,
+        clickable: false,
+        id: 'r1',
+        x: right_pos,
+        y: 15,
+        width: 201,
+        height: 268,
+        display: function () {
+            fill(light);
+            noStroke();
+            rect(this.x, this.y, this.width, this.height, 5);
+        }
+    };
+    let i1 = new CanvasImage(right_pos, 15, "", "girl", "", 201, 268, dark);
+    p_screen = new LoadingScreenNoP(0.4 * 201 + right_pos, 15 + 0.4 * 268, 0.2 * 201, 0.2 * 201);
+    p_screen.setColours(dark, bg_color, light, right);
+    let r2 = {
+        hoverable: false,
+        clickable: false,
+        id: 'r2',
+        x: right_pos,
+        y: 15,
+        width: 201,
+        height: 268,
+        display: function () {
+            stroke(getElement("girl").colour);
+            strokeWeight(4);
+            noFill();
+            rect(this.x, this.y, this.width, this.height, 5);
+        }
+    };
+    let t6 = new TextInfo(left_pos, 127, dark, "Tags", 21, "tags", "A");
+    let t8 = new TextInfo(left_pos, 160, dark, "Skill colours", 21, "skillcolours", "A");
+    let sk1 = new SkillButtonMini(left_pos, 170, "", "SkillQ");
+    sk1.setText('Q');
+    sk1.setColour(light.toString());
+    let sk2 = new SkillButtonMini(left_pos + 110, 170, "", "SkillW");
+    sk2.setText('W');
+    sk2.setColour(light.toString());
+    let sk3 = new SkillButtonMini(left_pos + 220, 170, "", "SkillE");
+    sk3.setText('E');
+    sk3.setColour(light.toString());
+    let sk4 = new SkillButtonMini(left_pos + 330, 170, "", "SkillR");
+    sk4.setText('R');
+    sk4.setColour(light.toString());
+    /*let sk5 = new SkillButtonMini(left_pos + 440, 170, "", "SkillD");
+    sk5.setText('Your Number');
+    sk5.setColour(light.toString());*/
+
+    let t9 = new TextInfo(left_pos, 276, dark, "Description", 21, "description", "C", 560);
+    let c = new StandardButton(475, 442, 5, "Close", 28, 'close');
+    shopobjects.push(white_window);
+    shopobjects.push(t1);
+    shopobjects.push(t2);
+    shopobjects.push(r1);
+    shopobjects.push(i1);
+    shopobjects.push(r2);
+    shopobjects.push(t6);
+    shopobjects.push(t8);
+    shopobjects.push(t9);
+    shopobjects.push(c);
+    shopobjects.push(sk1);
+    shopobjects.push(sk2);
+    shopobjects.push(sk3);
+    shopobjects.push(sk4);
+    //shopobjects.push(sk5);
+}
+
+function removeElement(id) {
+    for (let i = 0; i < shopobjects.length; i++) {
+        let obj = shopobjects[i];
+        if (obj.id === id) {
+            shopobjects.splice(i, 1);
+            return;
+        }
+    }
+}
+
+function close() {
+    STATE = 'NO_WINDOW';
+    removeElement('white_window');
+    removeElement('name');
+    removeElement('rarity');
+    removeElement('r1');
+    removeElement('girl');
+    removeElement('r2');
+    removeElement('tags');
+    removeElement('skills');
+    removeElement('skillcolours');
+    removeElement('description');
+    removeElement('close');
+    removeElement('SkillQ');
+    removeElement('SkillW');
+    removeElement('SkillE');
+    removeElement('SkillR');
+    //removeElement('SkillD');
 }
 
 function draw() {
@@ -70,7 +198,7 @@ function draw() {
             if (obj.clickTimer === 0) {
                 obj.unclick();
             }
-        } else if (obj.hoverable && obj.in()) { //found an "in"
+        } else if (obj.hoverable && obj.in() && ((STATE === 'NO_WINDOW') || (obj.id === 'close')|| (obj.id === 'SkillD')|| (obj.id === 'SkillR') || (obj.id === 'SkillE')|| (obj.id === 'SkillW') || (obj.id === 'SkillQ') || (!white_window.in()))) { //found an "in"
             if (!current) { //outside to something
                 current = obj;
                 obj.hovered();
@@ -82,14 +210,23 @@ function draw() {
         } else if (obj.hoverable && current && obj.id === current.id) { //went outside
             obj.unhovered();
             current = undefined;
+        } else if (obj.id === "girl" && obj.loaded() && p_screen.stopped < 1) {
+            p_screen.stop();
+        } else if (obj.id === "girl" && obj.loaded()) {
+            obj.display();
+        } else if (obj.id === "girl" && !obj.loaded() && p_screen.stopped < 1) {
+            p_screen.display();
         }
-            if (!!obj.transparency) {
-                tint(255, obj.transparency);
-                obj.display();
-                tint(255, 255);
-            } else {
-                obj.display();
-            }
+        if (!!obj.transparency) {
+            tint(255, obj.transparency);
+            obj.display();
+            tint(255, 255);
+        } else {
+            obj.display();
+        }
+        if (!touch && current && current.in() || touch && current && current.isHovered && current.in()) {
+            current.displayHover();
+        }
     }
 }
 
@@ -138,15 +275,90 @@ function init() {
 }
 
 function purchase(ID) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/shopitems', true);
-    xhr.send(JSON.stringify(ID));
-    xhr.onreadystatechange = (e) => {
-        if (xhr.readyState === 4) {
-            console.log(xhr.responseText);
-            init();
+    if (STATE !== "WINDOW") {
+        STATE = "WINDOW";
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/shopitems', true);
+        xhr.send(JSON.stringify(ID));
+        xhr.onreadystatechange = (e) => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    response = JSON.parse(xhr.responseText);
+                    console.log(response);
+                    parse(response);
+                    init();
+                } else {
+                    addPopup(xhr.responseText);
+                }
+            }
+        };
+    }
+}
+
+function parse(curGirl) {
+    open();
+    getElement("name").setText(curGirl.Name + " (" + curGirl.Number + ")");
+    getElement("rarity").setText(curGirl.Rarity);
+    switch (curGirl.Rarity) {
+        case "LF":
+            //star
+            getElement("rarity").setColour(LFCOLOUR);
+            break;
+        case "RP":
+            //green
+            getElement("rarity").setColour(RPCOLOUR);
+            break;
+        case "SP":
+            //yellow
+            getElement("rarity").setColour(SPCOLOUR);
+            break;
+        case "AD":
+            //blue
+            getElement("rarity").setColour(ADCOLOUR);
+            break;
+        case "ST":
+            //white
+            getElement("rarity").setColour(STCOLOUR);
+            break;
+        default:
+            console.log("EXCUSE ME");
+            break;
+    }
+    let name = curGirl.Name;
+    if (!imageBox.contains(name)) {
+        if (existsPortrait(curGirl.Number)) {
+            imageBox.add(new CanvasImage(right_pos, 15, "/images/locked/" + name + "_portrait.png", "girl", name, 201, 268, curGirl.MainColour));
+        } else {
+            imageBox.add(new CanvasImage(right_pos, 15, "/images/locked/Placeholder_portrait.png", "girl", name, 201, 268, curGirl.MainColour));
         }
-    };
+    }
+    //setloadingscreencolours;
+    p_screen.setColours(curGirl.SkillColourCodes[0], curGirl.SkillColourCodes[1], curGirl.SkillColourCodes[2], curGirl.SkillColourCodes[3]);
+    // update the pic
+    getElement("girl").set(imageBox.get(name));
+    //p_screen.restart()
+    p_screen.restart();
+    let tags = "";
+    for (let tag of curGirl.Tags.sort()) {
+        tags += tag + ", "
+    }
+    tags = tags.slice(0, tags.length - 2);
+    getElement("tags").setText(tags);
+    const letters = ['Q', 'W', 'E', 'R', 'D'];
+    for (let i = 0; i < curGirl.Skills.length; i++) {
+        let name = curGirl.Skills[i];
+        let letter = letters[i];
+        let el = getElement('Skill'+letter);
+        el.setText(name);
+        el.setColour(curGirl.SkillColourCodes[i]);
+    }
+    let colours = "";
+    for (let s of curGirl.SkillColours) {
+        colours += s + ", "
+    }
+    colours = colours.slice(0, colours.length - 2);
+    getElement("skillcolours").setText(colours);
+    getElement("description").setText(curGirl.Description);
 }
 
 function sendSkill(ID) {
@@ -157,22 +369,28 @@ function mouseClicked() {
     let x = mouseX;
     let y = mouseY;
     for (obj of shopobjects) {
-        if (obj.clickable && obj.in(x, y)) {
+        if (obj.clickable && obj.in(x, y) && STATE === "NO_WINDOW") {
             obj.clicked();
+        } else if (obj.clickable && obj.in(x, y) && STATE === "WINDOW" && obj.id === 'close') {
+            obj.clicked();
+            close();
         }
     }
 }
 
 function keyPressed() {
-    if ((key === 'q' || key === 'a') && getElement("ST").clickable) {
-        getElement("ST").clicked()
-    } else if ((key === 'w' || key === 'z') && getElement("AD").clickable) {
-        getElement("AD").clicked()
-    } else if (key === 'e' && getElement("SP").clickable) {
-        getElement("SP").clicked()
-    } else if (key === 'r' && getElement("RP").clickable) {
-        getElement("RP").clicked()
-    } else if (key === 't' && getElement("LF").clickable) {
-        getElement("LF").clicked()
+    if (STATE === 'NO_WINDOW') {
+        if ((key === 'q' || key === 'a') && getElement("ST").clickable) {
+            getElement("ST").clicked()
+        } else if ((key === 'w' || key === 'z') && getElement("AD").clickable) {
+            getElement("AD").clicked()
+        } else if (key === 'e' && getElement("SP").clickable) {
+            getElement("SP").clicked()
+        } else if (key === 'r' && getElement("RP").clickable) {
+            getElement("RP").clicked()
+        } else if (key === 't' && getElement("LF").clickable) {
+            getElement("LF").clicked()
+        }
     }
+
 }
