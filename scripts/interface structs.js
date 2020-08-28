@@ -388,8 +388,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                         text(this.text[i], this.x + this.images[i].width + 5, this.y - this.height + this.images[i].height * (i) + y_pos);
                     }
                 }
-            }
-            else if (this.type === "info") {
+            } else if (this.type === "info") {
                 stroke(this.textColour);
                 strokeWeight(1);
                 fill(this.textColour);
@@ -419,8 +418,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     textAlign(RIGHT);
                 }
                 text(this.text, this.x, this.y);
-            }
-            else {
+            } else {
                 if ((this.id === "playerHP" || this.id === "oppHP") && this.framesLeft > 0) {
                     this.framesLeft--;
                     if (this.HP + this.speed > this.targetHP && this.speed < 0 ||
@@ -547,12 +545,13 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     }
                 }
             }
-        }
-        else {
+        } else {
             this.text = t;
             this.height = this.textSize;
-            textSize(this.textSize);
-            this.width = textWidth(this.text);
+            if (this.type && this.type !== "B" && this.type !== "C" || !this.type) {
+                textSize(this.textSize);
+                this.width = textWidth(this.text);
+            }
         }
     };
 
@@ -611,8 +610,7 @@ function TextInfo(x, y, colour, t, size, id, type, width, height, hoverable) {
                     x_pos += 85;
                 }
             }
-        }
-        else if (this.hoverable && this.hoverText) {
+        } else if (this.hoverable) {
             displayStandardHoverBubble(this.hoverText, this.hoverLines)
         }
     };
@@ -1168,6 +1166,7 @@ function StandardButton(x, y, s, t, size, id, col) {
     if (this.id === "GiveUp") {
         this.hoverText = "Click here to give up and end the match.";
         this.hoverLines = calculateLines(this.hoverText);
+        this.warned = false;
     } else if (this.id === "back") {
         this.hoverText = "Click here to return to your rewards page.";
         this.hoverLines = calculateLines(this.hoverText);
@@ -1204,7 +1203,6 @@ function StandardButton(x, y, s, t, size, id, col) {
     this.clickedColour.setBlue(blue(this.colour) - clickchange);
     this.textColour = dark;
     this.height = size + 10;
-    this.warned = false;
     this.clickable = true;
     this.hoverable = true;
     this.clickLinger = 10;
@@ -1271,8 +1269,7 @@ function StandardButton(x, y, s, t, size, id, col) {
             console.log("RELOCATED!~", "/afterbattle");
             window.location = '/afterbattle';
             return
-        }
-        if (!this.warned && this.id === "GiveUp") {
+        } if (!this.warned && this.id === "GiveUp") {
             this.warned = true;
             let info = getElement("info");
             info.setColour(dark);

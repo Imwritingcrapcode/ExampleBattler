@@ -14,7 +14,7 @@ func main() {
 	http.HandleFunc("/images/", ImageHandler2)
 	http.HandleFunc("/scripts/", ScriptsHandler2)
 	http.HandleFunc("/html/", ScriptsHandler3)
-	err := http.ListenAndServe(":1118", nil)
+	err := http.ListenAndServe(":1117", nil)
 	if err != nil {
 		panic(err)
 	}

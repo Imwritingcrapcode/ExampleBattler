@@ -110,6 +110,7 @@ func Turn2Channels(girl1, girl2 CharInt, turnnum int, p1, p2 *ClientChannels) bo
 				}
 			case msg := <-playerGivenUp:
 				if msg {
+					p1.State = GaveUp
 					return msg
 				}
 				//skipped a turn due to timeout
@@ -221,6 +222,7 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 					}
 				case msg := <-p1.HasGivenUp:
 					if msg {
+						p1.State = GaveUp
 						return msg
 					}
 					//skipped a turn due to timeout
@@ -264,6 +266,7 @@ func TurnChannels(girl1, girl2 CharInt, turnnum int, p1 *ClientChannels, botInpu
 				select {
 				case msg := <-p1.HasGivenUp:
 					if msg {
+						p1.State = GaveUp
 						return msg
 					}
 					//BOT skipped a turn due to timeout

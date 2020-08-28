@@ -36,7 +36,7 @@ function countdown(value, where, yesno) {
     if (timeleft < 0) {
         if (yesno) {
             console.log("RELOCATED!~", where);
-            //window.location = where;
+            window.location = where;
             return;
         }
         isTicking = false;
@@ -118,12 +118,23 @@ function displayStandardHoverBubble(hoverText, lines) {
     fill(hoverc);
     let changerForFlipping;
     let w = textWidth(hoverText);
-    if (mouseX >= 965 && w < 290) {
+    let amnt = 965;
+    if (touch) amnt-= 40;
+    if (mouseX >= amnt && w < 290) {
         changerForFlipping = -w - 20;
-    } else if (mouseX >= 965) {
+        if (touch) {
+            changerForFlipping -= 40;
+        }
+    } else if (mouseX >= amnt) {
         changerForFlipping = -310;
+        if (touch) {
+            changerForFlipping -= 40;
+        }
     } else {
         changerForFlipping = 0;
+        if (touch) {
+            changerForFlipping += 40;
+        }
     }
     let changerForFlippingY;
     let h = lines * hoverSize + (lines - 1) * 5;
@@ -141,6 +152,7 @@ function displayStandardHoverBubble(hoverText, lines) {
     stroke(dark);
     fill(dark);
     textLeading(20);
+
     text(hoverText, mouseX + 10 + changerForFlipping, mouseY + changerForFlippingY + 5, 290);
 }
 

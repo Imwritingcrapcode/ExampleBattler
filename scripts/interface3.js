@@ -3,10 +3,10 @@ var FS;
 
 function setup() {
     //textFont('Calibri');
-    //TESTING = true;
-    touch = is_touch_device4();
-    //touch = true;
-    TESTING = false;
+    TESTING = true;
+    //TESTING = false;
+    //touch = is_touch_device4();
+    touch = true;
     PICS = true;
     //PICS = false;
     if (TESTING) {
@@ -18,8 +18,6 @@ function setup() {
         S2 = JSON.parse(STATE2);
         STATE3 = "{\"Instruction\":\"\",\"TurnNum\":19,\"TurnPlayer\":2,\"PlayerNum\":9,\"OppNum\":1,\"PlayerName\":\"Euphoria\",\"OppName\":\"Storyteller\",\"HP\":221,\"MaxHP\":221,\"OppHP\":213,\"OppMaxHP\":219,\"Effects\":{},\"OppEffects\":{\"12\":\"\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-100,\"OppW\":0},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
         S3 = JSON.parse(STATE3);
-        STATE4 = "{\"Instruction\":\"\",\"TurnNum\":20,\"TurnPlayer\":1,\"PlayerNum\":8,\"OppNum\":1,\"PlayerName\":\"Z89\",\"OppName\":\"Storyteller\",\"HP\":241,\"MaxHP\":241,\"OppHP\":239,\"OppMaxHP\":239,\"Effects\":{},\"OppEffects\":{\"12\":\"\",\"18\":\"2\"},\"SkillState\":{\"E\":0,\"Q\":0,\"R\":0,\"W\":0},\"OppSkillState\":{\"OppE\":0,\"OppQ\":0,\"OppR\":-100,\"OppW\":-100},\"SkillNames\":{\"E\":\"Your Dream\",\"Q\":\"Your Number\",\"R\":\"My Story\",\"W\":\"Your Colour\"},\"OppSkillNames\":{\"OppE\":\"Pink Sphere\",\"OppQ\":\"Ampleness\",\"OppR\":\"Euphoria\",\"OppW\":\"Exuberance\"},\"Defenses\":{\"1\":-1,\"2\":1,\"3\":0,\"4\":-2,\"5\":-1,\"6\":1,\"7\":1,\"8\":0,\"9\":-1,\"10\":-1,\"11\":-2,\"12\":1},\"OppDefenses\":{\"1\":0,\"2\":2,\"3\":0,\"4\":0,\"5\":-3,\"6\":0,\"7\":0,\"8\":3,\"9\":0,\"10\":-4,\"11\":0,\"12\":0},\"SkillColours\":{\"E\":\"rgb(104,022,253)\",\"Q\":\"rgb(255,69,002)\",\"R\":\"rgb(29,104,255)\",\"W\":\"rgb(237,235,243)\"},\"OppSkillColours\":{\"OppE\":\"rgb(255,135,173)\",\"OppQ\":\"rgb(255,173,135)\",\"OppR\":\"rgb(255,135,175)\",\"OppW\":\"rgb(255,173,135)\"},\"EndState\":0}";
-        S4 = JSON.parse(STATE4);
         //S2 = JSON.parse(STATE);
     }
     //Battler vars
@@ -63,10 +61,10 @@ function setup() {
 
     let can = createCanvas(1280, 550);
     can.parent('interface');
-    can.touchEnded(touchEnded);
-    can.touchMoved(touchMoved);
-    can.touchStarted(touchStarted);
-    can.mouseClicked(mouseClicked);
+    /*can.touchEnded(touchEnded2);
+    can.touchMoved(touchMoved2);
+    can.touchStarted(touchStarted2);*/
+    can.mouseClicked(clicked);
     leftPanel = new Panel(0, 0, 550, 550, 5);
     rightPanel = new Panel(730, 0, 550, 550, 5);
     topPanel = new Panel(550, 0, 180, 230, 5);
@@ -137,7 +135,7 @@ function setup() {
     } else {
         //parseState(S2);
         //parseState(S3);
-        parseState(S4);
+        parseState(S);
         disableButtons();
         parseInstruction("Animation:Q", false);
         parseInstruction("Animation:E", true);
@@ -169,7 +167,7 @@ function FullScreen(onOff) {
     }
 }
 
-function mouseClicked() {
+function clicked() {
     if (touch) return;
     if (document.activeElement.classList.contains("navigation")) {
         return
@@ -188,6 +186,7 @@ function mouseClicked() {
     if (rightPanel.in(x, y)) {
         for (obj of rightPanel.objects) {
             if (obj.clickable && obj.in(x, y)) {
+                console.log('CLICKED !!!', obj.id);
                 obj.clicked();
             }
         }
@@ -210,6 +209,7 @@ function mouseClicked() {
 }
 
 function touchStarted() {
+    console.log('touch', touch);
     if (!touch) return;
     if (!FS) {
         FS = FullScreen(touch);

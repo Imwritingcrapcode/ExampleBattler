@@ -14,19 +14,12 @@ import (
 )
 
 /*
-now:
-shop with drops
-then:
-weighted starting characters
-after:
 flavor: other important todos
-
-//IMPORTANT
-//TODO soft animation for loading bar when convert(?) on visibilityhandle
-//todo glittering loading bar
-//TODO shop with drops.
-//todo weighted starting characters
-
+• Mini skill buttons on girllist + stroke for the edge + other colours
+• effect icons for Z89 & Euphoria, effect for Z89
+• Please choose the girls first appears in red
+• add friend sends a notification to the potential friend
+• remove add friend button if already friends
 //FLAVOR
 //TODO cuter design of everything
 //todo linux support, get a server
@@ -37,7 +30,6 @@ flavor: other important todos
 //TODO global chat
 //TODO dms chat
 //TODO emojis (almost done but pasting in chat)
-//TODO test prompt reconnect >_<
 //TODO speech bubbles
 //TODO skins
 //TODO site themes
@@ -45,13 +37,12 @@ flavor: other important todos
 //TODO news page
 //TODO choose your pfp
 //TODO battle your friends
-
 //TODO ability draft, 2v2, ...
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {
 	log.Println("[INGAME] gg distribute rewards", p1.UserID)
-	if !(p1.State == GaveUp) {
+	if p1.State != GaveUp {
 		log.Println("[ingame] state of ", p1.UserID, ActivitiesToString[p1.State])
 		//1. Determine how much that girl should give
 		//2. Add that much
@@ -163,10 +154,10 @@ func Game(p1, p2 *ClientChannels) {
 	}
 	SetLastBattleResult(p1.UserID, state1.EndState)
 	SetLastBattleResult(p2.UserID, state2.EndState)
-	p1.Send(state1)
-	p2.Send(state2)
 	DistributeRewards(p1, p1Won)
 	DistributeRewards(p2, p2Won)
+	p1.Send(state1)
+	p2.Send(state2)
 	SetState(p1.UserID, JustFinishedTheGame)
 	SetState(p2.UserID, JustFinishedTheGame)
 	IncreaseBattles(p1.UserID, p1Won)

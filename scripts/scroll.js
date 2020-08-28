@@ -46,7 +46,7 @@ function scrollToPointUp(part, center, d) {
     let difference = currentPos - base;
     let startTime = performance.now();
 
-    console.log("duration", duration, "base", base, "difference", difference, "target", point, "current", currentPos);
+    //console.log("duration", duration, "base", base, "difference", difference, "target", point, "current", currentPos);
 
     function step() {
         let normalizedTime = (performance.now() - startTime) / duration;

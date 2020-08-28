@@ -121,7 +121,7 @@ MATCHES = new Map([
 
 CONVERSIONRATE = {
     b:0.4,
-    g:0.2,
+    p:0.2,
     w:0.5,
     y:0.25
 };

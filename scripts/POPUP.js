@@ -112,6 +112,8 @@ function getNotifications() {
                 for (let notification of response) {
                     addPopup(notification[0], notification[1]);
                 }
+            } else if (xhr.status === 400) {
+                window.location = xhr.responseText;
             } else {
                 console.log(xhr.status, xhr.responseText);
             }

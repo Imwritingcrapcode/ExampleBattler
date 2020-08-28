@@ -1,5 +1,5 @@
 function setup() {
-    updatespersecond = 60;
+    updatespersecond = 20;
     timeleft = -1;
     function handleVisibilityChangeConv() {
         if (!document.hidden && CONVINFO.IsConvertingRN) {
@@ -32,7 +32,6 @@ function setup() {
             p = 1
         }
         this.setPercentage(p * 100);
-        this.setNewPercentage(p * 100);
         document.getElementById("number").innerText = Math.ceil(p * maxValue) + "";
     };
     convobjects.push(bar);
@@ -54,6 +53,7 @@ function setup() {
         if (inner > 0 && get >= 1.0) {
             this.hide();
             bar.makeNotDraggable();
+            bar.setPercentage(0.0);
             document.getElementById("w").disabled = true;
             document.getElementById("b").disabled = true;
             document.getElementById("y").disabled = true;
@@ -181,9 +181,10 @@ function convert(requestType, amount, dustType) {
     };
 }
 
-function setDustType(type, amnt) {
-    bar.setPercentage(0.0);
-    bar.setNewPercentage(0.0);
+function setDustType(type, amnt, keepTheBar) {
+    if (!keepTheBar) {
+        bar.setPercentage(0.0);
+    }
     maxValue = amnt;
     switch (type) {
         case "w":
@@ -235,7 +236,7 @@ function setDustType(type, amnt) {
 
 }
 
-function setMoney(conv, m, isConverting) {
+function setMoney(conv, m, isConverting, needToSetDefault) {
     let needToCheck = true;
     let firstDust = "w";
     let firstAmnt = m.get("w");
@@ -269,7 +270,9 @@ function setMoney(conv, m, isConverting) {
         }
         document.getElementById("rarityselect").innerHTML = allInnerHtml;
     }
-    setDustType(firstDust, firstAmnt);
+    if (needToSetDefault) {
+        setDustType(firstDust, firstAmnt);
+    }
 }
 
 function parse(r, m) {
@@ -282,7 +285,7 @@ function parse(r, m) {
             c.setText("Convert!");
             getElement("c").show();
         }
-        setMoney(r.ConversionRate, m, r.IsConvertingRN);
+        setMoney(r.ConversionRate, m, r.IsConvertingRN, true);
         bar.makeDraggable();
     } else if (r.IsConvertingRN && r.Left > 0) { //CONVERTING
         console.log("currently converting...");
@@ -290,14 +293,14 @@ function parse(r, m) {
         if (c.visible) {
             c.hide();
         }
-        setMoney(r.ConversionRate, m, r.IsConvertingRN);
+        setMoney(r.ConversionRate, m, r.IsConvertingRN, false);
         bar.makeNotDraggable();
         let left = int(r.Left);
         bar.total = int(r.CurrentProgress) + left;
         bar.left = left;
         let get = r.Amount;
         let dustType = r.DustType;
-        setDustType(dustType);
+        setDustType(dustType, NaN, true);
         textSize(50);
         let bw = textWidth(get);
         let emntEl = getElement("willGet");
@@ -306,8 +309,11 @@ function parse(r, m) {
         if (!emntEl.visible) {
             emntEl.show();
         }
-        let im = new CanvasImage(emntEl.x - 65, emntEl.y - 50, "/images/locked/" + DUSTS.get(dustType) + "_dust.png", "dustpic", DUSTS.get(dustType) + "_dust.png", 50, 50);
-        convobjects.push(im);
+        if (!getElement('dustpic')) {
+            let im = new CanvasImage(emntEl.x - 65, emntEl.y - 50, "/images/locked/" + DUSTS.get(dustType) + "_dust.png", "dustpic", DUSTS.get(dustType) + "_dust.png", 50, 50);
+            convobjects.push(im);
+        }
+        bar.setNewPercentage((bar.total - left) / bar.total * 100);
         timeleft = left;
     } else if (r.IsConvertingRN && r.Left === 0) {//RDY TO CLAIM
         timeleft = -1;
@@ -324,15 +330,14 @@ function parse(r, m) {
         let conv = getElement("c");
         if (conv.visible) {
             conv.hide();
-
         }
-        removeElement("dustpic");
+        removeElement('dustpic');
         let c = getElement("cl");
         if (!c.visible) {
             c.show();
         }
-        setMoney(r.ConversionRate, m, r.IsConvertingRN);
-        setDustType(dustType, m.get(dustType));
+        setMoney(r.ConversionRate, m, r.IsConvertingRN, false);
+        setDustType(dustType, m.get(dustType), true);
         bar.setPercentage(100);
     } else { //ERROR
         console.log("uhhhhh what?")

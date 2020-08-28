@@ -1,25 +1,39 @@
 package main
 
 import (
-	"database/sql"
-	"log"
+	. "../Site"
+	"fmt"
+	"math"
 	"strconv"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	DATABASE, err := sql.Open("sqlite3", "Server\\Battler.db")
-	if err != nil {
-		panic(err)
+	AD := 0
+	TOTAL := 1000000
+	SP := 0
+	LF := 0
+	for i := 0; i < TOTAL; i++ {
+		//currTime := time.Now().UTC().UnixNano()
+		free_girl1, free_girl2 := GenerateStartingPack(int64(i))
+		//fmt.Println(i, free_girl1, free_girl2)
+		if free_girl1 == 8 || free_girl1 == 9 || free_girl1 == 33 {
+			AD += 1
+		} else if free_girl1 == 10 || free_girl1 == 51 {
+			SP += 1
+		} else {
+			LF += 1
+		}
+		if free_girl2 == 8 || free_girl2 == 9 || free_girl2 == 33 {
+			AD += 1
+		} else if free_girl2 == 10 || free_girl2 == 51 {
+			SP += 1
+		} else {
+			LF += 1
+		}
 	}
-	st, err := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE userID = " + strconv.FormatInt(4, 10) +
-		" AND redirect = '" + "friends" + "'")
-	if err != nil {
-		log.Println("[See notifications]", err.Error())
-	} else {
-		res, _ := st.Exec()
-		b, _ := res.LastInsertId()
-		s, _ := res.RowsAffected()
-		log.Println(s, b)
-	}
+	TOTAL *= 2
+	fmt.Println(AD, SP, LF, TOTAL)
+	fmt.Println("AD:", strconv.FormatInt(int64(math.Round(float64(float64(AD)/float64(TOTAL)*100))), 10)+"%")
+	fmt.Println("SP:", strconv.FormatInt(int64(math.Round(float64(float64(SP)/float64(TOTAL)*100))), 10)+"%")
+	fmt.Println("LF:", strconv.FormatInt(int64(math.Round(float64(float64(LF)/float64(TOTAL)*100))), 10)+"%")
 }

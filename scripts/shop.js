@@ -1,6 +1,32 @@
 function setup() {
-    shopobjects = [];
     STATE = "NO_WINDOW";
+    document.addEventListener("keydown", e => {
+        if (STATE === 'NO_WINDOW') {
+            if ((e.code === 'KeyQ' || e.code === 'KeyA') && getElement("ST").clickable) {
+                e.preventDefault();
+                getElement("ST").clicked()
+            } else if ((e.code === 'KeyW' || e.code === 'KeyZ') && getElement("AD").clickable) {
+                e.preventDefault();
+                getElement("AD").clicked()
+            } else if (e.code === 'KeyE' && getElement("SP").clickable) {
+                e.preventDefault();
+                getElement("SP").clicked()
+            } else if (e.code === 'KeyR' && getElement("RP").clickable) {
+                e.preventDefault();
+                getElement("RP").clicked()
+            } else if (e.code === 'KeyT' && getElement("LF").clickable) {
+                e.preventDefault();
+                getElement("LF").clicked()
+            }
+        } else {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                getElement("close").clicked();
+                close();
+            }
+        }
+    });
+    shopobjects = [];
     current = undefined;
     touch = is_touch_device4();
     let can = createCanvas(1024, 490);
@@ -77,9 +103,10 @@ function open() {
         width: 781,
         height: 490,
         display: function () {
-            noStroke();
-            let c = color(hoverc.toString());
-            c.setAlpha(255 * 0.75);
+            strokeWeight(1);
+            stroke(dark);
+            let c = color(240);
+            c.setAlpha(255 * 0.95);
             fill(c);
             rect(this.x, this.y, this.width, this.height, 5);
         },
@@ -142,7 +169,7 @@ function open() {
     sk5.setColour(light.toString());*/
 
     let t9 = new TextInfo(left_pos, 276, dark, "Description", 21, "description", "C", 560);
-    let c = new StandardButton(475, 442, 5, "Close", 28, 'close');
+    let c = new StandardButton(475, 442, 5, "Okay", 28, 'close');
     shopobjects.push(white_window);
     shopobjects.push(t1);
     shopobjects.push(t2);
@@ -157,6 +184,7 @@ function open() {
     shopobjects.push(sk2);
     shopobjects.push(sk3);
     shopobjects.push(sk4);
+    STATE = "WINDOW";
     //shopobjects.push(sk5);
 }
 
@@ -198,7 +226,9 @@ function draw() {
             if (obj.clickTimer === 0) {
                 obj.unclick();
             }
-        } else if (obj.hoverable && obj.in() && ((STATE === 'NO_WINDOW') || (obj.id === 'close')|| (obj.id === 'SkillD')|| (obj.id === 'SkillR') || (obj.id === 'SkillE')|| (obj.id === 'SkillW') || (obj.id === 'SkillQ') || (!white_window.in()))) { //found an "in"
+        } else if (obj.hoverable && obj.in() && ((STATE === 'NO_WINDOW') || (obj.id === 'close') ||
+            (obj.id === 'SkillD')|| (obj.id === 'SkillR') || (obj.id === 'SkillE')|| (obj.id === 'SkillW') ||
+            (obj.id === 'SkillQ') || (STATE === 'WINDOW' && (!white_window.in())))) { //found an "in"
             if (!current) { //outside to something
                 current = obj;
                 obj.hovered();
@@ -276,7 +306,6 @@ function init() {
 
 function purchase(ID) {
     if (STATE !== "WINDOW") {
-        STATE = "WINDOW";
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '/shopitems', true);
         xhr.send(JSON.stringify(ID));
@@ -376,21 +405,4 @@ function mouseClicked() {
             close();
         }
     }
-}
-
-function keyPressed() {
-    if (STATE === 'NO_WINDOW') {
-        if ((key === 'q' || key === 'a') && getElement("ST").clickable) {
-            getElement("ST").clicked()
-        } else if ((key === 'w' || key === 'z') && getElement("AD").clickable) {
-            getElement("AD").clicked()
-        } else if (key === 'e' && getElement("SP").clickable) {
-            getElement("SP").clicked()
-        } else if (key === 'r' && getElement("RP").clickable) {
-            getElement("RP").clicked()
-        } else if (key === 't' && getElement("LF").clickable) {
-            getElement("LF").clicked()
-        }
-    }
-
 }

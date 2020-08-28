@@ -1,4 +1,6 @@
 function LoadingBar(x, y, w, h, radius, id, c, c2) {
+    this.transitionFrames = 30;
+    this.transitionFramesLeft = 0;
     this.id = id;
     this.clickable = false;
     this.hoverable = false;
@@ -15,21 +17,32 @@ function LoadingBar(x, y, w, h, radius, id, c, c2) {
     this.radius = radius;
 
     this.display = function () {
+        if (this.transitionFramesLeft > 0) {
+            this.percentage += (this.newPercentage - this.percentage) / this.transitionFramesLeft;
+            this.transitionFramesLeft--;
+        }
         this.w = (this.width * this.percentage / 100);
         this.stopColour = lerpColor(this.rectColour, this.rightColour, this.percentage / 100);
         this.setGradient(this.rectColour, this.stopColour);
         stroke(this.rectColour);
-        strokeWeight(1);
+        strokeWeight(2);
         noFill();
         rect(this.x, this.y, this.width, this.h, this.radius);
     };
 
     this.setPercentage = function (perc) {
-        this.percentage = perc;
+        if (this.transitionFramesLeft > 0) {
+            this.newPercentage = perc;
+        } else {
+            this.percentage = perc;
+        }
     };
 
-    this.setNewPercentage = function (new_perc) {
+    this.setNewPercentage = function (new_perc, fastUpdate) {
         this.newPercentage = new_perc;
+        if (fastUpdate) {
+            this.transitionFramesLeft = this.transitionFrames;
+        }
     };
 
     this.setGradient = function (c1, c2) {
@@ -86,5 +99,5 @@ function LoadingBar(x, y, w, h, radius, id, c, c2) {
     this.makeNotDraggable = function() {
         this.clickable = false;
         this.draggable = false;
-    }
+    };
 }

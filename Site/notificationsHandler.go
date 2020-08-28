@@ -12,7 +12,8 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
 	if !AlrdyLoggedIn {
 		log.Println("[Notifications] Redirected to login")
-		Redirect(w, r, "/login")
+		w.WriteHeader(400)
+		w.Write([]byte("/login"))
 		return
 	}
 	user := FindBaseID(session.UserID)
