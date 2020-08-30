@@ -102,12 +102,12 @@ function refreshCurGirl(number) {
     }
     tags = tags.slice(0, tags.length - 2);
     getElementRight("tags").setText("Tags: " + tags);
-    let skills = "";
-    for (let s of curGirl.Skills) {
-        skills += s + ", "
+    const Skills = ['Q', 'W', 'E', 'R'];
+    for (let i = 0; i < curGirl.Skills.length; i++) {
+        let el = getElementRight('Skill'+Skills[i]);
+        el.setText(curGirl.Skills[i]);
+        el.setColour(curGirl.SkillColourCodes[i]);
     }
-    skills = skills.slice(0, skills.length - 2);
-    getElementRight("skills").setText("Skills: " + skills);
     let colours = "";
     for (let s of curGirl.SkillColours) {
         colours += s + ", "
@@ -117,9 +117,9 @@ function refreshCurGirl(number) {
     let description = curGirl.Description;
     let lines = interfaceCalculateLines(rightP, description, 738, 28);
     if (lines > 1) {
-        can3.resize(748, 413 + (lines - 1) * 33);
+        can3.resize(748, 448 + (lines - 1) * 33);
     } else {
-        can3.resize(748, 413);
+        can3.resize(748, 448);
     }
     getElementRight("description").setText(description);
     //document.getElementById("description").textContent = curGirl.Description;*
@@ -487,7 +487,7 @@ function battle() {
 
     } else {
         if (bottomReady) {
-            getElementBottom("prompts").setText("Please choose the girls first!");
+            getElementBottom("prompts").setText("Please set two characters first!");
         }
     }
 }

@@ -54,7 +54,7 @@ func GirlListHandler(w http.ResponseWriter, r *http.Request) {
 
 		//3. Send it to the frontend
 		var resline string
-		standard := "Press \"Battle!\" when you are ready"
+		standard := "Set two characters, then press \"Battle\"."
 		resline = standard
 		state := GetState(session.UserID)
 		if state < Queuing || state >= JustFinishedTheGame {

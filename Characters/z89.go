@@ -92,6 +92,14 @@ func Z89W(player, opp *Girl, turn int) {
 	if turn <= opp.Skills[3].StrT {
 		if (opp.Skills[3].StrT + 2) <= 19 {
 			opp.Skills[3].StrT += 2
+			if (!opp.HasEffect(UltimateSlow)) {
+				eff := opp.CreateEff(UltimateSlow, opp, opp.Skills[3].StrT-turn, 1)
+				opp.AddEffect(eff)
+			} else {
+				eff := opp.GetEffect(UltimateSlow)
+				eff.Duration = opp.Skills[3].StrT - turn
+				eff.State += 1
+			}
 		}
 	}
 }

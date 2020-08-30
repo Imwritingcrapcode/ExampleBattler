@@ -652,6 +652,8 @@ func GetRewards(user *User) *RewardsObj {
 
 	if rewards.ToAdd > 0 {
 		rewards.LastOpponentsName = GetLastOpponentsName(user.UserID)
+		other := FindBase(rewards.LastOpponentsName).UserID
+		rewards.AreFriends = IsFriend(user.UserID, other) && IsFriend(other, user.UserID)
 		rewards.BattleResult = GetLastBattleResult(user.UserID)
 	}
 

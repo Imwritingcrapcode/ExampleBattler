@@ -514,6 +514,165 @@ function LoadingScreen(p, x, y, w, h) {
     }
 }
 
+function SkillButtonMiniP(p, x, y, t, id) {
+    this.p = p;
+    this.id = id;
+    this.x = x;
+    this.y = y;
+    this.text = t;
+    this.textSize = 50;
+    this.textColour = p.color(dark.toString());
+    this.borderColour = p.color(dark.toString());
+    this.borderWidth = 2;
+    this.width = 100;
+    this.height = 100;
+    this.maxframes = 7;
+    this.frame = 0;
+    this.destColour = this.baseColour;
+    this.previousColour = this.baseColour;
+    this.isTransitioning = false;
+    this.rawColour = "";
+    this.rawText = "";
+    this.colour = clickc;
+    this.baseColour = clickc;
+    this.hoverColour = clickc;
+    this.clickedColour = clickc;
+    this.isHovered = false;
+    this.hoverText = "";
+    this.clickable = false;
+    this.hoverable = true;
+
+    this.display = function () {
+        if (this.isTransitioning) {
+            if (this.frame <= this.maxframes) {
+                this.frame++;
+                this.colour = this.p.lerpColor(this.previousColour, this.destColour, (this.frame + 1) / this.maxframes)
+            } else {
+                this.frame = 0;
+                this.isTransitioning = false;
+            }
+        }
+        let border = this.borderColour;
+        let c = this.colour;
+        let x = this.x;
+        let y = this.y;
+        let w = this.width;
+        let h = this.height;
+        let t = this.text;
+        let height = this.textSize;
+        let len = this.text.length;
+        this.p.stroke(border);
+        c.setAlpha(255 * 0.8);
+        this.p.fill(c);
+        this.p.strokeWeight(this.borderWidth);
+        this.p.rect(this.x, this.y, this.width, this.height, 4, 4, 4, 4);
+        this.p.noStroke();
+        this.p.fill(this.textColour);
+        this.p.textAlign(this.p.CENTER);
+        this.p.textSize(this.textSize);
+        /*stroke(color(255, 0, 0));
+        line(x, y + h/2, x+w, y + h/2);*/
+        for (let i = 0; i < len; i++) {
+            this.p.text(t[i], x + w / 2, y + h / 2 + height * (i + 1 - len / 2) - 5);
+        }
+    };
+
+    this.in = function () {
+        let x = this.p.mouseX;
+        let y = this.p.mouseY;
+        return (this.x <= x && x <= (this.width + this.x) && this.y <= y && y <= (this.height + this.y));
+    };
+
+    this.hovered = function () {
+        this.isHovered = true;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.hoverColour;
+    };
+
+    this.unhovered = function () {
+        this.isHovered = false;
+        if (!this.isTransitioning) {
+            this.isTransitioning = true;
+        } else {
+            this.frame = this.maxframes - this.frame;
+        }
+        this.previousColour = this.colour;
+        this.destColour = this.baseColour;
+    };
+
+    this.setColour = function (stringColour) {
+        if (this.rawColour !== stringColour) {
+            this.rawColour = stringColour;
+            this.frame = 0;
+            this.isTransitioning = false;
+            this.baseColour = this.p.color(stringColour);
+            this.colour = this.baseColour;
+            this.hoverColour = this.p.color(stringColour);
+            this.clickedColour = this.p.color(stringColour);
+            let hoverchange = 17;
+            let clickchange = 34;
+            if (isLightP(this.p, this.baseColour)) {
+                this.textColour = this.p.color(dark.toString());
+                this.hoverColour.setRed(this.p.red(this.colour) - hoverchange);
+                this.hoverColour.setGreen(this.p.green(this.colour) - hoverchange);
+                this.hoverColour.setBlue(this.p.blue(this.colour) - hoverchange);
+                this.clickedColour.setRed(this.p.red(this.colour) - clickchange);
+                this.clickedColour.setGreen(this.p.green(this.colour) - clickchange);
+                this.clickedColour.setBlue(this.p.blue(this.colour) - clickchange);
+            } else {
+                this.hoverColour.setRed(this.p.red(this.colour) + hoverchange);
+                this.hoverColour.setGreen(this.p.green(this.colour) + hoverchange);
+                this.hoverColour.setBlue(this.p.blue(this.colour) + hoverchange);
+                this.clickedColour.setRed(this.p.red(this.colour) + clickchange);
+                this.clickedColour.setGreen(this.p.green(this.colour) + clickchange);
+                this.clickedColour.setBlue(this.p.blue(this.colour) + clickchange);
+                this.textColour = this.p.color(light.toString());
+            }
+        }
+    };
+
+    this.setText = function (t) {
+        if (this.rawText !== t) {
+            this.rawText = t;
+            this.hoverText = SKILLDESCRIPTIONS.get(t);
+            if (!!this.hoverText) {
+                this.hoverLines = interfaceCalculateLines(this.p, this.hoverText);
+            }
+            this.text = this.p.split(t, " ");
+            let w = this.width;
+            this.textSize = 50;
+            this.p.textSize(this.textSize);
+            for (let word of this.text) {
+                let width = this.p.textWidth(word);
+                while (width >= w) {
+                    this.textSize--;
+                    this.p.textSize(this.textSize);
+                    width = this.p.textWidth(word);
+                }
+            }
+        }
+    };
+
+    this.getText = function () {
+        if (this.text !== "") {
+            return this.text.join(" ");
+        } else {
+            return "";
+        }
+    };
+
+    this.displayHover = function () {
+        if (this.hoverText) {
+            displayStandardHoverBubbleP(this.p, this.hoverText, this.hoverLines);
+        }
+    };
+}
+
 function interfaceCalculateLines(p, hoverText, width, size) {
     if (!width) {
         width = 290;
@@ -540,3 +699,54 @@ function interfaceCalculateLines(p, hoverText, width, size) {
     }
     return height;
 }
+
+function displayStandardHoverBubbleP(p, hoverText, lines) {
+    let hoverSize = 15;
+    p.textAlign(p.LEFT);
+    p.textSize(hoverSize);
+    p.noStroke();
+    p.fill(hoverc);
+    let changerForFlipping;
+    let w = p.textWidth(hoverText);
+    let amnt = 965;
+    if (touch) amnt-= 40;
+    if (p.mouseX >= amnt && w < 290) {
+        changerForFlipping = -w - 20;
+        if (touch) {
+            changerForFlipping -= 40;
+        }
+    } else if (p.mouseX >= amnt) {
+        changerForFlipping = -310;
+        if (touch) {
+            changerForFlipping -= 40;
+        }
+    } else {
+        changerForFlipping = 0;
+        if (touch) {
+            changerForFlipping += 40;
+        }
+    }
+    let changerForFlippingY;
+    let h = lines * hoverSize + (lines - 1) * 5;
+    if (p.mouseY + h + 10 >= 550) {
+        changerForFlippingY = -h;
+    } else {
+        changerForFlippingY = 0;
+    }
+    if (h === hoverSize && w < 290) {
+        p.rect(p.mouseX + changerForFlipping, p.mouseY + changerForFlippingY, w + 20, h + 10, 5);
+    } else {
+        p.rect(p.mouseX + changerForFlipping, p.mouseY + changerForFlippingY, 310, h + 10, 5);
+    }
+    p.strokeWeight(0.5);
+    p.stroke(dark);
+    p.fill(dark);
+    p.textLeading(20);
+    p.text(hoverText, p.mouseX + 10 + changerForFlipping, p.mouseY + changerForFlippingY + 5, 290);
+}
+
+
+function isLightP(p, colour) {
+    return p.lightness(colour) > 50;
+}
+

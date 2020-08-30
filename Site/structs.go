@@ -136,6 +136,7 @@ var DATABASE *sql.DB
 type RewardsObj struct {
 	BattleResult      int
 	LastOpponentsName string
+	AreFriends		  bool
 	Dusts             map[string]int
 	Name              string
 	Rarity            string

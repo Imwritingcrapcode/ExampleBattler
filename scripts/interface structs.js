@@ -1483,7 +1483,7 @@ function SkillButtonMini(x, y, t, id) {
     this.textSize = 50;
     this.textColour = color(dark.toString());
     this.borderColour = color(dark.toString());
-    this.borderWidth = 0.5;
+    this.borderWidth = 2;
     this.width = 100;
     this.height = 100;
     this.maxframes = 7;
@@ -1522,6 +1522,7 @@ function SkillButtonMini(x, y, t, id) {
         let height = this.textSize;
         let len = this.text.length;
         stroke(border);
+        c.setAlpha(255 * 0.8);
         fill(c);
         strokeWeight(this.borderWidth);
         rect(this.x, this.y, this.width, this.height, 4, 4, 4, 4);

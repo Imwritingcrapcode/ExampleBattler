@@ -58,17 +58,19 @@ function ParseMatches(info) {
     }
     if (info.LastOpponentsName) {
         oppName = info.LastOpponentsName;
-        let size = 20;
-        let t = "Add friend";
-        strokeWeight(1);
-        textSize(size);
-        let w = textWidth(t);
-        objects.push(new StandardButton(x + initial_w - w - 10, y + 125 + size, 5, t, size, info.LastOpponentsName));
-        getElement(info.LastOpponentsName).clicked = function () {
-            this.colour = this.clickedColour;
-            this.clickTimer = this.clickLinger;
-            addFriend(this.id);
-        };
+        if (!info.AreFriends) {
+            let size = 20;
+            let t = "Add friend";
+            strokeWeight(1);
+            textSize(size);
+            let w = textWidth(t);
+            objects.push(new StandardButton(x + initial_w - w - 10, y + 125 + size, 5, t, size, info.LastOpponentsName));
+            getElement(info.LastOpponentsName).clicked = function () {
+                this.colour = this.clickedColour;
+                this.clickTimer = this.clickLinger;
+                addFriend(this.id);
+            };
+        }
     }
     globalinfo = info;
     matches = MATCHES.get(info.Rarity);

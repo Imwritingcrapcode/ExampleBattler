@@ -3,10 +3,10 @@ var FS;
 
 function setup() {
     //textFont('Calibri');
-    TESTING = true;
-    //TESTING = false;
-    //touch = is_touch_device4();
-    touch = true;
+    //TESTING = true;
+    TESTING = false;
+    touch = is_touch_device4();
+    //touch = true;
     PICS = true;
     //PICS = false;
     if (TESTING) {
@@ -209,7 +209,6 @@ function clicked() {
 }
 
 function touchStarted() {
-    console.log('touch', touch);
     if (!touch) return;
     if (!FS) {
         FS = FullScreen(touch);

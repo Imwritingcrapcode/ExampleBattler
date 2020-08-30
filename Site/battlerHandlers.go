@@ -15,28 +15,27 @@ import (
 
 /*
 flavor: other important todos
-• Mini skill buttons on girllist + stroke for the edge + other colours
-• effect icons for Z89 & Euphoria, effect for Z89
-• Please choose the girls first appears in red
-• add friend sends a notification to the potential friend
-• remove add friend button if already friends
+• add friend sends a notification to the potential friend TEST
+now:
+loading animation while queuing
+next:
+skins (+ pictures are loaded every time)
+after:
+battle your friends
 //FLAVOR
 //TODO cuter design of everything
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
 //TODO bot
 //TODO random damage
-//todo loading animation while queuing
 //TODO global chat
 //TODO dms chat
 //TODO emojis (almost done but pasting in chat)
 //TODO speech bubbles
-//TODO skins
 //TODO site themes
 //TODO character wiki
 //TODO news page
 //TODO choose your pfp
-//TODO battle your friends
 //TODO ability draft, 2v2, ...
 */
 

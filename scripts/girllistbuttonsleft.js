@@ -13,6 +13,9 @@ leftSketch = function (p) {
         light = p.color(LIGHTC);
         right = p.color(RIGHTC);
         other = p.color(OTHERLIGHTC);
+        clickc = p.color(CLICKABLEC);
+        hoverc = p.color(HOVERC);
+        touch = is_touch_device4();
         leftobjects = [];
         current = undefined;
         console.log("left is getting");

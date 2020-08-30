@@ -17,7 +17,7 @@ bottomSketch = function (p) {
         b4.onClick = random;
         let b5 = new InterfaceButton(p, 844, 42.5, "Battle", textS + 25, 'battle', "B", 175, 70);
         b5.onClick = battle;
-        let t1 = new InterfaceText(p, 525, 42.5, right, "Press \"Battle!\" when you are ready", textS, 'prompts', "B", 314);
+        let t1 = new InterfaceText(p, 525, 42.5, right, "Select two characters, then press \"Battle\".", textS, 'prompts', "B", 314);
         bottomobjects.push(b1);
         bottomobjects.push(b2);
         bottomobjects.push(b3);

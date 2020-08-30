@@ -90,6 +90,17 @@ func (self *Girl) CreateEff(ID EffectID, opp *Girl, duration int, state int) *Ef
 			dummy,
 			false,
 		}
+	case UltimateSlow:
+		s = Effect{
+			ID,
+			duration,
+			state,
+			Debuff,
+			self,
+			dummy,
+			dummy,
+			false,
+		}
 		//Buff
 	case AtkReduc:
 		s = Effect{

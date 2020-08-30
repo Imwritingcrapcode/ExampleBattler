@@ -21,7 +21,7 @@ type EffectType int
 type EffectID int
 
 //All of the constants for the game.
-const TOTALEFFECTS = 19
+const TOTALEFFECTS = 20
 const TOTALCOLOURS = 12
 const MAXTAILSNUMBER = 3
 
@@ -62,6 +62,7 @@ const (
 	ControlledByStT
 	//Debuff
 	TurnReduc
+	UltimateSlow
 	//Buff
 	AtkReduc
 	TurnThreshold
@@ -122,6 +123,7 @@ var EffectNames = map[EffectID]string{
 	ControlledByStT: "Controlled by Storyteller", //none
 	//Debuff
 	TurnReduc: "Damage reduced this turn by:", //state
+	UltimateSlow: "Ultimate unlock delayed by:", //state
 	//Buff
 	TurnThreshold: "Damage min this turn:",                     //state
 	AtkReduc:      "Next opp's attack's damage is reduced by:", //state
