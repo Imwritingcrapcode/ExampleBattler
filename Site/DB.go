@@ -57,10 +57,12 @@ func AddUser(reg_data *RegData) (bool, string) {
 	}
 	statement.Exec(ID, currTime)
 
+	user := FindBase(reg_data.Username)
 	//2 free girls
 	free_girl1, free_girl2 := GenerateStartingPack(currTime)
-	UnlockGirl(FindBase(reg_data.Username), free_girl1)
-	UnlockGirl(FindBase(reg_data.Username), free_girl2)
+	UnlockGirl(user, free_girl1)
+	UnlockGirl(user, free_girl2)
+
 	return true, "OK"
 }
 
@@ -78,13 +80,13 @@ func GenerateStartingPack(currTime int64) (int, int) {
 		if (n < ST_CHANCE) && len(ReleasedCharactersPacks["ST"]) > 0 {
 			Rarity1 = "ST"
 			free_girl1 = ReleasedCharactersPacks["ST"][rand.Intn(len(ReleasedCharactersPacks["ST"]))]
-		} else if (n < ST_CHANCE + AD_CHANCE) && len(ReleasedCharactersPacks["AD"]) > 0 {
+		} else if (n < ST_CHANCE+AD_CHANCE) && len(ReleasedCharactersPacks["AD"]) > 0 {
 			Rarity1 = "AD"
 			free_girl1 = ReleasedCharactersPacks["AD"][rand.Intn(len(ReleasedCharactersPacks["AD"]))]
-		} else if (n < ST_CHANCE + AD_CHANCE + SP_CHANCE) && len(ReleasedCharactersPacks["SP"]) > 0 {
+		} else if (n < ST_CHANCE+AD_CHANCE+SP_CHANCE) && len(ReleasedCharactersPacks["SP"]) > 0 {
 			Rarity1 = "SP"
 			free_girl1 = ReleasedCharactersPacks["SP"][rand.Intn(len(ReleasedCharactersPacks["SP"]))]
-		} else if (n < ST_CHANCE + AD_CHANCE + SP_CHANCE + RP_CHANCE) && len(ReleasedCharactersPacks["RP"]) > 0 {
+		} else if (n < ST_CHANCE+AD_CHANCE+SP_CHANCE+RP_CHANCE) && len(ReleasedCharactersPacks["RP"]) > 0 {
 			Rarity1 = "RP"
 			free_girl1 = ReleasedCharactersPacks["RP"][rand.Intn(len(ReleasedCharactersPacks["RP"]))]
 		} else if len(ReleasedCharactersPacks["LF"]) > 0 {
@@ -94,13 +96,13 @@ func GenerateStartingPack(currTime int64) (int, int) {
 	}
 	for free_girl2 == 0 || free_girl2 == free_girl1 {
 		n = rand.Intn(1000)
-		if (n >= 1000 - LF_CHANCE) && len(ReleasedCharactersPacks["LF"]) > 0 && Rarity1 == "ST" && len(ReleasedCharactersPacks["LF"]) > 0 {
+		if (n >= 1000-LF_CHANCE) && len(ReleasedCharactersPacks["LF"]) > 0 && Rarity1 == "ST" && len(ReleasedCharactersPacks["LF"]) > 0 {
 			free_girl2 = ReleasedCharactersPacks["LF"][rand.Intn(len(ReleasedCharactersPacks["LF"]))]
-		} else if (n >= 1000 - LF_CHANCE - RP_CHANCE) && (Rarity1 == "ST" || Rarity1 == "AD") && len(ReleasedCharactersPacks["RP"]) > 0 {
+		} else if (n >= 1000-LF_CHANCE-RP_CHANCE) && (Rarity1 == "ST" || Rarity1 == "AD") && len(ReleasedCharactersPacks["RP"]) > 0 {
 			free_girl2 = ReleasedCharactersPacks["RP"][rand.Intn(len(ReleasedCharactersPacks["RP"]))]
-		} else if  (n >= 1000 - LF_CHANCE - RP_CHANCE - SP_CHANCE) && (Rarity1 == "ST" || Rarity1 == "AD" || Rarity1 == "SP") && len(ReleasedCharactersPacks["SP"]) > 0{
+		} else if (n >= 1000-LF_CHANCE-RP_CHANCE-SP_CHANCE) && (Rarity1 == "ST" || Rarity1 == "AD" || Rarity1 == "SP") && len(ReleasedCharactersPacks["SP"]) > 0 {
 			free_girl2 = ReleasedCharactersPacks["SP"][rand.Intn(len(ReleasedCharactersPacks["SP"]))]
-		} else if  (n >= 1000 - LF_CHANCE - RP_CHANCE - SP_CHANCE - AD_CHANCE) && (Rarity1 != "LF") && len(ReleasedCharactersPacks["AD"]) > 0 {
+		} else if (n >= 1000-LF_CHANCE-RP_CHANCE-SP_CHANCE-AD_CHANCE) && (Rarity1 != "LF") && len(ReleasedCharactersPacks["AD"]) > 0 {
 			free_girl2 = ReleasedCharactersPacks["AD"][rand.Intn(len(ReleasedCharactersPacks["AD"]))]
 		} else if len(ReleasedCharactersPacks["ST"]) > 0 {
 			free_girl2 = ReleasedCharactersPacks["ST"][rand.Intn(len(ReleasedCharactersPacks["ST"]))]
@@ -387,13 +389,13 @@ func UnlockGirl(user *User, girl int) {
 		log.Println("[UnlockGirl]", user.Username, "already has", girl)
 		return
 	}
-	time := time.Now().UTC().UnixNano()
+	time2 := time.Now().UTC().UnixNano()
 	statement, err := DATABASE.Prepare("INSERT INTO girls (userID, girlNumber, timeUnlocked) VALUES (?, ?, ?)")
 	if err != nil {
 		log.Println("[UnlockGirl]", err)
 		return
 	}
-	_, err = statement.Exec(user.UserID, girl, time)
+	_, err = statement.Exec(user.UserID, girl, time2)
 	if err != nil {
 		log.Println(err)
 		log.Println("[UnlockGirl]", err)
@@ -426,7 +428,7 @@ func GetSkillLevel(userID int64, girl int) int {
 		if won == 0 {
 			winrate = 0
 		} else {
-			winrate = math.Floor(float64(won)/float64(played)*100)
+			winrate = math.Floor(float64(won) / float64(played) * 100)
 		}
 		switch {
 		case winrate >= 50:
@@ -633,7 +635,9 @@ func GetRewards(user *User) *RewardsObj {
 
 	var rtype string
 	var amnt int
+	var found int
 	for rows.Next() {
+		found += 1
 		rows.Scan(&rtype, &amnt)
 		_, isDust := DustMap[rtype]
 		if isDust {
@@ -650,7 +654,7 @@ func GetRewards(user *User) *RewardsObj {
 	rewards.Level = stuff[0]
 	rewards.CurrentMatches = stuff[1]
 
-	if rewards.ToAdd > 0 {
+	if found > 0 {
 		rewards.LastOpponentsName = GetLastOpponentsName(user.UserID)
 		other := FindBase(rewards.LastOpponentsName).UserID
 		rewards.AreFriends = IsFriend(user.UserID, other) && IsFriend(other, user.UserID)
@@ -1031,7 +1035,15 @@ func NotifiedConversion(UserID int64) {
 
 //notifications
 
-func AddNotification(UserID int64, text, redirect string) {
+func AddNotification(UserID int64, text, redirect string, unique bool) {
+	if unique {
+		notif := GetNotifications(UserID, false)
+		for _, n := range notif {
+			if n[0] == text && n[1] == redirect {
+				return
+			}
+		}
+	}
 	statement, err := DATABASE.Prepare("INSERT INTO notifications (userID, text, redirect, seen) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		log.Println("[AddNotification]", err)
@@ -1046,7 +1058,7 @@ func AddNotification(UserID int64, text, redirect string) {
 	}
 }
 
-func GetNotifications(UserID int64) [][]string {
+func GetNotifications(UserID int64, see bool) [][]string {
 	var notifications [][]string
 	var ids []int
 	notifications = make([][]string, 0)
@@ -1065,9 +1077,11 @@ func GetNotifications(UserID int64) [][]string {
 	}
 	rows.Close()
 
-	for _, v := range ids {
-		statement, _ := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE NotifID = " + strconv.Itoa(v))
-		statement.Exec()
+	if see {
+		for _, v := range ids {
+			statement, _ := DATABASE.Prepare("UPDATE notifications SET seen = 1 WHERE NotifID = " + strconv.Itoa(v))
+			statement.Exec()
+		}
 	}
 	return notifications
 }
@@ -1133,7 +1147,7 @@ func NotifyFriends(userID int64) {
 	for _, v := range friends.Friends {
 		friend := FindBase(v[0])
 		if friend.CurrentActivity > 0 { //is online
-			AddNotification(friend.UserID, "Your friend <b>"+us.Username+"</b> has just come online!", "friends")
+			AddNotification(friend.UserID, "Your friend <b>"+us.Username+"</b> has just come online!", "friends", true)
 		}
 	}
 }

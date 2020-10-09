@@ -69,6 +69,7 @@ function ParseMatches(info) {
                 this.colour = this.clickedColour;
                 this.clickTimer = this.clickLinger;
                 addFriend(this.id);
+                removeElement(this.id);
             };
         }
     }
@@ -268,6 +269,16 @@ function getElement(id) {
     for (obj of objects) {
         if (obj.id === id) {
             return obj
+        }
+    }
+}
+
+function removeElement(id) {
+    for (let i = 0; i < objects.length; i++) {
+        let obj = objects[i];
+        if (obj.id === id) {
+            objects.splice(i, 1);
+            return;
         }
     }
 }

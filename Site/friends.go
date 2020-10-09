@@ -57,7 +57,7 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 					if IsFriend(other.UserID, session.UserID) {
 						RemoveFriend(other.UserID, session.UserID)
 						w.WriteHeader(200)
-						w.Write([]byte("Rejected a friend request from " + friendReq[1] + "."))
+						w.Write([]byte("Rejected a friend request from <b>" + friendReq[1] + "</b>."))
 						log.Println("[FriendListPost] rejected a friend request from", other.UserID, "to", session.UserID)
 					} else {
 						http.Error(w, "You sent an invalid friend request.", 400)
@@ -67,10 +67,10 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 					RemoveFriend(session.UserID, other.UserID)
 					w.WriteHeader(200)
 					if IsFriend(other.UserID, session.UserID) {
-						w.Write([]byte("Removed " + friendReq[1] + " from your friend list."))
+						w.Write([]byte("Removed <b>" + friendReq[1] + "</b> from your friend list."))
 						log.Println("[FriendListPost] removed a friend", other.UserID, "for", session.UserID)
 					} else {
-						w.Write([]byte("Revoked friend request to " + friendReq[1] + "."))
+						w.Write([]byte("Revoked friend request to <b>" + friendReq[1] + "</b>."))
 						log.Println("[FriendListPost] revoked a friend request", other.UserID, "for", session.UserID)
 					}
 				}
@@ -101,11 +101,11 @@ func FriendListHandler(w http.ResponseWriter, r *http.Request) {
 					if fromthem { //accepting
 						w.Write([]byte("You are now friends with <b>" + friendReq[1] + "</b>."))
 						log.Println("[FriendListPost] added a friend", other.UserID, "for", session.UserID)
-						AddNotification(other.UserID, "<b>" + FindBaseID(session.UserID).Username + "</b> has accepted your friend request.", "friends")
+						AddNotification(other.UserID, "<b>" + FindBaseID(session.UserID).Username + "</b> has accepted your friend request.", "friends", true)
 					} else { //sending first
 						w.Write([]byte("Sent friend request to <b>" + friendReq[1] + "</b>."))
 						log.Println("[FriendListPost] sent request to ", other.UserID, "from", session.UserID)
-						AddNotification(other.UserID, "<b>" + FindBaseID(session.UserID).Username + "</b> added you to their friend list.", "friends")
+						AddNotification(other.UserID, "<b>" + FindBaseID(session.UserID).Username + "</b> added you to their friend list.", "friends", true)
 					}
 				}
 			} else { //an invalid user

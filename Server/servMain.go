@@ -85,13 +85,13 @@ func main() {
 	}
 	statement.Exec()
 
-	statement, err = DATABASE.Prepare("ALTER TABLE girls ADD COLUMN timeUnlocked INTEGER NOT NULL default 0")
+	/*statement, err = DATABASE.Prepare("ALTER TABLE girls ADD COLUMN timeUnlocked INTEGER NOT NULL default 0")
 	if err != nil {
 		log.Println("[Starting]", err.Error())
 	} else {
 		statement.Exec()
 		log.Println("[Starting] Added timeUnlocked")
-	}
+	}*/
 	statement, err = DATABASE.Prepare("CREATE TABLE IF NOT EXISTS girls (userID INTEGER, girlNumber INTEGER NOT NULL, girlLevel INTEGER DEFAULT 1, currMatches INTEGER DEFAULT 0, matchesPlayed INTEGER DEFAULT 0, matchesWon INTEGER DEFAULT 0, FOREIGN KEY (userID) REFERENCES userData(userID), PRIMARY KEY (userID, girlNumber))")
 	if err != nil {
 		panic(err)

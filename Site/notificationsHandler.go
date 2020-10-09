@@ -24,22 +24,22 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 			if over && left < 1 && notified < 1 {
 				AddNotification(user.UserID,
 					"Your conversion for "+strconv.Itoa(amnt)+" :"+DustTypesToFilesMap[dtype]+"_dust_small: is over!",
-					"conversion")
+					"conversion", false)
 				NotifiedConversion(user.UserID)
 			}
 		}
 		client, present := ClientConnections[user.UserID]
 		if present && client.State == Disconnected && activity != PlayingAs {
 			AddNotification(user.UserID,
-				"Your game as <b>" + ReleasedCharactersNames[client.PlayingAs] + "</b> is still going! Would you like to reconnect?","game")
+				"Your game as <b>" + ReleasedCharactersNames[client.PlayingAs] + "</b> is still going! Would you like to reconnect?","game", false)
 		}
 		switch {
 		case activity == ConversionPage:
 			SeeNotifications(user.UserID, "conversion")
-		case activity == BrowsingFriendList:
-			SeeNotifications(user.UserID, "friends")
+		/*case activity == BrowsingFriendList:
+			SeeNotifications(user.UserID, "friends")*/
 		}
-		notifications := GetNotifications(user.UserID)
+		notifications := GetNotifications(user.UserID, true)
 		res, err := json.Marshal(notifications)
 		if err != nil {
 			log.Println("[Notifications] for", user.Username, err)

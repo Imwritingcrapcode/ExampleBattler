@@ -15,7 +15,6 @@ import (
 
 /*
 flavor: other important todos
-• add friend sends a notification to the potential friend TEST
 now:
 loading animation while queuing
 next:
@@ -37,6 +36,7 @@ battle your friends
 //TODO news page
 //TODO choose your pfp
 //TODO ability draft, 2v2, ...
+//TODO fix EEEEEEEEEE
 */
 
 func DistributeRewards(p1 *ClientChannels, won bool) {
@@ -51,6 +51,9 @@ func DistributeRewards(p1 *ClientChannels, won bool) {
 		AddRewards(user, "w", neededAmount)
 		AddRewards(user, strconv.Itoa(p1.PlayingAs), 1)
 		user.SetDust("w", user.GetDust("w")+neededAmount)
+	} else {
+		user := FindBaseID(p1.UserID)
+		AddRewards(user, "w", 0)
 	}
 }
 

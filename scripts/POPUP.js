@@ -121,10 +121,11 @@ function getNotifications() {
     };
 }
 
-getNotifications();
+//getNotifications();
 function handleVisibilityChange() {
     if (!document.hidden) {
         getNotifications();
     }
 }
 document.addEventListener("visibilitychange", handleVisibilityChange, false);
+window.onload = getNotifications;

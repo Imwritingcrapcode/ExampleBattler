@@ -2,7 +2,7 @@ friends = [];
 incoming = [];
 pending = [];
 
-function init() {
+function init(first) {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', '/friendlist', true);
     xhr.send();
@@ -14,10 +14,12 @@ function init() {
                 setFriends(response.friends);
                 setIncoming(response.incoming);
                 setPending(response.pending);
-                //displaying current tab
-                document.getElementById('Friends').style.display = "block";
-                //clicking on the top button
-                document.getElementById('defaultTab').className += " active";
+                if (first) {
+                    //displaying current tab
+                    document.getElementById('Friends').style.display = "block";
+                    //clicking on the top button
+                    document.getElementById('defaultTab').className += " active";
+                }
             } else {
                 console.log(xhr.responseText);
             }
@@ -146,5 +148,11 @@ function setPending(pending) {
     document.getElementById("pending").innerHTML = innerHTML;
 }
 
-init();
+init(true);
 UpdateFreeData();
+function handleVisibilityChange() {
+    if (!document.hidden) {
+        init(false);
+    }
+}
+document.addEventListener("visibilitychange", handleVisibilityChange, false);
