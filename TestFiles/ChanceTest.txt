@@ -1,0 +1,76 @@
+Testing 2500119 time(s).
+Storyteller 	- Z89, wins with 35.205% chance, -18 average hp difference, and 9 turns average game length.
+Storyteller 	- Euphoria, wins with 79.143% chance, 18 average hp difference, and 10 turns average game length.
+Storyteller 	- Ruby, wins with 99.070% chance, 62 average hp difference, and 9 turns average game length.
+Storyteller 	- Speed, wins with 79.125% chance, 46 average hp difference, and 10 turns average game length.
+Storyteller 	- Milana, wins with 3.770% chance, -44 average hp difference, and 9 turns average game length.
+Storyteller 	- Structure, wins with 21.497% chance, -27 average hp difference, and 10 turns average game length.
+Z89 	- Storyteller, wins with 59.634% chance, 15 average hp difference, and 10 turns average game length.
+Z89 	- Euphoria, wins with 74.929% chance, 33 average hp difference, and 10 turns average game length.
+Z89 	- Ruby, wins with 82.244% chance, 57 average hp difference, and 9 turns average game length.
+Z89 	- Speed, wins with 66.767% chance, 28 average hp difference, and 9 turns average game length.
+Z89 	- Milana, wins with 60.862% chance, 16 average hp difference, and 10 turns average game length.
+Z89 	- Structure, wins with 74.618% chance, 36 average hp difference, and 9 turns average game length.
+Euphoria 	- Storyteller, wins with 9.718% chance, -25 average hp difference, and 10 turns average game length.
+Euphoria 	- Z89, wins with 25.325% chance, -33 average hp difference, and 10 turns average game length.
+Euphoria 	- Ruby, wins with 82.780% chance, 23 average hp difference, and 9 turns average game length.
+Euphoria 	- Speed, wins with 50.204% chance, -20 average hp difference, and 10 turns average game length.
+Euphoria 	- Milana, wins with 12.201% chance, -47 average hp difference, and 9 turns average game length.
+Euphoria 	- Structure, wins with 9.502% chance, -36 average hp difference, and 10 turns average game length.
+Ruby 	- Storyteller, wins with 0.907% chance, -63 average hp difference, and 9 turns average game length.
+Ruby 	- Z89, wins with 20.074% chance, -52 average hp difference, and 9 turns average game length.
+Ruby 	- Euphoria, wins with 21.913% chance, -19 average hp difference, and 9 turns average game length.
+Ruby 	- Speed, wins with 41.574% chance, -15 average hp difference, and 9 turns average game length.
+Ruby 	- Milana, wins with 1.803% chance, -64 average hp difference, and 9 turns average game length.
+Ruby 	- Structure, wins with 37.870% chance, -15 average hp difference, and 8 turns average game length.
+Speed 	- Storyteller, wins with 24.264% chance, -39 average hp difference, and 10 turns average game length.
+Speed 	- Z89, wins with 37.998% chance, -17 average hp difference, and 9 turns average game length.
+Speed 	- Euphoria, wins with 44.739% chance, 14 average hp difference, and 10 turns average game length.
+Speed 	- Ruby, wins with 60.146% chance, 17 average hp difference, and 9 turns average game length.
+Speed 	- Milana, wins with 49.706% chance, 9 average hp difference, and 9 turns average game length.
+Speed 	- Structure, wins with 46.956% chance, 5 average hp difference, and 9 turns average game length.
+Milana 	- Storyteller, wins with 88.318% chance, 36 average hp difference, and 9 turns average game length.
+Milana 	- Z89, wins with 35.991% chance, -15 average hp difference, and 10 turns average game length.
+Milana 	- Euphoria, wins with 81.300% chance, 42 average hp difference, and 9 turns average game length.
+Milana 	- Ruby, wins with 98.104% chance, 62 average hp difference, and 9 turns average game length.
+Milana 	- Speed, wins with 48.655% chance, -8 average hp difference, and 9 turns average game length.
+Milana 	- Structure, wins with 43.286% chance, 5 average hp difference, and 9 turns average game length.
+Structure 	- Storyteller, wins with 89.182% chance, 30 average hp difference, and 10 turns average game length.
+Structure 	- Z89, wins with 31.284% chance, -28 average hp difference, and 9 turns average game length.
+Structure 	- Euphoria, wins with 90.912% chance, 36 average hp difference, and 10 turns average game length.
+Structure 	- Ruby, wins with 68.300% chance, 21 average hp difference, and 9 turns average game length.
+Structure 	- Speed, wins with 55.043% chance, -1 average hp difference, and 9 turns average game length.
+Structure 	- Milana, wins with 60.103% chance, -1 average hp difference, and 9 turns average game length.
+Storyteller's average winrate is: 53.816%.
+Z89's average winrate is: 69.431%.
+Euphoria's average winrate is: 33.066%.
+Ruby's average winrate is: 19.458%.
+Speed's average winrate is: 43.537%.
+Milana's average winrate is: 67.267%.
+Structure's average winrate is: 63.425%.
+Testing 100000 time(s).
+Storyteller 	- Ruby, wins with 99.115% chance, 62 average hp difference, and 9 turns average game length.
+Storyteller 	- Speed, wins with 79.141% chance, 47 average hp difference, and 10 turns average game length.
+Storyteller 	- Milana, wins with 3.830% chance, -44 average hp difference, and 9 turns average game length.
+Storyteller 	- Structure, wins with 21.631% chance, -27 average hp difference, and 10 turns average game length.
+Ruby 	- Storyteller, wins with 0.943% chance, -63 average hp difference, and 9 turns average game length.
+Ruby 	- Speed, wins with 41.518% chance, -15 average hp difference, and 9 turns average game length.
+Ruby 	- Milana, wins with 1.756% chance, -65 average hp difference, and 9 turns average game length.
+Ruby 	- Structure, wins with 37.785% chance, -15 average hp difference, and 8 turns average game length.
+Speed 	- Storyteller, wins with 24.020% chance, -39 average hp difference, and 10 turns average game length.
+Speed 	- Ruby, wins with 60.267% chance, 17 average hp difference, and 9 turns average game length.
+Speed 	- Milana, wins with 49.977% chance, 9 average hp difference, and 9 turns average game length.
+Speed 	- Structure, wins with 47.033% chance, 6 average hp difference, and 9 turns average game length.
+Milana 	- Storyteller, wins with 88.317% chance, 36 average hp difference, and 9 turns average game length.
+Milana 	- Ruby, wins with 98.115% chance, 62 average hp difference, and 9 turns average game length.
+Milana 	- Speed, wins with 48.656% chance, -8 average hp difference, and 9 turns average game length.
+Milana 	- Structure, wins with 43.363% chance, 5 average hp difference, and 9 turns average game length.
+Structure 	- Storyteller, wins with 89.382% chance, 30 average hp difference, and 10 turns average game length.
+Structure 	- Ruby, wins with 68.460% chance, 21 average hp difference, and 9 turns average game length.
+Structure 	- Speed, wins with 54.990% chance, -1 average hp difference, and 9 turns average game length.
+Structure 	- Milana, wins with 59.908% chance, -1 average hp difference, and 9 turns average game length.
+Storyteller's average winrate is: 50.132%.
+Ruby's average winrate is: 19.506%.
+Speed's average winrate is: 44.624%.
+Milana's average winrate is: 70.373%.
+Structure's average winrate is: 65.366%.
