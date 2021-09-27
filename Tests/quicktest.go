@@ -1,39 +1,72 @@
 package main
 
 import (
-	. "../Site"
+	"math/rand"
 	"fmt"
-	"math"
-	"strconv"
 )
 
-func main() {
-	AD := 0
-	TOTAL := 1000000
-	SP := 0
-	LF := 0
-	for i := 0; i < TOTAL; i++ {
-		//currTime := time.Now().UTC().UnixNano()
-		free_girl1, free_girl2 := GenerateStartingPack(int64(i))
-		//fmt.Println(i, free_girl1, free_girl2)
-		if free_girl1 == 8 || free_girl1 == 9 || free_girl1 == 33 {
-			AD += 1
-		} else if free_girl1 == 10 || free_girl1 == 51 {
-			SP += 1
-		} else {
-			LF += 1
-		}
-		if free_girl2 == 8 || free_girl2 == 9 || free_girl2 == 33 {
-			AD += 1
-		} else if free_girl2 == 10 || free_girl2 == 51 {
-			SP += 1
-		} else {
-			LF += 1
+
+var ReleasedCharactersPacks = map[string][]int{
+	"ST": {},
+	"AD": {8, 9, 33},
+	"SP": {10, 51},
+	"RP": {},
+	"LF": {1, 119},
+}
+
+func GenerateStartingPack(currTime int64) (int, int) {
+	rand.Seed(currTime)
+	var free_girl1, free_girl2, n int
+	var Rarity1 string
+	ST_CHANCE := 450
+	AD_CHANCE := 300
+	SP_CHANCE := 150
+	RP_CHANCE := 80
+	LF_CHANCE := 20
+	for free_girl1 == 0 {
+		n = rand.Intn(1000)
+		if (n < ST_CHANCE) && len(ReleasedCharactersPacks["ST"]) > 0 {
+			Rarity1 = "ST"
+			free_girl1 = ReleasedCharactersPacks["ST"][rand.Intn(len(ReleasedCharactersPacks["ST"]))]
+		} else if (n < ST_CHANCE+AD_CHANCE) && len(ReleasedCharactersPacks["AD"]) > 0 {
+			Rarity1 = "AD"
+			free_girl1 = ReleasedCharactersPacks["AD"][rand.Intn(len(ReleasedCharactersPacks["AD"]))]
+		} else if (n < ST_CHANCE+AD_CHANCE+SP_CHANCE) && len(ReleasedCharactersPacks["SP"]) > 0 {
+			Rarity1 = "SP"
+			free_girl1 = ReleasedCharactersPacks["SP"][rand.Intn(len(ReleasedCharactersPacks["SP"]))]
+		} else if (n < ST_CHANCE+AD_CHANCE+SP_CHANCE+RP_CHANCE) && len(ReleasedCharactersPacks["RP"]) > 0 {
+			Rarity1 = "RP"
+			free_girl1 = ReleasedCharactersPacks["RP"][rand.Intn(len(ReleasedCharactersPacks["RP"]))]
+		} else if len(ReleasedCharactersPacks["LF"]) > 0 {
+			Rarity1 = "LF"
+			free_girl1 = ReleasedCharactersPacks["LF"][rand.Intn(len(ReleasedCharactersPacks["LF"]))]
 		}
 	}
-	TOTAL *= 2
-	fmt.Println(AD, SP, LF, TOTAL)
-	fmt.Println("AD:", strconv.FormatInt(int64(math.Round(float64(float64(AD)/float64(TOTAL)*100))), 10)+"%")
-	fmt.Println("SP:", strconv.FormatInt(int64(math.Round(float64(float64(SP)/float64(TOTAL)*100))), 10)+"%")
-	fmt.Println("LF:", strconv.FormatInt(int64(math.Round(float64(float64(LF)/float64(TOTAL)*100))), 10)+"%")
+	for free_girl2 == 0 || free_girl2 == free_girl1 {
+		n = rand.Intn(1000)
+		if (n >= 1000-LF_CHANCE) && len(ReleasedCharactersPacks["LF"]) > 0 && Rarity1 == "ST" && len(ReleasedCharactersPacks["LF"]) > 0 {
+			free_girl2 = ReleasedCharactersPacks["LF"][rand.Intn(len(ReleasedCharactersPacks["LF"]))]
+		} else if (n >= 1000-LF_CHANCE-RP_CHANCE) && (Rarity1 == "ST" || Rarity1 == "AD") && len(ReleasedCharactersPacks["RP"]) > 0 {
+			free_girl2 = ReleasedCharactersPacks["RP"][rand.Intn(len(ReleasedCharactersPacks["RP"]))]
+		} else if (n >= 1000-LF_CHANCE-RP_CHANCE-SP_CHANCE) && (Rarity1 == "ST" || Rarity1 == "AD" || Rarity1 == "SP") && len(ReleasedCharactersPacks["SP"]) > 0 {
+			free_girl2 = ReleasedCharactersPacks["SP"][rand.Intn(len(ReleasedCharactersPacks["SP"]))]
+		} else if (n >= 1000-LF_CHANCE-RP_CHANCE-SP_CHANCE-AD_CHANCE) && (Rarity1 != "LF") && len(ReleasedCharactersPacks["AD"]) > 0 {
+			free_girl2 = ReleasedCharactersPacks["AD"][rand.Intn(len(ReleasedCharactersPacks["AD"]))]
+		} else if len(ReleasedCharactersPacks["ST"]) > 0 {
+			free_girl2 = ReleasedCharactersPacks["ST"][rand.Intn(len(ReleasedCharactersPacks["ST"]))]
+		} else {
+			free_girl2 = ReleasedCharactersPacks["AD"][rand.Intn(len(ReleasedCharactersPacks["AD"]))]
+		}
+	}
+	/*free_girl1 = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
+	free_girl2 = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
+	for free_girl2 == free_girl1 {
+		free_girl2 = ReleasedCharacters[rand.Intn(len(ReleasedCharacters))]
+	}*/
+
+	return free_girl1, free_girl2
+}
+
+func main() {
+	fmt.Println(GenerateStartingPack(119))
 }

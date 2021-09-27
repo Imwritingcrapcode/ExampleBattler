@@ -10,6 +10,7 @@ const (
 	BrowsingFriendList
 	ConversionPage
 	Shopping
+	InLobby
 	//the new ones go above this line -----
 	BrowsingCharacters
 	Queuing
@@ -53,6 +54,7 @@ var ActivitiesToString = map[int]string{
 	BrowsingFriendList:  "Browsing their friend list",
 	ConversionPage:      "Converting currency",
 	Shopping:            "Shopping",
+	InLobby:             "In a game lobby",
 	BrowsingCharacters:  "Browsing character gallery",
 	Queuing:             "Queuing for a game",
 	ReadyingForTheGame:  "Just found an opponent",
@@ -170,7 +172,7 @@ type ClientChannels struct {
 	Opponent       *ClientChannels
 	State          int
 	ChosenGirls    []int
-	SkillLevels		[]int
+	SkillLevels    []int
 	PlayingAs      int
 	LastThing      GameState
 	Clock          *Clock
@@ -180,11 +182,11 @@ type ClientChannels struct {
 	Time           chan bool
 	TimeOutput     chan string
 	KillConnection chan struct{}
-	Taken               chan *ClientChannels
-	Disconnected        chan string
-	IsTaken             bool
-	IsDesperate         bool
-	ShouldRemove        bool
+	Taken          chan *ClientChannels
+	Disconnected   chan string
+	IsTaken        bool
+	IsDesperate    bool
+	ShouldRemove   bool
 }
 
 func (user *ClientChannels) GetCompatibility(other *ClientChannels) (int, int, int) {
@@ -213,7 +215,7 @@ func (user *ClientChannels) GetCompatibility(other *ClientChannels) (int, int, i
 		return 6, mySec, theirSec
 	case myMain != theirSec && (-1 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 1):
 		return 7, myMain, theirSec
-	case mySec != theirMain && (-1 == mySecSkill-theirMainSkill|| mySecSkill-theirMainSkill== 1):
+	case mySec != theirMain && (-1 == mySecSkill-theirMainSkill || mySecSkill-theirMainSkill == 1):
 		return 8, mySec, theirMain
 	case myMain != theirMain && (-2 == myMainSkill-theirMainSkill || myMainSkill-theirMainSkill == 2):
 		return 9, myMain, theirMain
@@ -221,7 +223,7 @@ func (user *ClientChannels) GetCompatibility(other *ClientChannels) (int, int, i
 		return 10, mySec, theirSec
 	case myMain != theirSec && (-2 == myMainSkill-theirSecSkill || myMainSkill-theirSecSkill == 2):
 		return 11, myMain, theirSec
-	case mySec != theirMain && (-2 == mySecSkill-theirMainSkill|| mySecSkill-theirMainSkill== 2):
+	case mySec != theirMain && (-2 == mySecSkill-theirMainSkill || mySecSkill-theirMainSkill == 2):
 		return 12, mySec, theirMain
 	case myMain != theirMain:
 		return 13, myMain, theirMain
@@ -246,7 +248,6 @@ func (i *ClientChannels) GiveUp() {
 			i.Opponent.State = OpponentGaveUp
 		}
 		i.HasGivenUp <- true
-		close(i.Input)
 	}
 }
 

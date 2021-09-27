@@ -191,7 +191,7 @@ func GetFriendData(userID int64, mutual bool) []string {
 func FindBase(username string) *User {
 	rows, err := DATABASE.Query("SELECT userData.userID, username, activity FROM users INNER JOIN userData ON users.userID = userData.userID WHERE username = '" + username + "'")
 	if err != nil {
-		log.Println("[FindBase] " + err.Error())
+		log.Println("[FindBase] User not found", username)
 		return nil
 	}
 	defer rows.Close()
@@ -389,13 +389,12 @@ func UnlockGirl(user *User, girl int) {
 		log.Println("[UnlockGirl]", user.Username, "already has", girl)
 		return
 	}
-	time2 := time.Now().UTC().UnixNano()
-	statement, err := DATABASE.Prepare("INSERT INTO girls (userID, girlNumber, timeUnlocked) VALUES (?, ?, ?)")
+	statement, err := DATABASE.Prepare("INSERT INTO girls (userID, girlNumber) VALUES (?, ?)")
 	if err != nil {
 		log.Println("[UnlockGirl]", err)
 		return
 	}
-	_, err = statement.Exec(user.UserID, girl, time2)
+	_, err = statement.Exec(user.UserID, girl)
 	if err != nil {
 		log.Println(err)
 		log.Println("[UnlockGirl]", err)
@@ -655,9 +654,14 @@ func GetRewards(user *User) *RewardsObj {
 	rewards.CurrentMatches = stuff[1]
 
 	if found > 0 {
-		rewards.LastOpponentsName = GetLastOpponentsName(user.UserID)
-		other := FindBase(rewards.LastOpponentsName).UserID
-		rewards.AreFriends = IsFriend(user.UserID, other) && IsFriend(other, user.UserID)
+
+		rewards.LastOpponentsName = GetLastOpponent(user.UserID)
+		other := FindBase(rewards.LastOpponentsName)
+		if other == nil {
+			rewards.AreFriends = true
+		} else {
+			rewards.AreFriends = IsFriend(user.UserID, other.UserID) && IsFriend(other.UserID, user.UserID)
+		}
 		rewards.BattleResult = GetLastBattleResult(user.UserID)
 	}
 
@@ -711,12 +715,12 @@ func SetLastOpponentsName(UserID1 int64, UserID2 int64) {
 	if UserID1 != UserID2 {
 		rows, err := DATABASE.Query("SELECT username FROM users WHERE userID = " + strconv.FormatInt(UserID2, 10))
 		if err != nil {
-			log.Println("[GetLastOpponentsName] " + err.Error())
+			log.Println("[SetLastOpponentsName] " + err.Error())
 		}
 		if rows.Next() {
 			rows.Scan(&name)
 		} else {
-			log.Panic("[GetLastOpponentsName] no such person found owo")
+			log.Panic("[SetLastOpponentsName] no such person found owo")
 		}
 		rows.Close()
 	} else {
@@ -739,12 +743,13 @@ func SetLastOpponentsName(UserID1 int64, UserID2 int64) {
 	}
 }
 
-func GetLastOpponentsName(UserID int64) string {
+func GetLastOpponent(UserID int64) string {
 	rows, err := DATABASE.Query("SELECT lastOpponentsName FROM userData WHERE userID = " + strconv.FormatInt(UserID, 10))
 	if err != nil {
 		log.Println(err)
 		return ""
 	}
+
 	defer rows.Close()
 	if rows.Next() {
 		var state string

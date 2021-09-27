@@ -47,8 +47,8 @@ func EventOrganizer() {
 					other.IsTaken = true
 					RemoveUser(user)
 					RemoveUser(other)
-					ClientConnections[user.UserID] = user
-					ClientConnections[other.UserID] = other
+					AddBattle(user.UserID, user)
+					AddBattle(other.UserID, other)
 					go user.Take(other)
 					go other.Take(user)
 					info := "[Queue] MATCHED " + strconv.FormatInt(user.UserID, 10) + " WITH " + strconv.FormatInt(user.UserID, 10) + " AS IDEAL"
@@ -71,7 +71,7 @@ func EventOrganizer() {
 			if BestGrade == 1000 {
 				user.IsTaken = true
 				RemoveUser(user)
-				ClientConnections[user.UserID] = user
+				AddBattle(user.UserID, user)
 				go user.Take(user)
 			} else {
 				user.IsTaken = true
@@ -81,8 +81,8 @@ func EventOrganizer() {
 				comp, char1, char2 := user.GetCompatibility(BestOpponent)
 				user.PlayingAs = char1
 				BestOpponent.PlayingAs = char2
-				ClientConnections[user.UserID] = user
-				ClientConnections[BestOpponent.UserID] = BestOpponent
+				AddBattle(user.UserID, user)
+				AddBattle(BestOpponent.UserID, BestOpponent)
 				go user.Take(BestOpponent)
 				go BestOpponent.Take(user)
 				info += " AND COMPATIBILITY " + strconv.Itoa(comp) + " AND PLAYING " + strconv.Itoa(user.PlayingAs) + " OTHER PLAYING AS " + strconv.Itoa(BestOpponent.PlayingAs)
@@ -105,6 +105,15 @@ func KillIfTheyDisconnect(ws *websocket.Conn, user *ClientChannels) {
 	}
 }
 
+func IsInQueue(UserID int64) bool {
+	for i := 0; i < len(QUEUE); i++ {
+		if QUEUE[i].UserID == UserID {
+			return true
+		}
+	}
+	return false
+}
+
 func WaitForConnection(self *ClientChannels) {
 	timer2 := time.NewTimer(CONNECTWAITTIME * time.Second)
 	// check if connected
@@ -118,7 +127,7 @@ func WaitForConnection(self *ClientChannels) {
 		}
 	case <-timer2.C: //timed out
 		log.Println("[Queue]", self.UserID, "failed to connect")
-		channels, present := ClientConnections[self.UserID]
+		channels, present := GetBattle(self.UserID)
 		if present {
 			channels.State = GaveUp
 		}
@@ -138,18 +147,16 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == http.MethodGet {
 		log.Println("[Queue] accessing queue for", session.UserID)
-		if GetState(session.UserID) > Queuing && GetState(session.UserID) < JustFinishedTheGame {
+		channels, present := GetBattle(session.UserID)
+		if present {
 			log.Println("[Queue] Terminating your game, ", session.UserID)
-			channels, present := ClientConnections[session.UserID]
-			if present {
-				channels.GiveUp()
-				delete(ClientConnections, session.UserID)
-			} else {
-				log.Println("[Queue] user not found in queue", session.UserID)
-			}
+			channels.GiveUp()
+		} else {
+			log.Println("[Queue] user not found in game", session.UserID)
+		}
 
-		} else if GetState(session.UserID) == Queuing {
-			http.Error(w, "You are already in queue", 400)
+		if IsInQueue(session.UserID) || IsInALobby(session.UserID) || GetState(session.UserID) == Queuing {
+			http.Error(w, "You are already in queue or in a lobby", 400)
 			return
 		}
 		// Upgrade initial GET request to a web socket
@@ -191,7 +198,6 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 			HasGivenUp:     make(chan bool, 1),
 			Time:           make(chan bool, 1),
 			TimeOutput:     make(chan string, 1),
-			KillConnection: make(chan struct{}, 1),
 			Taken:          make(chan *ClientChannels, 1),
 			Disconnected:   make(chan string, 2),
 		}
@@ -213,7 +219,6 @@ func Disconnect(user *ClientChannels) {
 		close(user.HasGivenUp)
 		close(user.Time)
 		close(user.TimeOutput)
-		close(user.KillConnection)
 	}
 	close(user.Disconnected)
 	close(user.Taken)

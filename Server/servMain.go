@@ -48,7 +48,7 @@ func redirectStderr(f *os.File) {
 }
 
 func main() {
-	outputToLogTxt := false
+	outputToLogTxt := true
 	if outputToLogTxt {
 		f, err1 := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err1 != nil {
@@ -148,7 +148,8 @@ func main() {
 	http.HandleFunc("/images/", ImageHandler)
 	http.HandleFunc("/login", Login)
 	http.HandleFunc("/register", Register)
-	http.HandleFunc("/", Welcome)
+	http.HandleFunc("/welcome", Welcome)
+	http.HandleFunc("/", Login)
 	http.HandleFunc("/logout", Logout)
 	http.HandleFunc("/girllist", GirlListHandler)
 	http.HandleFunc("/favicon.ico", FavIcoFix)
@@ -163,6 +164,8 @@ func main() {
 	http.HandleFunc("/freeinfo", FreeInfo)
 	http.HandleFunc("/profileinfo", ProfileInfo)
 	http.HandleFunc("/notifications", Notifications)
+	http.HandleFunc("/testlobby", LobbyTestPage)
+	http.HandleFunc("/lobby", Lobby)
 
 	go OfflinePeople()
 	go EventOrganizer()
@@ -236,7 +239,7 @@ func OfflinePeople() {
 		for rows.Next() {
 			var userID, lastActivityTime, activity int64
 			rows.Scan(&userID, &lastActivityTime, &activity)
-			_, present := ClientConnections[userID]
+			_, present := GetBattle(userID)
 			timePassed := time.Now().UnixNano() - lastActivityTime
 			if timePassed > (OfflineEvery).Nanoseconds() && !present {
 				idsToOffline = append(idsToOffline, userID)

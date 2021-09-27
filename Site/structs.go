@@ -59,45 +59,28 @@ func HowMuchDoesSheGive(girlNumber int, win bool) int {
 
 func EndGame(channels *ClientChannels) {
 	log.Println("[GAME] Ended game as", channels.UserID, "against", channels.Opponent.UserID)
-	_, stillOpen := <-channels.Input
-	if stillOpen {
-		close(channels.Input)
-	}
-
-	_, stillOpen = <-channels.KillConnection
-	if stillOpen {
-		close(channels.KillConnection)
-	}
-
+	close(channels.Input)
 	close(channels.Time)
-
 	if channels.Clock.State() {
 		channels.Clock.Stop()
 	}
 
-	_, present := ClientConnections[channels.UserID]
-	if present {
-		delete(ClientConnections, channels.UserID)
+	present := DeleteBattle(channels.UserID)
+	if !present {
+		log.Println("[GAME] couldn't", channels.UserID, "from the game map: not found")
+	} else {
 		log.Println("[GAME] removed", channels.UserID, "from the game map")
 	}
 	if channels.Opponent != channels {
-		_, stillOpen := <-channels.Opponent.Input
-		if stillOpen {
-			close(channels.Opponent.Input)
-		}
-		_, stillOpen = <-channels.Opponent.KillConnection
-		if stillOpen {
-			close(channels.Opponent.KillConnection)
-		}
-
+		close(channels.Opponent.Input)
 		close(channels.Opponent.Time)
-
 		if channels.Opponent.Clock.State() {
 			channels.Opponent.Clock.Stop()
 		}
-		_, present := ClientConnections[channels.Opponent.UserID]
-		if present {
-			delete(ClientConnections, channels.Opponent.UserID)
+		present := DeleteBattle(channels.Opponent.UserID)
+		if !present {
+			log.Println("[GAME] couldn't", channels.Opponent.UserID, "from the game map: not found")
+			return
 		}
 		log.Println("[GAME] removed", channels.Opponent.UserID, "from the game map")
 	}
@@ -106,9 +89,9 @@ func EndGame(channels *ClientChannels) {
 //DB
 
 var BotNames = []string{
-	"BestHomie",
+	"your ex",
 	"frozencalla",
-	"IrJean",
+	"sick_birb",
 	"Fiendine•",
 	"ukulele",
 	"urkitten",
@@ -136,7 +119,7 @@ var DATABASE *sql.DB
 type RewardsObj struct {
 	BattleResult      int
 	LastOpponentsName string
-	AreFriends		  bool
+	AreFriends        bool
 	Dusts             map[string]int
 	Name              string
 	Rarity            string
@@ -182,13 +165,12 @@ type FriendList struct {
 
 //GameServer
 
-const QUEUEWAITTIME = 20 * time.Second
+const QUEUEWAITTIME =  5 * time.Second
 
 var QUEUECHANNEL = make(chan *ClientChannels, 10)
 var QUEUE = make([]*ClientChannels, 0)
 
 var upgrader = websocket.Upgrader{}
-
 
 type QueueResponse struct {
 	OK       bool   `json:"OK"`
@@ -226,8 +208,8 @@ type UserFree struct {
 }
 
 type UserFreeProfile struct {
-	BattlesTotal int       `json:"BattlesTotal"`
-	BattlesWon   int       `json:"BattlesWon"`
+	BattlesTotal int `json:"BattlesTotal"`
+	BattlesWon   int `json:"BattlesWon"`
 }
 
 type MoneyInfo struct {
@@ -304,11 +286,11 @@ type ConvRequest struct {
 }
 
 type ConvResponse struct {
-	IsConvertingRN       bool
-	CurrentProgress      int
-	Left                 int
-	Amount               int
-	DustType             string
+	IsConvertingRN  bool
+	CurrentProgress int
+	Left            int
+	Amount          int
+	DustType        string
 }
 
 var ConversionRate = map[string]float64{

@@ -112,7 +112,19 @@ function Panel(x, y, w, h, s) {
             this.objects.splice(index, 1);
             return true;
         } else {
-            return false;
+            const index = this.toplayerobjs.indexOf(obj);
+            if (index > -1) {
+                if (obj.clickable) {
+                    obj.unclick();
+                }
+                if (obj.hoverable) {
+                    obj.unhovered();
+                }
+                this.objects.splice(index, 1);
+                return true;
+            } else {
+                return false;
+            }
         }
     };
 

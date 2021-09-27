@@ -22,7 +22,7 @@ skins (+ pictures are loaded every time)
 after:
 battle your friends
 //FLAVOR
-//TODO cuter design of everything
+//TODO learn css
 //todo linux support, get a server
 //TODO DDOS protection (not cloudflare apparently)
 //TODO bot
@@ -36,8 +36,27 @@ battle your friends
 //TODO news page
 //TODO choose your pfp
 //TODO ability draft, 2v2, ...
-//TODO fix EEEEEEEEEE
+//TODO replays, spectators
+//FIXME fix Euphoria EEEEEEEEEE
+//FIXME fix notifications not having an order when they get a duplicate not sure how to implement this
+//FIXME • redirect after accessing the main page doesn't actually redirect. MAYBE FIXED ???
+//FIXME • Z89's effect stays for too long.
 */
+
+func GetBattle(UserID int64) (*ClientChannels, bool) {
+	user, present := ClientConnections[UserID]
+	return user, present
+}
+
+func AddBattle(UserID int64, channels *ClientChannels) {
+	ClientConnections[UserID] = channels
+}
+
+func DeleteBattle(UserID int64) bool {
+	_, present := ClientConnections[UserID]
+	delete(ClientConnections, UserID)
+	return present
+}
 
 func DistributeRewards(p1 *ClientChannels, won bool) {
 	log.Println("[INGAME] gg distribute rewards", p1.UserID)
@@ -170,10 +189,12 @@ func Game(p1, p2 *ClientChannels) {
 }
 
 func BotGame(p1 *ClientChannels, botChar int, DEPTH int) {
-	if (p1.PlayingAs == 33 || botChar == 33) && DEPTH > 5 {
-		DEPTH = 5
-	} else if (p1.PlayingAs == 33 || botChar == 33) && DEPTH < 4 {
-		DEPTH = 4
+	if p1.PlayingAs == 33 || botChar == 33 {
+		if DEPTH > 5 {
+			DEPTH = 5
+		} else if DEPTH < 4 {
+			DEPTH = 4
+		}
 	}
 
 	var g1, g2 CharInt
@@ -257,7 +278,7 @@ func Standard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := FindBaseID(session.UserID)
-	channels, present := ClientConnections[client.UserID]
+	channels, present := GetBattle(client.UserID)
 	if !present || channels.State <= Queuing {
 		log.Print("[INGAME] " + client.Username + " redirected to /girllist bc their state is < queuing or they are not in the map")
 		Redirect(w, r, "/girllist")
@@ -287,7 +308,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := FindBaseID(session.UserID)
-	channels, present := ClientConnections[client.UserID]
+	channels, present := GetBattle(client.UserID)
 	if !present || channels.State <= Queuing {
 		log.Print("[INGAME] "+client.Username+" redirected to /girllist", !present)
 		Redirect(w, r, "/girllist")
@@ -308,8 +329,6 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 
 		if state == Disconnected { //reconnect
 			log.Println("[INGAME] Reconnected! will show the last thing that happened for", client.Username)
-			kill := make(chan struct{}, 1)
-			channels.KillConnection = kill
 			channels.Output <- channels.LastThing
 			channels.Time <- true
 			channels.State = PlayingAs
@@ -320,6 +339,9 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 				channels.Opponent.Output <- LS
 			}
 		}
+
+		kill := make(chan struct{}, 1)
+		channels.KillConnection = kill
 
 		defer ws.Close()
 		defer close(channels.KillConnection)
@@ -413,10 +435,7 @@ func BattlerHandler(w http.ResponseWriter, r *http.Request) {
 				} else if channels.State < GaveUp {
 					channels.Input <- msg
 				} else {
-					_, stillOpen := <-channels.Input
-					if stillOpen {
-						close(channels.Input)
-					}
+					return
 				}
 			}
 		}

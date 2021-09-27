@@ -1,4 +1,4 @@
-﻿var touch;
+﻿﻿var touch;
 var FS;
 
 function setup() {

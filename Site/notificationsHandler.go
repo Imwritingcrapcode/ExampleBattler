@@ -16,6 +16,7 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("/login"))
 		return
 	}
+	SetState(session.UserID, GetState(session.UserID))
 	user := FindBaseID(session.UserID)
 	activity := user.CurrentActivity
 	if r.Method == http.MethodGet {
@@ -28,7 +29,7 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 				NotifiedConversion(user.UserID)
 			}
 		}
-		client, present := ClientConnections[user.UserID]
+		client, present := GetBattle(user.UserID)
 		if present && client.State == Disconnected && activity != PlayingAs {
 			AddNotification(user.UserID,
 				"Your game as <b>" + ReleasedCharactersNames[client.PlayingAs] + "</b> is still going! Would you like to reconnect?","game", false)
@@ -46,7 +47,9 @@ func Notifications(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Write(res)
-		log.Println("[Notifications] Got notifications for", user.Username, notifications, ActivitiesToString[activity])
+		if len(notifications) > 0 {
+			log.Println("[Notifications] Got notifications for", user.Username, notifications, ActivitiesToString[activity])
+		}
 		DeleteNotifications(user.UserID, "seen")
 	}
 }

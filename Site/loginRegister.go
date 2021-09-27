@@ -14,8 +14,10 @@ import (
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request, where string) {
+	//http.Error(w, "Forbidden AND gay.", 403)
 	http.Redirect(w, r, where, 303)
 }
+
 
 func IsLoggedIn(r *http.Request) (bool, *Session) {
 	var AlrdyLoggedIn bool
@@ -99,8 +101,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 func Login(w http.ResponseWriter, r *http.Request) {
 	AlrdyLoggedIn, session := IsLoggedIn(r)
 	if AlrdyLoggedIn {
-		log.Print("[Log In] " + strconv.FormatInt(session.UserID, 10) + " redirected to /")
-		Redirect(w, r, "/")
+		log.Print("[Log In] " + strconv.FormatInt(session.UserID, 10) + " redirected to /welcome")
+		Redirect(w, r, "/welcome")
 	} else {
 		if r.Method == http.MethodPost {
 			reg_data := RegData{}
@@ -145,7 +147,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 						Expires: expiration}
 					http.SetCookie(w, &cookie)
 					w.WriteHeader(200)
-					w.Write([]byte("/"))
+					w.Write([]byte("/welcome"))
 				} else if user == nil {
 					log.Println("[Log In] Wrong username")
 					w.WriteHeader(400)
@@ -193,10 +195,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := FindBaseID(session.UserID)
-	_, present := ClientConnections[user.UserID]
-	if present {
-		delete(ClientConnections, user.UserID)
-	}
+	DeleteBattle(user.UserID)
 	SetState(session.UserID, Offline)
 	//DeleteNotifications(user.UserID, "all")
 	log.Println("[Logout] see you,", session.UserID)
